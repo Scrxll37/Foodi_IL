@@ -1,0 +1,26 @@
+[
+  {
+    "id": "notif-1",
+    "title": "Commande en route ! 🛵",
+    "message": "Votre livreur Foodi Karim est en route vers Résidence Fleurie, Talborjt.",
+    "time": "Il y a 5 min",
+    "isRead": false,
+    "type": "order"
+  },
+  {
+    "id": "notif-2",
+    "title": "Offre Exclusive Agadir 🎉",
+    "message": "-20% sur tous les menus Maxi Best Of chez McDonald's Talborjt aujourd'hui.",
+    "time": "Il y a 2 heures",
+    "isRead": true,
+    "type": "promo"
+  },
+  {
+    "id": "notif-3",
+    "title": "Bienvenue sur Foodi Agadir 👋",
+    "message": "Profitez de la livraison gratuite sur votre première commande avec le code FOODIAGADIR.",
+    "time": "Hier",
+    "isRead": true,
+    "type": "system"
+  }
+]

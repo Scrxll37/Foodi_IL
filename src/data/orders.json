@@ -1,0 +1,50 @@
+[
+  {
+    "id": "CMD-AGD-8821",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "neighborhood": "Talborjt, Agadir",
+    "date": "28 Octobre 2026 à 13:45",
+    "status": "in_delivery",
+    "statusLabel": "En cours de livraison",
+    "items": [
+      {
+        "name": "Menu Maxi Big Mac",
+        "quantity": 2,
+        "price": 68,
+        "options": "Frites, Coca-Cola 50cl, Sauce Barbecue"
+      },
+      {
+        "name": "McFlurry Oreo & Chocolat",
+        "quantity": 1,
+        "price": 28,
+        "options": ""
+      }
+    ],
+    "subtotal": 164,
+    "deliveryFee": 12,
+    "total": 176,
+    "address": "Résidence Fleurie, Bâtiment A, 3ème étage, Talborjt, Agadir"
+  },
+  {
+    "id": "CMD-AGD-7419",
+    "restaurantName": "Mister Cook",
+    "restaurantLogo": "/images/restaurants/mistercook.png",
+    "neighborhood": "Talborjt, Agadir",
+    "date": "24 Octobre 2026 à 20:15",
+    "status": "delivered",
+    "statusLabel": "Livré avec succès",
+    "items": [
+      {
+        "name": "Smash Bacon Truffe Burger",
+        "quantity": 1,
+        "price": 72,
+        "options": "Frites Cajun, Boisson Canette"
+      }
+    ],
+    "subtotal": 72,
+    "deliveryFee": 8,
+    "total": 80,
+    "address": "Résidence Fleurie, Bâtiment A, 3ème étage, Talborjt, Agadir"
+  }
+]

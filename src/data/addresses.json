@@ -1,0 +1,44 @@
+[
+  {
+    "id": "addr_talborjt",
+    "type": "apartment",
+    "neighborhood": "Talborjt",
+    "street": "Avenue du 29 Fevrier",
+    "city": "Agadir",
+    "lat": 30.4278,
+    "lng": -9.5981,
+    "buildingNameNumber": "Résidence Fleurie, Bâtiment A",
+    "floorNumber": "3ème étage",
+    "doorNumber": "Appt 14",
+    "instructions": "Laisser à la conciergerie si absent.",
+    "isDefault": true
+  },
+  {
+    "id": "addr_dakhla",
+    "type": "office",
+    "neighborhood": "Dakhla",
+    "street": "Avenue des FAR",
+    "city": "Agadir",
+    "lat": 30.4182,
+    "lng": -9.5634,
+    "buildingNameNumber": "Centre d'Affaires Agadir",
+    "floorNumber": "2ème étage",
+    "doorNumber": "Bureau 204",
+    "instructions": "Remettre à l'accueil du 2ème étage.",
+    "isDefault": false
+  },
+  {
+    "id": "addr_founty",
+    "type": "house",
+    "neighborhood": "Founty",
+    "street": "Baie d'Agadir, Rue des Palmiers",
+    "city": "Agadir",
+    "lat": 30.4021,
+    "lng": -9.5892,
+    "buildingNameNumber": "Villa 24",
+    "floorNumber": "",
+    "doorNumber": "",
+    "instructions": "Sonner au portail extérieur.",
+    "isDefault": false
+  }
+]

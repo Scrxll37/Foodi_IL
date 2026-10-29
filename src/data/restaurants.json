@@ -1,0 +1,2720 @@
+[
+  {
+    "id": "mcdonalds",
+    "name": "McDonald's",
+    "slug": "mcdonalds",
+    "logo": "/images/restaurants/McDonalds.png",
+    "cover": "/images/banners/1791903178_mpd.jpg",
+    "rating": 4.7,
+    "reviewCount": 540,
+    "cuisine": "Burgers & Fast Food",
+    "cuisineSlug": "burgers",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 12,
+    "minOrder": 40,
+    "neighborhood": "Ain Diab",
+    "address": "Boulevard de la Corniche, Ain Diab, Casablanca",
+    "badge": "Populaire",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "19",
+        "name": "Menus",
+        "dishes": [
+          {
+            "id": "43",
+            "name": "McCrispy",
+            "description": "",
+            "price": 60,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/e34f11087cff74c970f6ec30eb50f2dfa0501e449613dc0915a8fd1527a93bb3?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "44",
+            "name": "Chicken Mythic",
+            "description": "",
+            "price": 70,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/999e9cfd32857f1881098644aad2af934bafe3cc4f56796700ae28a3d2645144?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "45",
+            "name": "Big Tasty Chicken",
+            "description": "",
+            "price": 70,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/4758f3e5405dbae87ec07ca8fc6c378af5f372b96e70a8c3c37a0ce193b729ff?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "46",
+            "name": "Big Tasty",
+            "description": "",
+            "price": 71,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/197cd69fb55836ce19e5853fa98f24e1415877fcdc45b49b437d8476605b8966?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "47",
+            "name": "Best Of Chicken Mythic",
+            "description": "",
+            "price": 81,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/c50ca71e357f90f13c419e3815cd44a718121312f993e2f53f7eee45c6441857?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "48",
+            "name": "Best Of Big Tasty Chicken",
+            "description": "",
+            "price": 81,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/7be5d46de2576f54991a587f53e0aea71464630f55609d56edda864fefee8827?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "49",
+            "name": "Best Of Big Tasty",
+            "description": "",
+            "price": 83,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/fc8000ef0f1f967292953dc033c06399d48d688b6f1983a8420f9a34901da1ab?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "20",
+        "name": "Burgers & Wraps",
+        "dishes": [
+          {
+            "id": "50",
+            "name": "Grand McWrap Boeuf - Sauce Tasty",
+            "description": "",
+            "price": 59,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/ff213a66a5de6e5edef5b9a22eefb1f24032a76a4dba9a5c289b6a22e0fc581d?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "21",
+        "name": "Happy Meal®",
+        "dishes": [
+          {
+            "id": "51",
+            "name": "Happy Meal Chicken McNuggets - 4 Pcs",
+            "description": "",
+            "price": 56,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/ce8c6068dbc13654c78521f04f49050d65ff6581ba82dbd480efb0caa609ea61?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "52",
+            "name": "Happy Meal Chicken Burger",
+            "description": "",
+            "price": 36,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/549bb550e77159aa4aba02a6b849a499c17e330f91554229456a305f5605dea8?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "53",
+            "name": "Happy Meal Cheese Burger",
+            "description": "",
+            "price": 36,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/58de56536f4d20da92e812f35820e807edff4468fd7ce1592eac97677c23a6a8?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "54",
+            "name": "Happy Meal Hamburger",
+            "description": "",
+            "price": 36,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/cb21ced47ed00f279a9853a2c55024fcfbb1c8e7700013331cc2c76745ded3a0?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "22",
+        "name": "P'tites Faims",
+        "dishes": [
+          {
+            "id": "55",
+            "name": "Menu Chicken McNuggets - 4 Pcs",
+            "description": "",
+            "price": 37,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/8d0b3f009fb220715e43337b5ed971374c18d7d9a1032b260b18fb97083373d1?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "56",
+            "name": "Menu P'tit Wrap Miel Moutarde",
+            "description": "",
+            "price": 39,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/645ae1696e865402187a443fa220fffefc29ca30dbd7ead4227d8ae942d05caf?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "57",
+            "name": "Duo Mabrouk : P'tit Wrap + Hamburger",
+            "description": "",
+            "price": 50,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/7f8a69b4441737f25f221e41e7f4450c2e429d6acd672dda54de667b210bd6b9?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "58",
+            "name": "Duo Mabrouk : P'tit Wrap + Cheeseburger",
+            "description": "",
+            "price": 50,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/84b3bc30715089ed8f5cc166de9dc2683237713272a9a59728853efd0a5ff312?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "59",
+            "name": "Duo Mabrouk : P'tit Wrap + Chickenburger",
+            "description": "",
+            "price": 50,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/eb52cb63865eade3ff8497445cb7d9ce02d2e8d9ee5d192fb686feac6e657745?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "23",
+        "name": "À Partager",
+        "dishes": [
+          {
+            "id": "60",
+            "name": "Chicken McNuggets - 9 Pcs",
+            "description": "",
+            "price": 57,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/e3201f0da0ba4905d301b9a67199db22a059e0d202c9b3a2498b148d94d6072c?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "61",
+            "name": "Best Of Chicken McNuggets - 6 Pcs",
+            "description": "",
+            "price": 62,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/799521096e7391509ee600713e85d49f11d2816d5f9efe3e7587934db33fd3bf?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "62",
+            "name": "Chicken Box - 21 pcs",
+            "description": "",
+            "price": 116,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/0f902551533b8139cfdba510846e407a1cb8068983fa76889e91a802c76d794e?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "24",
+        "name": "Glaces & Desserts",
+        "dishes": [
+          {
+            "id": "63",
+            "name": "McFlurry KitKat",
+            "description": "",
+            "price": 30,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/9b75a3c457985f47b714c5a7d4c0574ddc876f7c4f302c1a95b009956c3c1f80?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "64",
+            "name": "McFlurry Nature",
+            "description": "",
+            "price": 30,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/5ba42a8f2ec1318248709ac2c426db78a1504e4a3a7c310baf70eeb02b7a6328?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "65",
+            "name": "McFlurry M&M's",
+            "description": "",
+            "price": 30,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/3aa97cdfbb69f8f8ce6b6191d68d2af649f076d0b067bcd34c919f341b81f97e?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "66",
+            "name": "Golden McFlurry",
+            "description": "",
+            "price": 32,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/4759187b598da67c76a8763a65d728dbe10101b8f6d41829ae22a026ff14f057?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "25",
+        "name": "Frites",
+        "dishes": [
+          {
+            "id": "67",
+            "name": "Sauce Pomme Frite",
+            "description": "",
+            "price": 2,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/f1f3b6ae980e9026d18d595b3bdc37f2ccfef0afb8c732de186095b794dd2558?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "68",
+            "name": "Sauce Deluxe",
+            "description": "",
+            "price": 3,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/67274224b46d58fb626daf13cd0f64c6d870599b2ad6d30a7e23f64ea161e61a?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "69",
+            "name": "Petite Frite",
+            "description": "",
+            "price": 16,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/2525c7c9348a5a66c9e3dd5a2369bbc0269241d7838d4d414e5307e65173675d?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "70",
+            "name": "Moyenne Crinkle Frites",
+            "description": "",
+            "price": 20,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/13e8343e5facb5f951310c9c5dd7ac68f76ac30d3b42a2ad4af8570f5b4a4962?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "71",
+            "name": "McFlavor Fries (Sauce Algérienne)",
+            "description": "",
+            "price": 27,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/46b344a83bbaab3ec5d5ad715bb9b53ac9e7b7898f1b3001212f225a7c26dca2?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "26",
+        "name": "Boissons",
+        "dishes": [
+          {
+            "id": "72",
+            "name": "McFizz Piña Colada",
+            "description": "",
+            "price": 22,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/ca7e677298bce0b2c95d5e462f147a91d3c618bb8917e4d9e4483c1c182ce55f?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "73",
+            "name": "McFizz Pamplemousse",
+            "description": "",
+            "price": 22,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/521ab9528226f8048108aa21583a060481d28a46a9d36ac95fee05ee514942cf?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "74",
+            "name": "McFizz Fruit de la passion",
+            "description": "",
+            "price": 22,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/0c61aa19b8c29170523157a67fbb53d04dfefa52547ed3ea6f475ee47bf69ee1?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "75",
+            "name": "MilkShake Vanille",
+            "description": "",
+            "price": 24,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/026342210574483c5fb532af98ee8dce76dc467314fc4e7b4cbc08929f1d6882?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "76",
+            "name": "MilkShake Fraise",
+            "description": "",
+            "price": 24,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/7fb25b803844a66efe8ed1b86154b0dd7fb062cdcdca22cda643e7c600f8b339?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "27",
+        "name": "Salades",
+        "dishes": [
+          {
+            "id": "77",
+            "name": "Salade Pêcheur",
+            "description": "",
+            "price": 39,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/aeea71e73f2119a51555f15b6cfc8915880b8a62b8bed0523d0d1cff0b8f01b3?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aidthIjozMjAsImhlaWdodCI6MzIwfX1d",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "78",
+            "name": "Salade Caesar",
+            "description": "",
+            "price": 42,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/bbc639ad23b70e7906d7b01049c6889ca8687395f70b59a300e27441951a3aeb?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kfc",
+    "name": "KFC",
+    "slug": "kfc",
+    "logo": "/images/restaurants/KFC.jpg",
+    "cover": "/images/banners/1791902905_kfc1.png",
+    "rating": 4.65,
+    "reviewCount": 410,
+    "cuisine": "Poulet Frit & Tenders",
+    "cuisineSlug": "poulet",
+    "deliveryTime": "20 - 30 min",
+    "deliveryFee": 15,
+    "minOrder": 50,
+    "neighborhood": "Gauthier",
+    "address": "Boulevard d'Anfa, Gauthier, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "28",
+        "name": "Duo Deals",
+        "dishes": [
+          {
+            "id": "96",
+            "name": "MVP Royal",
+            "description": "2 Royals, 4 strips, 2 coleslaw , 2 boissons, 2 frites, 2 BBQ sauces.",
+            "price": 135,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/631aba15e7487e4411ae78269d6410fb2fff2f947c7b2423df4ddccde9c7f3bd",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "97",
+            "name": "Duo Gourmand",
+            "description": "Twister sandwich, Zinger Sandwich, Fries, Drink, BBQ Sauce , Dynamite Sauce",
+            "price": 74,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/02b01a1f8b11e001230a704063198c7aeab2a56ff7a53a3334889dc58889ca9b",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "29",
+        "name": "Big Box Meals",
+        "dishes": [
+          {
+            "id": "98",
+            "name": "Mighty Zinger Box",
+            "description": "Sandwich mighty zinger + 1 pièce de poulet ou 2 strips + frites + salade coleslaw + boisson",
+            "price": 101,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/c1ef51d6596f56edeaa371d0baf19ce4f4a0cf097a3081a33f75faa4643791a0",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "99",
+            "name": "Suprême Box",
+            "description": "Sandwich suprême + 1 pièce de poulet ou 2 strips + salade coleslaw + frites + boisson",
+            "price": 93,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/a3dee427981d0ebbf734bc82a3b204a121545253c711ad85173a30d504cdfccb",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "100",
+            "name": "Zinger Box",
+            "description": "Sandwich zinger + 1 pièce de poulet ou 2 strips + frites + salade coleslaw + boisson",
+            "price": 83,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/4843e1a99d943c3f9f698b5c9c3874b7e38897ebba992db8276fdd0bac5de220",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "101",
+            "name": "6 en 1 Box",
+            "description": "Royal sandwich , 1 Pièce de poulet ,1 Strip , Coleslaw ,Frites , Boisson",
+            "price": 69,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/895bf8d21d9bbdf6e6af1d4e0da9a59e633490f58e02f49404dd6ca9bec47555",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "30",
+        "name": "Combo Meals",
+        "dishes": [
+          {
+            "id": "102",
+            "name": "Mighty Zinger Combo",
+            "description": "Un burger double zinger + frites + boisson",
+            "price": 86,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/f2448b92c0f0178b24262c26072d4a70aeb2d49039e6c4fff2e421e10f3cd83b",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "103",
+            "name": "Supreme Combo",
+            "description": "Supreme sandwich+ frites + boisson",
+            "price": 78,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/0b42c8a0b2b3cf8979b76e0ea3b3ca92d40153324958869b1d9675124030f2b7",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "31",
+        "name": "Chicken Meals",
+        "dishes": [
+          {
+            "id": "104",
+            "name": "Super Dinner Meal",
+            "description": "4 pièces de poulet + salade coleslaw + frites + boisson",
+            "price": 92,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/ee704abeffe11d729ff20ac9e9b970bd30a9b23b48cf99eea960ad8278808887",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "105",
+            "name": "6 Pièces Crispy Strips Meal",
+            "description": "6 strips + frites + coleslaw + 2 dips + pain + boisson",
+            "price": 82,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/ff0cdf4841971609d0725ba14fa1d30081456744d81a3b55c764c709e8485ff8",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "32",
+        "name": "Bucket Meals",
+        "dishes": [
+          {
+            "id": "106",
+            "name": "30 Pièces Mighty Bucket",
+            "description": "20 strips + 10 pièce de poulet + frites familiales + large coleslaw + boisson 1.5l + 6 sauces + 6 pains",
+            "price": 112,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/c35900dd7bcb0e8c38c632a78f09c2a728fcbab0d7cf053e52a5d133d83b163a",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "107",
+            "name": "Bucket Jma3a",
+            "description": "10 pièces wings + 10 strips + family frites + 3 sauces",
+            "price": 112,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/6e98887a2f64438b73f1fd96200bdc7ce89aff226c561d6b7b9478120d92f74b",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "33",
+        "name": "Twisters & Burgers",
+        "dishes": [
+          {
+            "id": "108",
+            "name": "Mighty Zinger",
+            "description": "Un burger double zinger avec fromage",
+            "price": 71,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/a2177165b0af6ae9c62ec8a860a62837f8a871665d6048e5046af594bc470ee9",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "109",
+            "name": "Twister Sandwich",
+            "description": "Twister sandwich",
+            "price": 38,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/4e5a5e69a19302276522afb3b41803922c30de5dc71c3cada53ccb1ce189fa49",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "34",
+        "name": "Sides",
+        "dishes": [
+          {
+            "id": "110",
+            "name": "Hot Shots",
+            "description": "Une boite de 180 gr de petits morceaux de poulets piquants servis avec une sauce bbq",
+            "price": 49,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/10e59609beacb92d3d9d944521417cf54d0d7e7cf5d62f6eb33607afbeb8c394",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "111",
+            "name": "Mozzarella Sticks",
+            "description": "4 Pièces",
+            "price": 28,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/b097a06dfda22618de3bed7a901e2a37015780b12e4fc946d5284d2f867b4631",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "112",
+            "name": "3 Hot Wings",
+            "description": "3 Hot Wings",
+            "price": 20,
+            "image": "https://glovo.dhmedia.io/image/menus-glovo/products/026d03c58b5ba6bc8cc122d66b69bfad87cb63566c57cd8ef50b992137748ad9",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pizza-hut",
+    "name": "Pizza Hut",
+    "slug": "pizza-hut",
+    "logo": "/images/restaurants/PIZZAHUT.png",
+    "cover": "/images/banners/1791902911_pizzahut.jpg",
+    "rating": 4.8,
+    "reviewCount": 390,
+    "cuisine": "Pizzas & Spécialités Italiennes",
+    "cuisineSlug": "pizza",
+    "deliveryTime": "25 - 35 min",
+    "deliveryFee": 0,
+    "minOrder": 60,
+    "neighborhood": "Maarif",
+    "address": "Boulevard Massira Al Khadra, Maarif, Casablanca",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "11",
+        "name": "Pizzas Favorites Pan & Cheezy",
+        "dishes": [
+          {
+            "id": "28",
+            "name": "Pizza Supreme Pan",
+            "description": "Sauce tomate riche, mozzarella fondante, bœuf haché assaisonné, pepperoni de bœuf, champignons et poivrons frais.",
+            "price": 85,
+            "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "29",
+            "name": "Pizza Pepperoni Lovers Pan",
+            "description": "Double dose de pepperoni de bœuf croustillant, sauce tomate italienne et mozzarella gratinée.",
+            "price": 79,
+            "image": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "30",
+            "name": "Pizza 4 Fromages Gourmande",
+            "description": "Alliance généreuse de Mozzarella, Emmental, Gorgonzola et copeaux de Parmesan.",
+            "price": 82,
+            "image": "https://images.unsplash.com/photo-1573821663912-569905455b1c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "12",
+        "name": "Entrées & Pains à l'Ail",
+        "dishes": [
+          {
+            "id": "31",
+            "name": "Pain à l'Ail Mozzarella Gratiné",
+            "description": "Baguette croustillante beurrée à l'ail frais et persil, recouverte de mozzarella filante.",
+            "price": 29,
+            "image": "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "32",
+            "name": "Chicken Wings BBQ (8 pièces)",
+            "description": "Ailes de poulet marinées et rôties au four, laquées à la sauce barbecue fumée.",
+            "price": 49,
+            "image": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mister-cook",
+    "name": "Mister Cook",
+    "slug": "mister-cook",
+    "logo": "/images/restaurants/mistercook.png",
+    "cover": "/images/banners/1791902918_mistercook.jpg",
+    "rating": 4.75,
+    "reviewCount": 280,
+    "cuisine": "Fast-Food Gourmet & Burgers",
+    "cuisineSlug": "burgers",
+    "deliveryTime": "20 - 30 min",
+    "deliveryFee": 10,
+    "minOrder": 45,
+    "neighborhood": "Habous",
+    "address": "Avenue 2 Mars, Habous, Casablanca",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "13",
+        "name": "Burgers & Sandwichs Gourmets",
+        "dishes": [
+          {
+            "id": "33",
+            "name": "Burger Mister King Double Steak",
+            "description": "Deux steaks grillés, double cheddar, sauce barbecue fumée, oignons caramélisés et bacon de bœuf.",
+            "price": 52,
+            "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "34",
+            "name": "Big Texas Burger BBQ",
+            "description": "Gros steak 150g, galette rösti de pomme de terre, cheddar, oignons rings et sauce texas épicée.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "14",
+        "name": "Tacos Français Gratinés",
+        "dishes": [
+          {
+            "id": "35",
+            "name": "Tacos Double Viande Gratiné",
+            "description": "Viande hachée assaisonnée + poulet mariné, frites dorées, sauce fromagère maison et mozzarella gratinée sur le dessus.",
+            "price": 55,
+            "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "crusty",
+    "name": "Crusty",
+    "slug": "crusty",
+    "logo": "/images/restaurants/crusti.jpg",
+    "cover": "/images/banners/1791902931_crusty.jpg",
+    "rating": 4.88,
+    "reviewCount": 320,
+    "cuisine": "Poulet Frit & Wings Épicés",
+    "cuisineSlug": "poulet",
+    "deliveryTime": "18 - 28 min",
+    "deliveryFee": 12,
+    "minOrder": 45,
+    "neighborhood": "Maarif",
+    "address": "Boulevard Bir Anzarane, Maarif, Casablanca",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "15",
+        "name": "Burgers Crispy US",
+        "dishes": [
+          {
+            "id": "36",
+            "name": "Crusty Burger Deluxe",
+            "description": "Gros filet de poulet mariné pané ultra croustillant, cheddar coulant, coleslaw frais et sauce spicy Crusty.",
+            "price": 66,
+            "image": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "37",
+            "name": "Smoky Bacon Crispy Burger",
+            "description": "Filet de poulet pané, tranches de bacon fumé croustillant, double fromage cheddar et sauce barbecue blanche.",
+            "price": 66,
+            "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "16",
+        "name": "Tenders & Box Signature",
+        "dishes": [
+          {
+            "id": "38",
+            "name": "Box 8 Tenders Signature & Frites",
+            "description": "8 tenders géants panés à la main, servis avec frites gaufrées et 2 sauces signatures maison.",
+            "price": 68,
+            "image": "https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "burger-king",
+    "name": "Burger King",
+    "slug": "burger-king",
+    "logo": "/images/restaurants/burger-king.png",
+    "cover": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.65,
+    "reviewCount": 340,
+    "cuisine": "Burgers Grillés à la Flamme",
+    "cuisineSlug": "burgers",
+    "deliveryTime": "18 - 28 min",
+    "deliveryFee": 12,
+    "minOrder": 40,
+    "neighborhood": "Centre Ville",
+    "address": "Avenue Mohammed V, Centre Ville, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "70",
+        "name": "Menus Whopper & Spécialités",
+        "dishes": [
+          {
+            "id": "347",
+            "name": "Whopper Original",
+            "description": "Pain sésame toasté, bœuf grillé à la flamme, tomates fraîches, salade croquante, cornichons, oignons et sauce mayonnaise.",
+            "price": 54,
+            "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "348",
+            "name": "Double Whopper Cheese",
+            "description": "Deux savoureux steaks 100% bœuf grillés à la flamme accompagnés de fromage fondu onctueux, tomates fraîches et salade iceberg.",
+            "price": 68,
+            "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "349",
+            "name": "Crispy Chicken Burger",
+            "description": "Filet de poulet croustillant et doré à la perfection, salade croquante et mayonnaise légère dans un pain brioché.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "350",
+            "name": "Steakhouse Bacon Crispy",
+            "description": "Steak grillé à la flamme, sauce barbecue fumée, bacon croustillant, oignons frits croustillants et cheddar fondu.",
+            "price": 64,
+            "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "71",
+        "name": "Petite Faim & Desserts",
+        "dishes": [
+          {
+            "id": "351",
+            "name": "King Nuggets 9 pièces",
+            "description": "9 bouchées de poulet tendres et croustillantes avec 2 sauces au choix : barbecue, aigre-douce ou curry.",
+            "price": 39,
+            "image": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "352",
+            "name": "Frites King Cheddar & Bacon",
+            "description": "Portion généreuse de frites dorées nappées de sauce cheddar fondue chaude et éclats de bacon croustillant.",
+            "price": 28,
+            "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "353",
+            "name": "Onion Rings Croustillants (6 pcs)",
+            "description": "Rondelles d oignons entières panées et frites croustillantes servies avec sauce barbecue.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1639024471287-035566ab4d7e?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "354",
+            "name": "King Fusion Oreo",
+            "description": "Glace onctueuse à la vanille fouettée avec des morceaux croquants de biscuits Oreo et coulis chocolat.",
+            "price": 24,
+            "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dominos-pizza",
+    "name": "Domino's Pizza",
+    "slug": "dominos-pizza",
+    "logo": "/images/restaurants/dominos.png",
+    "cover": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.7,
+    "reviewCount": 420,
+    "cuisine": "Pizzas Chaudes & Pains Fourrés",
+    "cuisineSlug": "pizza",
+    "deliveryTime": "20 - 30 min",
+    "deliveryFee": 10,
+    "minOrder": 45,
+    "neighborhood": "Agadir Bay",
+    "address": "Boulevard Hassan II, Agadir Bay, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "72",
+        "name": "Nos Pizzas Incontournables",
+        "dishes": [
+          {
+            "id": "355",
+            "name": "Pizza Pepperoni Passion",
+            "description": "Sauce tomate cuisinée, double portion de mozzarella fondante et abondance de tranches de pepperoni boeuf savoureux.",
+            "price": 59,
+            "image": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "356",
+            "name": "Pizza 4 Fromages Gourmande",
+            "description": "Mélange crémeux et savoureux de mozzarella, emmental fondant, fourme d ambert et chèvre affiné.",
+            "price": 62,
+            "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "357",
+            "name": "Pizza ExtravaganZZa Suprême",
+            "description": "Sauce tomate, mozzarella, pepperoni, boulettes de boeuf, poivrons verts, champignons frais et oignons doux.",
+            "price": 69,
+            "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "358",
+            "name": "Pizza Margherita Classique",
+            "description": "Recette originale italienne : sauce tomate parfumée à l origan, mozzarella fondante et filet d huile d olive.",
+            "price": 45,
+            "image": "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "73",
+        "name": "Entrées & Douceurs",
+        "dishes": [
+          {
+            "id": "359",
+            "name": "Cheesy Bread Fondant",
+            "description": "Pain cuit au four fourré à la mozzarella et à l ail doux, gratiné au fromage.",
+            "price": 32,
+            "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "360",
+            "name": "Kickers de Poulet Épicé (6 pcs)",
+            "description": "Bouchées de filets de poulet panées épicées relevées au piment avec sauce ranch.",
+            "price": 36,
+            "image": "https://images.unsplash.com/photo-1527477378408-1bc82946c5a5?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "361",
+            "name": "Choco Bread Chaud Moelleux",
+            "description": "Pain feuilleté cuit au four garni de chocolat noisette coulant saupoudré de sucre glace.",
+            "price": 26,
+            "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "o-tacos",
+    "name": "O'Tacos",
+    "slug": "o-tacos",
+    "logo": "/images/restaurants/otacos.png",
+    "cover": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.8,
+    "reviewCount": 610,
+    "cuisine": "French Tacos & Sauce Fromagère",
+    "cuisineSlug": "tacos",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 0,
+    "minOrder": 35,
+    "neighborhood": "Quartier Industriel",
+    "address": "Avenue des FAR, Quartier Industriel, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "74",
+        "name": "Les Tacos Signatures",
+        "dishes": [
+          {
+            "id": "362",
+            "name": "Tacos M (1 Viande)",
+            "description": "Une viande au choix (Viande hachée ou Poulet mariné), frites fraîches et sauce fromagère maison dans une galette dorée.",
+            "price": 39,
+            "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "363",
+            "name": "Tacos L (2 Viandes)",
+            "description": "Deux viandes au choix, double portion de frites et sauce fromagère crémeuse onctueuse.",
+            "price": 55,
+            "image": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "364",
+            "name": "Tacos Gratiné Raclette & Lardons",
+            "description": "Tacos taille L généreusement nappé de fromage raclette fondu et gratine au four avec des éclats de lardons de dinde.",
+            "price": 49,
+            "image": "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "365",
+            "name": "Tacos XL (3 Viandes)",
+            "description": "Pour les grands appétits : trois viandes au choix, frites croustillantes et double sauce fromagère artisanale.",
+            "price": 74,
+            "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "75",
+        "name": "O'Bowls & Desserts",
+        "dishes": [
+          {
+            "id": "366",
+            "name": "O'Bowl Poulet Mariné & Riz",
+            "description": "Bol gourmand composé de riz assaisonné, filet de poulet mariné, maïs doux, avocat, sauce fromagère et oignons frits.",
+            "price": 45,
+            "image": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "367",
+            "name": "O'Shake Spéculoos Gourmand",
+            "description": "Milkshake épais et crémeux à base de crème glacée, brisures de Spéculoos et chantilly généreuse.",
+            "price": 28,
+            "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "368",
+            "name": "Tiramisu Nutella Biscuit",
+            "description": "Verrine de mascarpone onctueux, couches de biscuit imbibé et généreux tourbillon de Nutella.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tacos-beldi",
+    "name": "Tacos Beldi",
+    "slug": "tacos-beldi",
+    "logo": "/images/restaurants/tacos-beldi.jpg",
+    "cover": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.75,
+    "reviewCount": 290,
+    "cuisine": "Tacos & Saveurs Marocaines",
+    "cuisineSlug": "tacos",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 8,
+    "minOrder": 30,
+    "neighborhood": "Talborjt",
+    "address": "Boulevard Al Mouqawama, Talborjt, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "76",
+        "name": "Tacos & Sandwichs Beldi",
+        "dishes": [
+          {
+            "id": "369",
+            "name": "Tacos Beldi Kefta & Merguez",
+            "description": "Kefta hachée fraîche assaisonnée au cumin et persil, rondelles de merguez grillées, frites beldi et sauce algérienne.",
+            "price": 38,
+            "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "370",
+            "name": "Tacos Poulet Épicé Zaïm",
+            "description": "Filets de poulet marinés au curcuma, gingembre et piment doux, frites croustillantes et sauce blanche à l ail.",
+            "price": 35,
+            "image": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "371",
+            "name": "Sandwich Beldi Kefta & Oeuf au Plat",
+            "description": "Pain rond marocain croustillant, kefta grillée à la plancha, œuf au plat coulant, tomates et oignons caramélisés.",
+            "price": 28,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "372",
+            "name": "Tacos Gratiné Cheddar & Piments",
+            "description": "Tacos garni gratiné au cheddar fondant avec piments verts grillés marocains pour les amateurs de sensations relevées.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "77",
+        "name": "Accompagnements & Boissons",
+        "dishes": [
+          {
+            "id": "373",
+            "name": "Frites Beldi Sauce Andalouse",
+            "description": "Grand cornet de frites coupées sur place, croustillantes à l extérieur et fondantes, avec sauce andalouse.",
+            "price": 16,
+            "image": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "374",
+            "name": "Salade Marocaine aux Poivrons",
+            "description": "Tomates fraîches concassées, poivrons rouges et verts grillés au charbon de bois, huile d olive extra vierge et coriandre.",
+            "price": 18,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "375",
+            "name": "Jus Panaché Fruits Frais Beldi",
+            "description": "Mélange crémeux d avocat, banane, orange et amandes concassées préparé à la minute.",
+            "price": 20,
+            "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bocadillo-house",
+    "name": "Bocadillo House",
+    "slug": "bocadillo-house",
+    "logo": "/images/restaurants/bocadillo.png",
+    "cover": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.6,
+    "reviewCount": 210,
+    "cuisine": "Bocadillos & Sandwichs",
+    "cuisineSlug": "fast-food",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 10,
+    "minOrder": 30,
+    "neighborhood": "Secteur Touristique",
+    "address": "Boulevard du 20 Août, Secteur Touristique, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "78",
+        "name": "Bocadillos Chauds & Froids",
+        "dishes": [
+          {
+            "id": "376",
+            "name": "Bocadillo Calamar Frit",
+            "description": "Demi-baguette croustillante garnie d anneaux de calamars frais frits croustillants, salade et sauce tartare relevée.",
+            "price": 36,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "377",
+            "name": "Bocadillo Mixte Crevettes & Kefta",
+            "description": "Crevettes royales sautées à l ail et kefta grillée, sauce spéciale maison et crudités fraîches.",
+            "price": 42,
+            "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "378",
+            "name": "Bocadillo Thon Escabèche & Œuf",
+            "description": "Thon de qualité, rondelles d oeufs durs, olives noires, tomates fraîches et filet de vinaigre balsamique.",
+            "price": 24,
+            "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "379",
+            "name": "Bocadillo Tortilla Espagnole",
+            "description": "Épaisse part de tortilla de pommes de terre faite maison, fromage fondu et salade iceberg croquante.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1521390188846-e2a39b7ef4a8?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "79",
+        "name": "Salades & Boissons",
+        "dishes": [
+          {
+            "id": "380",
+            "name": "Salade Niçoise Méditerranéenne",
+            "description": "Salade verte, thon, haricots verts, tomates cerises, oeufs durs, olives et vinaigrette à la moutarde douce.",
+            "price": 30,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "381",
+            "name": "Jus d'Avocat aux Amandes",
+            "description": "Avocat onctueux mixé avec du lait frais entier, touche de miel pur et éclats d amandes grillées.",
+            "price": 25,
+            "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "master-food",
+    "name": "Master Food",
+    "slug": "master-food",
+    "logo": "/images/restaurants/master-food.jpg",
+    "cover": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.55,
+    "reviewCount": 185,
+    "cuisine": "Fast-Food & Smash Burgers",
+    "cuisineSlug": "burgers",
+    "deliveryTime": "16 - 26 min",
+    "deliveryFee": 12,
+    "minOrder": 35,
+    "neighborhood": "Dakhla",
+    "address": "Avenue Allal Ben Abdellah, Dakhla, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "80",
+        "name": "Burgers & Tacos Master",
+        "dishes": [
+          {
+            "id": "382",
+            "name": "Master Burger Triple Kefta",
+            "description": "Trois steaks pur boeuf assaisonnés, triple cheddar américain, sauce barbecue fumée et oignons frits croustillants.",
+            "price": 49,
+            "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "383",
+            "name": "Tacos Master 3 Étages Gratiné",
+            "description": "Poulet pané, viande hachée, cordon bleu, double sauce fromagère et couverture complète de fromage gratiné au four.",
+            "price": 58,
+            "image": "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "384",
+            "name": "Chicken Master Burger Pané",
+            "description": "Gros filet de poulet pané maison épicé, tranche de cheddar, salade fraîche et sauce burger crémeuse.",
+            "price": 42,
+            "image": "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "385",
+            "name": "Sandwich Master Foie & Kefta",
+            "description": "Mélange savoureux de foie de veau grillé et boulettes de kefta aux épices dans un pain ciabatta toasté.",
+            "price": 36,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "81",
+        "name": "Boxes & Loaded Fries",
+        "dishes": [
+          {
+            "id": "386",
+            "name": "Loaded Fries Crispy Chicken",
+            "description": "Barquette géante de frites dorées surmontées de morceaux de poulet croustillant et sauce fromage fondue.",
+            "price": 34,
+            "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "387",
+            "name": "Chicken Wings BBQ (6 pcs)",
+            "description": "Ailes de poulet laquées à la sauce barbecue fumée, croustillantes à l extérieur et fondantes à coeur.",
+            "price": 35,
+            "image": "https://images.unsplash.com/photo-1527477378408-1bc82946c5a5?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bready",
+    "name": "Bready",
+    "slug": "bready",
+    "logo": "/images/restaurants/bready.jpg",
+    "cover": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.85,
+    "reviewCount": 310,
+    "cuisine": "Boulangerie & Sandwichs",
+    "cuisineSlug": "sandwich",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 15,
+    "minOrder": 40,
+    "neighborhood": "Agadir",
+    "address": "Avenue Prince Moulay Abdellah, Agadir, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "82",
+        "name": "Sandwichs Artisans & Ciabattas",
+        "dishes": [
+          {
+            "id": "388",
+            "name": "Ciabatta Poulet Rôti & Pesto",
+            "description": "Pain ciabatta artisanal à l huile d olive, émincé de poulet rôti aux herbes, pesto au basilic frais et mozzarella fondue.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "389",
+            "name": "Toasté Saumon Fumé & Avocat",
+            "description": "Pain de campagne toasté, fromage frais aux herbes fines, tranches de saumon fumé norvégien et lamelles d avocat.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "390",
+            "name": "Panini Dinde & Mozzarella",
+            "description": "Pain panini croustillant pressé à chaud, filet de dinde fumée, mozzarella di bufala fondante et tomates fraîches.",
+            "price": 35,
+            "image": "https://images.unsplash.com/photo-1521390188846-e2a39b7ef4a8?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "83",
+        "name": "Salades Fraîcheur & Jus",
+        "dishes": [
+          {
+            "id": "391",
+            "name": "Salade César Poulet Rôti",
+            "description": "Cœur de romaine croquant, émincé de poulet doré, copeaux de parmesan affiné, croûtons dorés et sauce césar classique.",
+            "price": 45,
+            "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "392",
+            "name": "Jus Detox Pomme Concombre",
+            "description": "Jus vert rafraîchissant extrait à froid : pomme granny smith, concombre bio, menthe fraîche et citron vert.",
+            "price": 26,
+            "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pomme-de-pain",
+    "name": "Pomme de Pain",
+    "slug": "pomme-de-pain",
+    "logo": "/images/restaurants/pomme-de-pain.jpg",
+    "cover": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.7,
+    "reviewCount": 240,
+    "cuisine": "Sandwichs Français & Pâtisseries",
+    "cuisineSlug": "sandwich",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 0,
+    "minOrder": 35,
+    "neighborhood": "Agadir",
+    "address": "Boulevard Mohammed V, Agadir, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "84",
+        "name": "Sandwichs Signatures Pomme de Pain",
+        "dishes": [
+          {
+            "id": "393",
+            "name": "Sandwich Le Rustique Camembert",
+            "description": "Baguette artisanale croustillante, tranches épaisses de camembert affiné, éclats de noix et salade roquette.",
+            "price": 45,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "394",
+            "name": "Club Sandwich Poulet Grillé",
+            "description": "Pain de mie toasté à trois étages, filet de poulet émincé, bacon de dinde, tomates fraîches et mayonnaise douce.",
+            "price": 46,
+            "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "395",
+            "name": "Sandwich Parisien Tradition",
+            "description": "Baguette tradition fraîche, beurre doux AOP, tranches de dinde cuite et emmental français fondant.",
+            "price": 38,
+            "image": "https://images.unsplash.com/photo-1521390188846-e2a39b7ef4a8?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "85",
+        "name": "Salades & Pâtisseries",
+        "dishes": [
+          {
+            "id": "396",
+            "name": "Salade Chèvre Chaud",
+            "description": "Salade mesclun, toasts tièdes de chèvre au miel, cerneaux de noix croquants et réduction balsamique.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "397",
+            "name": "Muffin Cœur Chocolat Coulant",
+            "description": "Muffin généreux aux pépites de chocolat avec un cœur fondant de ganache noisette servi tiède.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "paul-maroc",
+    "name": "Paul Maroc",
+    "slug": "paul-maroc",
+    "logo": "/images/restaurants/paul.jpg",
+    "cover": "https://images.unsplash.com/photo-1554433607-66b5efe9d304?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.9,
+    "reviewCount": 480,
+    "cuisine": "Boulangerie & Bistrot",
+    "cuisineSlug": "boulangerie",
+    "deliveryTime": "20 - 30 min",
+    "deliveryFee": 18,
+    "minOrder": 50,
+    "neighborhood": "Marina d'Agadir",
+    "address": "Marina d'Agadir, Front de Mer, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "86",
+        "name": "Plats Bistrot & Sandwichs Fins",
+        "dishes": [
+          {
+            "id": "398",
+            "name": "Croque-Monsieur Tradition Paul",
+            "description": "Pain de mie de campagne artisanal doré au four, sauce béchamel onctueuse, jambon de dinde et emmental gratiné.",
+            "price": 49,
+            "image": "https://images.unsplash.com/photo-1554433607-66b5efe9d304?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "399",
+            "name": "Sandwich Dieppois Thon Crudités",
+            "description": "Pain pavé aux graines de pavot, effiloché de thon relevé à la mayonnaise fine, tomates fraîches et œufs durs.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "400",
+            "name": "Quiche Lorraine Traditionnelle",
+            "description": "Pâte brisée pur beurre dorée garnie d un appareil crémeux aux lardons de dinde et fromage suisse, servie avec salade.",
+            "price": 45,
+            "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "87",
+        "name": "Salades Gourmandes & Douceurs",
+        "dishes": [
+          {
+            "id": "401",
+            "name": "Salade Paul Quinoa & Légumes",
+            "description": "Quinoa bio, courgettes et poivrons grillés, avocat, fèves fraîches, graines de courge et vinaigrette au citron.",
+            "price": 55,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "402",
+            "name": "Tartelette Framboise Fraîche",
+            "description": "Fond de pâte sablée au beurre, crème pâtissière parfumée à la vanille bourbon et framboises fraîches généreuses.",
+            "price": 36,
+            "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "403",
+            "name": "Millefeuille Vanille Bourbon",
+            "description": "Feuilletage croustillant caramélisé au four, garni d une généreuse crème diplomate à la gousse de vanille.",
+            "price": 32,
+            "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "chic-chicken",
+    "name": "Chic Chicken",
+    "slug": "chic-chicken",
+    "logo": "/images/restaurants/chic-chicken.png",
+    "cover": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.65,
+    "reviewCount": 330,
+    "cuisine": "Poulet Frit & Wraps",
+    "cuisineSlug": "poulet",
+    "deliveryTime": "16 - 26 min",
+    "deliveryFee": 12,
+    "minOrder": 35,
+    "neighborhood": "Cité Al Qods",
+    "address": "Avenue Hassan I, Cité Al Qods, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "88",
+        "name": "Burgers & Buckets Poulet",
+        "dishes": [
+          {
+            "id": "404",
+            "name": "Chic Burger Spicy Cheddar",
+            "description": "Gros filet de blanc de poulet pané pimenté, double tranche de cheddar fondant, salade iceberg et sauce cajun.",
+            "price": 39,
+            "image": "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "405",
+            "name": "Wrap Crispy Chicken Barbecue",
+            "description": "Tortilla de blé chaude roulée avec deux tenders croustillants, salade croquante et sauce barbecue douce.",
+            "price": 34,
+            "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "406",
+            "name": "Bucket 10 Crispy Tenders",
+            "description": "10 aiguillettes de poulet 100% filet panées ultra croustillantes servies avec 3 sauces maison et portion de frites.",
+            "price": 68,
+            "image": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "407",
+            "name": "Box Solo 3 Tenders & Frites",
+            "description": "Menu solo complet : 3 tenders panés dorés, cornet de frites chaudes, sauce au choix et canette fraîche.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "89",
+        "name": "Sides & Boissons",
+        "dishes": [
+          {
+            "id": "408",
+            "name": "Frites Assaisonnées Cajun",
+            "description": "Frites dorées enrobées d un mélange secret d épices cajun doux et herbes aromatiques.",
+            "price": 18,
+            "image": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "409",
+            "name": "Bouchées Camembert Pané (4 pcs)",
+            "description": "Bouchées de fromage camembert fondant enrobées de chapelure croustillante servies avec sauce piquante.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "le-paradis-du-tacos",
+    "name": "Le Paradis du Tacos",
+    "slug": "le-paradis-du-tacos",
+    "logo": "/images/restaurants/paradis-tacos.jpg",
+    "cover": "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.7,
+    "reviewCount": 275,
+    "cuisine": "Tacos & Street Food",
+    "cuisineSlug": "tacos",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 9,
+    "minOrder": 30,
+    "neighborhood": "Centre",
+    "address": "Boulevard Général Kettani, Centre, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "90",
+        "name": "Tacos Gratinés & Cheese Naans",
+        "dishes": [
+          {
+            "id": "410",
+            "name": "Tacos Savoyard Raclette",
+            "description": "Viande hachée et poulet, frites, sauce fromagère, le tout gratiné au four sous une épaisse couche de fromage à raclette.",
+            "price": 46,
+            "image": "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "411",
+            "name": "Tacos Mexicain Poivrons & Épices",
+            "description": "Bœuf épicé, poivrons rouges et oignons sautés, sauce piquante salsa et fromage fondu coulant.",
+            "price": 42,
+            "image": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "412",
+            "name": "Cheese Naan Poulet Tikka",
+            "description": "Pain indien traditionnel cuit au four tandoor farci à la vache qui rit fondante, garni de poulet mariné tikka masala.",
+            "price": 38,
+            "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "413",
+            "name": "Tacos Cordon Bleu & Nuggets",
+            "description": "Combinaison préférée des ados : morceaux de cordon bleu doré, nuggets de poulet, frites et sauce algérienne.",
+            "price": 39,
+            "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "91",
+        "name": "Sides & Shakes",
+        "dishes": [
+          {
+            "id": "414",
+            "name": "Frites Belges Sauce Samouraï",
+            "description": "Grande barquette de frites croustillantes servies avec sauce samouraï pimentée et ketchup.",
+            "price": 16,
+            "image": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "415",
+            "name": "Milkshake KitKat Crunchy",
+            "description": "Milkshake onctueux au chocolat au lait mixé avec des barres de KitKat croustillantes et nappage caramel.",
+            "price": 25,
+            "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "snack-rafiq",
+    "name": "Snack Rafiq",
+    "slug": "snack-rafiq",
+    "logo": "/images/restaurants/snack-rafiq.png",
+    "cover": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.8,
+    "reviewCount": 520,
+    "cuisine": "Chawarma & Grillades",
+    "cuisineSlug": "fast-food",
+    "deliveryTime": "12 - 22 min",
+    "deliveryFee": 0,
+    "minOrder": 25,
+    "neighborhood": "Agadir Ville",
+    "address": "Boulevard Hassan II, Agadir Ville, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "92",
+        "name": "Chawarmas & Grillades",
+        "dishes": [
+          {
+            "id": "416",
+            "name": "Chawarma Poulet Libanaise Toum",
+            "description": "Fines lamelles de poulet doré à la broche, crème d ail libanaise (toum), cornichons au sel et frites roulés dans un pain pita toasté.",
+            "price": 32,
+            "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "417",
+            "name": "Chawarma Viande de Bœuf Persillée",
+            "description": "Tranches tendres de bœuf mariné aux 7 épices d orient, persil frais émincé, oignons rouges sumac et sauce tahina.",
+            "price": 38,
+            "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "418",
+            "name": "Sandwich Brochettes Kefta Charbon",
+            "description": "Deux brochettes de kefta pure viande grillées au feu de bois dans un pain batbout chaud avec tomates et oignons.",
+            "price": 30,
+            "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "419",
+            "name": "Assiette Mixte Chawarma & Riz",
+            "description": "Assiette copieuse de chawarma poulet et boeuf, riz parfumé au safran, salade verte, frites et ramequins de sauces.",
+            "price": 52,
+            "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "93",
+        "name": "Entrées & Boissons",
+        "dishes": [
+          {
+            "id": "420",
+            "name": "Salade Marocaine Traditionnelle",
+            "description": "Salade fraîche de tomates fermes concassées, oignons doux, coriandre et filet d huile d olive du souss.",
+            "price": 16,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "421",
+            "name": "Portion Houmous Libanais & Pain",
+            "description": "Purée onctueuse de pois chiches à la crème de sésame (tahina) arrosée d huile d olive extra vierge.",
+            "price": 20,
+            "image": "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "chawarma-damas",
+    "name": "Chawarma Damas",
+    "slug": "chawarma-damas",
+    "logo": "/images/restaurants/chawarma-damas.jpg",
+    "cover": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.85,
+    "reviewCount": 390,
+    "cuisine": "Syrien & Libanais",
+    "cuisineSlug": "oriental",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 10,
+    "minOrder": 30,
+    "neighborhood": "Agadir",
+    "address": "Avenue My Youssef, Agadir, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "94",
+        "name": "Spécialités Damascènes",
+        "dishes": [
+          {
+            "id": "422",
+            "name": "Grand Chawarma Damas Poulet",
+            "description": "Pain saj extra fin toasté au feu de bois, poulet doré fondant, sauce ail toum authentique et cornichons marinés.",
+            "price": 34,
+            "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "423",
+            "name": "Sandwich Falafel Sauce Tahina",
+            "description": "Boulettes croustillantes de pois chiches aux herbes fraîches, tomates, salade, menthe fraîche et sauce sésame.",
+            "price": 24,
+            "image": "https://images.unsplash.com/photo-1593001874117-c99c800e3eb7?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "424",
+            "name": "Chawarma Bœuf Marinade Épices",
+            "description": "Bœuf tendre coupé très fin, grenade fraîche acidulée, oignons au sumac et crème de sésame dans un pain libanais croustillant.",
+            "price": 39,
+            "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "425",
+            "name": "Assiette Arabi Rouleaux Découpés",
+            "description": "Chawarma coupée en 6 rouleaux dorés accompagnée d une boîte de frites, cornichons, crème toum et salade.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "95",
+        "name": "Mezzés & Douceurs",
+        "dishes": [
+          {
+            "id": "426",
+            "name": "Moutabal Caviar d'Aubergines",
+            "description": "Aubergines rôties au feu de bois écrasées avec crème de sésame, ail et huile d olive vierge.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "427",
+            "name": "Baklava Pistache & Miel (2 pcs)",
+            "description": "Pâtisserie orientale feuilletée au beurre pur dorée, généreusement farcie de pistaches concassées et sirop de miel.",
+            "price": 20,
+            "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pizzeria-bella-napoli",
+    "name": "Pizzeria Bella Napoli",
+    "slug": "pizzeria-bella-napoli",
+    "logo": "/images/restaurants/bella-napoli.jpg",
+    "cover": "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.9,
+    "reviewCount": 460,
+    "cuisine": "Pizza Napolitaine",
+    "cuisineSlug": "pizza",
+    "deliveryTime": "20 - 30 min",
+    "deliveryFee": 12,
+    "minOrder": 45,
+    "neighborhood": "Résidence Islane",
+    "address": "Boulevard Hassan II, Résidence Islane, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "96",
+        "name": "Pizzas Napolitaines au Feu de Bois",
+        "dishes": [
+          {
+            "id": "428",
+            "name": "Pizza Margherita Verace",
+            "description": "Sauce tomate San Marzano D.O.P, mozzarella fior di latte fraîche fondante, basilic frais et filet d huile d olive d Italie.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "429",
+            "name": "Pizza Diavola Salami Piquant",
+            "description": "Sauce tomate cuisinée, mozzarella fior di latte, salami calabrais piquant et piments doux sautés.",
+            "price": 58,
+            "image": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "430",
+            "name": "Pizza Regina Champignons Frais",
+            "description": "Sauce tomate parfumée, mozzarella fondante, tranches de dinde cuite fine et champignons de Paris frais dorés.",
+            "price": 54,
+            "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "431",
+            "name": "Calzone Napoletano Soufflé",
+            "description": "Pizza soufflée refermée en chausson, garnie de ricotta fraîche crémeuse, mozzarella fondante et sauce tomate.",
+            "price": 55,
+            "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "97",
+        "name": "Pâtes Fraîches & Salades",
+        "dishes": [
+          {
+            "id": "432",
+            "name": "Penne All'Arrabbiata Piment",
+            "description": "Pâtes de blé dur italiennes enrobées d une sauce tomate mijotée à l ail doré, piment rouge et basilic frais.",
+            "price": 46,
+            "image": "https://images.unsplash.com/photo-1621996346565-e3d5d6281292?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "433",
+            "name": "Salade Caprese Di Bufala",
+            "description": "Tranches de tomates fraîches de saison, boule de mozzarella di bufala crémeuse, pesto vert maison et réduction balsamique.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "434",
+            "name": "Tiramisu Café Amaretto Maison",
+            "description": "Véritable recette italienne : biscuits cuillère imbibés d espresso corsé et mousse mascarpone aérienne.",
+            "price": 28,
+            "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "la-grillardiere",
+    "name": "La Grillardière",
+    "slug": "la-grillardiere",
+    "logo": "/images/restaurants/grillardiere.png",
+    "cover": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.75,
+    "reviewCount": 410,
+    "cuisine": "Grillades Marocaines",
+    "cuisineSlug": "marocain",
+    "deliveryTime": "22 - 32 min",
+    "deliveryFee": 14,
+    "minOrder": 40,
+    "neighborhood": "Centre Ville",
+    "address": "Avenue Hassan II, Centre Ville, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "98",
+        "name": "Grillades au Charbon & Tajines",
+        "dishes": [
+          {
+            "id": "435",
+            "name": "Assiette Trio Grillade Mixte",
+            "description": "Assortiment généreux : brochette de kefta assaisonnée, côtelette d agneau braisée et brochette de blanc de poulet mariné.",
+            "price": 78,
+            "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "436",
+            "name": "Sandwich Kefta Braisée Poivre",
+            "description": "Baguette toastée garnie de kefta fraîche grillée au charbon, sauce au poivre doux et oignons caramélisés.",
+            "price": 36,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "437",
+            "name": "Tajine Kefta Tomate & Deux Œufs",
+            "description": "Boulettes de kefta mijotées dans un coulis de tomates fraîches à l ail et au cumin, surmontées de deux œufs pochés.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "438",
+            "name": "Sandwich Poulet Citron Confit",
+            "description": "Brochette de poulet tendre parfumée au safran et citron confit dans un pain frais avec salade croquante.",
+            "price": 34,
+            "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "99",
+        "name": "Salades Marocaines & Entrées",
+        "dishes": [
+          {
+            "id": "439",
+            "name": "Salade Mechouia Poivrons",
+            "description": "Poivrons et tomates grillés au feu de bois pelés et assaisonnés d ail confit, cumin et huile d olive du terroir.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "440",
+            "name": "Zaalouk d'Aubergines Cuites",
+            "description": "Caviar d aubergines marocain cuit à la tomate fraîche, coriandre et épices douces.",
+            "price": 20,
+            "image": "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "441",
+            "name": "Frites Fraîches Coupées Maison",
+            "description": "Portion de pommes de terre fraîches coupées chaque matin et frites deux fois pour un croquant parfait.",
+            "price": 15,
+            "image": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "wok-to-walk",
+    "name": "Wok to Walk",
+    "slug": "wok-to-walk",
+    "logo": "/images/restaurants/wok-to-walk.png",
+    "cover": "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.65,
+    "reviewCount": 260,
+    "cuisine": "Asiatique & Wok",
+    "cuisineSlug": "asiatique",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 12,
+    "minOrder": 35,
+    "neighborhood": "Agadir",
+    "address": "Avenue Hassan II, Agadir, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "100",
+        "name": "Woks & Nouilles Sautées",
+        "dishes": [
+          {
+            "id": "442",
+            "name": "Wok Udon Poulet Teriyaki",
+            "description": "Épaisses nouilles udon sautées au wok, filet de poulet doré, brocolis, carottes, germes de soja et sauce teriyaki japonaise.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "443",
+            "name": "Wok Riz Jasmin Sauté Bœuf",
+            "description": "Riz jasmin sauté à la flamme vive avec fines lamelles de bœuf, champignons de paris, oignons verts et sauce soja douce.",
+            "price": 52,
+            "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "444",
+            "name": "Pad Thaï Crevettes Cacahuètes",
+            "description": "Nouilles de riz plates sautées aux crevettes sauvages, œuf brouillé, tofu, coriandre fraîche et cacahuètes pilées.",
+            "price": 56,
+            "image": "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "445",
+            "name": "Wok Veggie Tofu & Légumes",
+            "description": "Nouilles de blé jaunes avec dés de tofu grillé, champignons shiitake, chou chinois croquant et sauce sésame piment doux.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "101",
+        "name": "Finger Food Asiatique",
+        "dishes": [
+          {
+            "id": "446",
+            "name": "Nems Croustillants Poulet (4 pcs)",
+            "description": "Rouleaux frits croustillants farcis au poulet et vermicelles de soja avec feuilles de menthe et sauce nem.",
+            "price": 28,
+            "image": "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "447",
+            "name": "Salade Edamame & Sésame Grillé",
+            "description": "Fèves de soja japonaises edamame cuites à la vapeur assaisonnées de fleur de sel et huile de sésame grillé.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sushiclub",
+    "name": "Sushi Timitar",
+    "slug": "sushiclub",
+    "logo": "/images/restaurants/sishiclub.jpg",
+    "cover": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.85,
+    "reviewCount": 370,
+    "cuisine": "Sushi & Japonais",
+    "cuisineSlug": "sushi",
+    "deliveryTime": "25 - 35 min",
+    "deliveryFee": 0,
+    "minOrder": 50,
+    "neighborhood": "Marina d'Agadir",
+    "address": "Marina d'Agadir, Quai Ouest, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "110",
+        "name": "Promotions",
+        "dishes": [
+          {
+            "id": "474",
+            "name": "Formula c",
+            "description": "Plateau Formula C : assortiment complet de makis, yakitoris gourmands et boisson fraîche.",
+            "price": 202.4,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "475",
+            "name": "Formula a",
+            "description": "Nouilles sautées aux fruits de mer, salade asiatique, gyozas poulet et soda au choix.",
+            "price": 132,
+            "image": "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "476",
+            "name": "Duo plan 2",
+            "description": "Menu pour 2 : 32 pièces de sushis fins, 2 soupes miso chaudes et 2 boissons au choix.",
+            "price": 256,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "477",
+            "name": "Formula b",
+            "description": "Rouleaux de printemps croustillants, california rolls saumon avocat et boisson fraîche.",
+            "price": 136,
+            "image": "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "478",
+            "name": "Duo plan 3",
+            "description": "Vietnamese salad, seafood noodles, mixed 24 piece assortment, 2 soda choices",
+            "price": 340,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "479",
+            "name": "Duo plan 1",
+            "description": "Formule duo : 20 pièces sushis fins, 4 yakitoris poulet teriyaki, riz vinaigré et 2 boissons.",
+            "price": 292,
+            "image": "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "111",
+        "name": "Top sellers",
+        "dishes": [
+          {
+            "id": "480",
+            "name": "Assortiment 16p mixte",
+            "description": "Assortiment découverte 16 pièces : 4 saumon avocat, 4 thon piquant, 4 crispy crevette, 4 maki cheese.",
+            "price": 100,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "481",
+            "name": "Assortiment 24 mixte",
+            "description": "Plateau généreux de 24 pièces : makis saumon, california rolls crunchy et sushis nigiri.",
+            "price": 150,
+            "image": "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "482",
+            "name": "Assortiment happiness 40 pcs",
+            "description": "Grand plateau fête 40 pièces variées avec sauces soja sucrée, salée, gingembre et wasabi.",
+            "price": 225,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "483",
+            "name": "Sushi fried pieces",
+            "description": "Rolls frits croustillants panés au panko avec nappage sauce unagi douce et sésame torréfié.",
+            "price": 99,
+            "image": "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "102",
+        "name": "Rolls & Sushis Découverte",
+        "dishes": [
+          {
+            "id": "448",
+            "name": "California Salmon Roll (8 pcs)",
+            "description": "Rouleau inversé garni de saumon frais de Norvège, avocat mûr à point, mayonnaise japonaise et graines de sésame.",
+            "price": 49,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "449",
+            "name": "Crispy Tempura Roll (8 pcs)",
+            "description": "Crevette tempura panée croustillante, concombre, nappe de sauce teriyaki douce et brisures de panko dorées.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "450",
+            "name": "Dragon Roll Thon Rouge Épicé",
+            "description": "Thon rouge émincé relevé au piment shichimi, recouvert d une fine tranche d avocat frais et tobiko orange.",
+            "price": 58,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "451",
+            "name": "Plateau Mixte 16 Pièces",
+            "description": "4 California Saumon, 4 Crispy Tempura, 4 Maki Avocat Cheese et 4 Sushi Saumon découpés à la commande.",
+            "price": 89,
+            "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "103",
+        "name": "Bowls & Brochettes",
+        "dishes": [
+          {
+            "id": "452",
+            "name": "Poké Bowl Saumon Avocat",
+            "description": "Base de riz vinaigré, tranches de saumon cru mariné au soja, avocat, dés de mangue fraîche, edamame et graines.",
+            "price": 65,
+            "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "453",
+            "name": "Brochettes Yakitori Bœuf Fromage (4 pcs)",
+            "description": "Cubes de fromage gouda fondant enrobés de fines tranches de bœuf caramélisées à la sauce tare sucrée.",
+            "price": 42,
+            "image": "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "454",
+            "name": "Soupe Miso Traditionnelle",
+            "description": "Bouillon dashi traditionnel à la pâte de soja fermentée miso, petits dés de tofu soyeux et algues wakame.",
+            "price": 22,
+            "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "franks-burgers",
+    "name": "Frank's Burgers",
+    "slug": "franks-burgers",
+    "logo": "/images/restaurants/franks-burgers.png",
+    "cover": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.9,
+    "reviewCount": 530,
+    "cuisine": "Smash Burgers Gourmets",
+    "cuisineSlug": "burgers",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 10,
+    "minOrder": 40,
+    "neighborhood": "Agadir Bay",
+    "address": "Boulevard Hassan II, Agadir Bay, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "104",
+        "name": "Smash Burgers Gourmets",
+        "dishes": [
+          {
+            "id": "455",
+            "name": "Oklahoma Smash Burger Double",
+            "description": "Deux boules de bœuf écrasées sur le grill brûlant avec une montagne d oignons émincés caramélisés, double cheddar et sauce Frank s.",
+            "price": 76,
+            "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "456",
+            "name": "Truffle & Bacon Smash Burger",
+            "description": "Double steak smashé croustillant, mayonnaise à la truffe noire d été, bacon de bœuf grillé et roquette.",
+            "price": 76,
+            "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "457",
+            "name": "Crispy Hot Honey Chicken",
+            "description": "Cuisse de poulet désossée frite ultra croustillante, trempée dans du miel pimenté maison et coleslaw crémeux.",
+            "price": 46,
+            "image": "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "458",
+            "name": "Classic Cheeseburger Simple",
+            "description": "Steak smashé croustillant, cheddar fondu, cornichons doux marinés, oignons rouges et ketchup moutarde dans un bun doré.",
+            "price": 38,
+            "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "105",
+        "name": "Loaded Sides & Shakes",
+        "dishes": [
+          {
+            "id": "459",
+            "name": "Loaded Fries Truffe & Parmesan",
+            "description": "Frites maison assaisonnées à l huile de truffe blanche, copeaux de parmesan affiné et persil frais ciselé.",
+            "price": 34,
+            "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "460",
+            "name": "Milkshake Caramel Beurre Salé",
+            "description": "Glace vanille artisanale fouettée au lait entier avec sauce caramel au beurre salé fait maison.",
+            "price": 28,
+            "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "venezia-ice",
+    "name": "Venezia Ice",
+    "slug": "venezia-ice",
+    "logo": "/images/restaurants/venezia-ice.jpg",
+    "cover": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.7,
+    "reviewCount": 310,
+    "cuisine": "Glaces & Desserts",
+    "cuisineSlug": "desserts",
+    "deliveryTime": "15 - 25 min",
+    "deliveryFee": 0,
+    "minOrder": 30,
+    "neighborhood": "Agadir Plage",
+    "address": "Boulevard du 20 Août, Agadir Plage, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "106",
+        "name": "Glaces & Desserts Plaisir",
+        "dishes": [
+          {
+            "id": "461",
+            "name": "Coupe Glacée Dame Blanche",
+            "description": "Trois boules de glace vanille artisanale, coulis de chocolat noir chaud onctueux, chantilly maison et amandes effilées.",
+            "price": 36,
+            "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "462",
+            "name": "Crêpe Gourmande Nutella Banane",
+            "description": "Crêpe fraîche dorée minute garnie d une abondante dose de Nutella, rondelles de banane fraîche et noisettes grillées.",
+            "price": 32,
+            "image": "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "463",
+            "name": "Gaufre Liégeoise Spéculoos",
+            "description": "Gaufre chaude croustillante aux perles de sucre, nappage crème de Spéculoos fondue et chantilly.",
+            "price": 29,
+            "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "107",
+        "name": "Sandwichs Salés & Salades",
+        "dishes": [
+          {
+            "id": "464",
+            "name": "Club Sandwich Dinde Toasté",
+            "description": "Triple étage de pain de mie toasté, jambon de dinde, fromage emmental, tomate, œuf dur, salade et frites.",
+            "price": 44,
+            "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "465",
+            "name": "Salade Gourmande Poulet Croustillant",
+            "description": "Salade panachée, aiguillettes de poulet panées croustillantes, maïs doux, tomates cerises et sauce miel moutarde.",
+            "price": 42,
+            "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "466",
+            "name": "Jus Panaché Tutti Frutti",
+            "description": "Cocktail de fruits frais de saison : orange, fraise, pêche et banane pressés à froid.",
+            "price": 24,
+            "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dar-lassil",
+    "name": "Dar L'Assil",
+    "slug": "dar-lassil",
+    "logo": "/images/restaurants/dar-lassil.png",
+    "cover": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=1000&q=80",
+    "rating": 4.95,
+    "reviewCount": 430,
+    "cuisine": "Marocain Traditionnel",
+    "cuisineSlug": "marocain",
+    "deliveryTime": "25 - 35 min",
+    "deliveryFee": 15,
+    "minOrder": 50,
+    "neighborhood": "Secteur Résidentiel",
+    "address": "Rue des Orangers, Secteur Résidentiel, Agadir",
+    "badge": "",
+    "isPromo": false,
+    "promoLabel": "",
+    "categories": [
+      {
+        "id": "108",
+        "name": "Tajines & Spécialités Marocaines",
+        "dishes": [
+          {
+            "id": "467",
+            "name": "Tajine Poulet Beldi Citron Confit",
+            "description": "Cuisse de poulet fermier mijotée dans une sauce onctueuse au safran pur, quartiers de citron confit et olives rouges de Marrakech.",
+            "price": 55,
+            "image": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "468",
+            "name": "Tajine de Veau aux Pruneaux & Amandes",
+            "description": "Morceaux tendres de veau caramélisés à la cannelle et miel doux, parsemés de pruneaux fondants et amandes effilées frites.",
+            "price": 65,
+            "image": "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "469",
+            "name": "Mini Pastilla Poulet & Amandes",
+            "description": "Feuilles de warqa ultra croustillantes dorées au four, farce généreuse d effiloché de poulet aux amandes moulues et cannelle.",
+            "price": 48,
+            "image": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80",
+            "isPopular": true,
+            "hasOptions": false
+          },
+          {
+            "id": "470",
+            "name": "Assortiment 4 Briouates Kefta",
+            "description": "4 triangles de pâte croustillante farcis à la kefta d agneau aux épices marocaines et fromage fondu doux.",
+            "price": 32,
+            "image": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      },
+      {
+        "id": "109",
+        "name": "Soupes & Douceurs Beldi",
+        "dishes": [
+          {
+            "id": "471",
+            "name": "Harira Fassie & Dattes Majhoul",
+            "description": "Soupe traditionnelle marocaine veloutée aux tomates fraîches, pois chiches, lentilles et herbes, servie avec dattes Majhoul.",
+            "price": 26,
+            "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "472",
+            "name": "Salade d'Oranges à la Cannelle",
+            "description": "Rondelles d oranges douces parfumées à l eau de fleur d oranger pure et saupoudrées de cannelle moulue.",
+            "price": 18,
+            "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          },
+          {
+            "id": "473",
+            "name": "Thé à la Menthe & Cornes de Gazelle",
+            "description": "Grand verre de thé vert traditionnel à la menthe fraîche du jardin servi avec deux cornes de gazelle à la pâte d amande.",
+            "price": 24,
+            "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+            "isPopular": false,
+            "hasOptions": false
+          }
+        ]
+      }
+    ]
+  }
+]

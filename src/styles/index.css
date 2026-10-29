@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+:root {
+  --fd-brand: #FF5A00;
+  --fd-brand-600: #E64F00;
+  --fd-brand-50: #FFF3EA;
+  --fd-ink: #0B1020;
+  --fd-ink-2: #3B4256;
+  --fd-muted: #7A8194;
+  --fd-line: rgba(11, 16, 32, 0.08);
+  --fd-bg: #FAF8F5;
+  --fd-surface: #FFFFFF;
+  --fd-green: #12A150;
+  --fd-r-sm: 14px;
+  --fd-r-md: 20px;
+  --fd-r-lg: 28px;
+  --fd-shadow-1: 0 1px 2px rgba(11, 16, 32, 0.04), 0 4px 14px rgba(11, 16, 32, 0.05);
+  --fd-shadow-2: 0 2px 4px rgba(11, 16, 32, 0.04), 0 16px 40px rgba(11, 16, 32, 0.1);
+  --fd-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background-color: var(--fd-bg);
+  color: var(--fd-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+.foodi-glass {
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.foodi-header-bar {
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  backdrop-filter: saturate(180%) blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 1px var(--fd-line), 0 6px 24px rgba(11, 16, 32, 0.06);
+}
+
+.foodi-card {
+  background: var(--fd-surface);
+  border-radius: var(--fd-r-md);
+  border: 1px solid var(--fd-line);
+  box-shadow: var(--fd-shadow-1);
+  transition: transform 0.25s var(--fd-ease), box-shadow 0.25s var(--fd-ease), border-color 0.25s var(--fd-ease);
+}
+
+.foodi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--fd-shadow-2);
+  border-color: rgba(255, 90, 0, 0.3);
+}
+
+.foodi-btn-primary {
+  background: var(--fd-brand);
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: var(--fd-r-sm);
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s var(--fd-ease), transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(255, 90, 0, 0.28);
+}
+
+.foodi-btn-primary:hover {
+  background: var(--fd-brand-600);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 90, 0, 0.35);
+}
+
+.foodi-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.foodi-btn-secondary {
+  background: #FFFFFF;
+  color: var(--fd-ink);
+  font-weight: 700;
+  border-radius: var(--fd-r-sm);
+  border: 1px solid var(--fd-line);
+  padding: 10px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s var(--fd-ease);
+}
+
+.foodi-btn-secondary:hover {
+  background: var(--fd-brand-50);
+  border-color: rgba(255, 90, 0, 0.25);
+  color: var(--fd-brand);
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fd-green);
+  box-shadow: 0 0 0 3px rgba(18, 161, 80, 0.2);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.65;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-leaflet-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.custom-leaflet-tooltip {
+  background: #0B1020;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  margin-bottom: 6px;
+}
+
+.custom-leaflet-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #00BFA5;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 191, 165, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}

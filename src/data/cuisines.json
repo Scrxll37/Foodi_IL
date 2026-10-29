@@ -1,0 +1,51 @@
+[
+  {
+    "id": "fast-food",
+    "name": "Fast Food",
+    "slug": "fast-food",
+    "icon": "🍔",
+    "count": 12
+  },
+  {
+    "id": "burgers",
+    "name": "Burgers",
+    "slug": "burgers",
+    "icon": "🍟",
+    "count": 9
+  },
+  {
+    "id": "pizza",
+    "name": "Pizzas",
+    "slug": "pizza",
+    "icon": "🍕",
+    "count": 8
+  },
+  {
+    "id": "poulet",
+    "name": "Poulet Frit",
+    "slug": "poulet",
+    "icon": "🍗",
+    "count": 6
+  },
+  {
+    "id": "tacos",
+    "name": "Tacos & Sandwichs",
+    "slug": "tacos",
+    "icon": "🌮",
+    "count": 7
+  },
+  {
+    "id": "sushi",
+    "name": "Sushi & Asiatique",
+    "slug": "sushi",
+    "icon": "🍣",
+    "count": 5
+  },
+  {
+    "id": "desserts",
+    "name": "Desserts & Glaces",
+    "slug": "desserts",
+    "icon": "🍦",
+    "count": 4
+  }
+]
