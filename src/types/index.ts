@@ -26,6 +26,15 @@ export interface MenuCategory {
   dishes: Dish[];
 }
 
+export interface RestaurantBranch {
+  id: string;
+  name: string;
+  neighborhood: string;
+  address: string;
+  lat: number;
+  lng: number;
+}
+
 export interface Restaurant {
   id: string;
   name: string;
@@ -41,6 +50,10 @@ export interface Restaurant {
   minOrder: number;
   neighborhood: string;
   address: string;
+  lat?: number;
+  lng?: number;
+  avgPrepMinutes?: number;
+  branches?: RestaurantBranch[];
   badge?: string;
   isPromo?: boolean;
   promoLabel?: string;

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./home.css";
 
 :root {
   --fd-brand: #FF5A00;

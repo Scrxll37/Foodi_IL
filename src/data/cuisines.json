@@ -1,51 +1,72 @@
 [
   {
-    "id": "fast-food",
-    "name": "Fast Food",
-    "slug": "fast-food",
-    "icon": "🍔",
-    "count": 12
-  },
-  {
     "id": "burgers",
     "name": "Burgers",
     "slug": "burgers",
-    "icon": "🍟",
-    "count": 9
+    "image": "/images/cuisines/burgers.png",
+    "icon": "🍔"
+  },
+  {
+    "id": "sandwiches",
+    "name": "Sandwichs",
+    "slug": "sandwiches",
+    "image": "/images/cuisines/sandwiches.png",
+    "icon": "🥪"
   },
   {
     "id": "pizza",
-    "name": "Pizzas",
+    "name": "Pizza",
     "slug": "pizza",
-    "icon": "🍕",
-    "count": 8
+    "image": "/images/cuisines/pizza.png",
+    "icon": "🍕"
+  },
+  {
+    "id": "tacos",
+    "name": "Tacos",
+    "slug": "tacos",
+    "image": "/images/cuisines/tacos.png",
+    "icon": "🌮"
   },
   {
     "id": "poulet",
     "name": "Poulet Frit",
     "slug": "poulet",
-    "icon": "🍗",
-    "count": 6
+    "image": "/images/cuisines/poulet.png",
+    "icon": "🍗"
   },
   {
-    "id": "tacos",
-    "name": "Tacos & Sandwichs",
-    "slug": "tacos",
-    "icon": "🌮",
-    "count": 7
+    "id": "italien",
+    "name": "Italien",
+    "slug": "italien",
+    "image": "/images/cuisines/italien.png",
+    "icon": "🍝"
+  },
+  {
+    "id": "chawarma",
+    "name": "Chawarma",
+    "slug": "chawarma",
+    "image": "/images/cuisines/chawarma.png",
+    "icon": "🌯"
   },
   {
     "id": "sushi",
-    "name": "Sushi & Asiatique",
+    "name": "Sushi",
     "slug": "sushi",
-    "icon": "🍣",
-    "count": 5
+    "image": "/images/cuisines/sushi.png",
+    "icon": "🍣"
   },
   {
-    "id": "desserts",
-    "name": "Desserts & Glaces",
-    "slug": "desserts",
-    "icon": "🍦",
-    "count": 4
+    "id": "salade",
+    "name": "Salade",
+    "slug": "salade",
+    "image": "/images/cuisines/salade.png",
+    "icon": "🥗"
+  },
+  {
+    "id": "marocain",
+    "name": "Marocain",
+    "slug": "marocain",
+    "image": "/images/cuisines/marocain.png",
+    "icon": "🍲"
   }
 ]

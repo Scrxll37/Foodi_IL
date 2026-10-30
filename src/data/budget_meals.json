@@ -1,0 +1,119 @@
+[
+  {
+    "id": "b-mcdo-bigmac-solo",
+    "name": "Big Mac Solo",
+    "price": 42.0,
+    "original_price": 48.0,
+    "image_path": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "McDonald's",
+      "slug": "mcdonalds",
+      "logo_path": "/images/restaurants/McDonalds.png",
+      "base_delivery_fee": 12.0
+    }
+  },
+  {
+    "id": "b-kfc-colonel",
+    "name": "Colonel Burger Classic",
+    "price": 45.0,
+    "original_price": null,
+    "image_path": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "KFC",
+      "slug": "kfc",
+      "logo_path": "/images/restaurants/KFC.jpg",
+      "base_delivery_fee": 10.0
+    }
+  },
+  {
+    "id": "b-bk-nuggets",
+    "name": "King Nuggets 9 pièces",
+    "price": 39.0,
+    "original_price": null,
+    "image_path": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "Burger King",
+      "slug": "burger-king",
+      "logo_path": "/images/restaurants/burger-king.png",
+      "base_delivery_fee": 10.0
+    }
+  },
+  {
+    "id": "b-ph-pain-ail",
+    "name": "Pain à l'Ail Mozzarella Gratiné",
+    "price": 29.0,
+    "original_price": 35.0,
+    "image_path": "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "Pizza Hut",
+      "slug": "pizzahut",
+      "logo_path": "/images/restaurants/PIZZAHUT.png",
+      "base_delivery_fee": 0.0
+    }
+  },
+  {
+    "id": "b-otacos-m",
+    "name": "Tacos M (1 Viande)",
+    "price": 42.0,
+    "original_price": null,
+    "image_path": "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "O'Tacos",
+      "slug": "otacos",
+      "logo_path": "/images/restaurants/otacos.png",
+      "base_delivery_fee": 10.0
+    }
+  },
+  {
+    "id": "b-dom-margherita",
+    "name": "Pizza Margherita Classique",
+    "price": 49.0,
+    "original_price": 59.0,
+    "image_path": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "Domino's Pizza",
+      "slug": "dominos",
+      "logo_path": "/images/restaurants/dominos.png",
+      "base_delivery_fee": 10.0
+    }
+  },
+  {
+    "id": "b-dom-cheesy",
+    "name": "Cheesy Bread Fondant",
+    "price": 28.0,
+    "original_price": null,
+    "image_path": "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "Domino's Pizza",
+      "slug": "dominos",
+      "logo_path": "/images/restaurants/dominos.png",
+      "base_delivery_fee": 10.0
+    }
+  },
+  {
+    "id": "b-rafiq-bocadillo",
+    "name": "Bocadillo Mixte Rafiq",
+    "price": 32.0,
+    "original_price": 38.0,
+    "image_path": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "Snack Rafiq",
+      "slug": "snack-rafiq",
+      "logo_path": "/images/restaurants/snack-rafiq.png",
+      "base_delivery_fee": 7.0
+    }
+  },
+  {
+    "id": "b-rafiq-panini",
+    "name": "Panini Poulet Épicé Fromage",
+    "price": 28.0,
+    "original_price": null,
+    "image_path": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=700&q=85",
+    "restaurant": {
+      "name": "Snack Rafiq",
+      "slug": "snack-rafiq",
+      "logo_path": "/images/restaurants/snack-rafiq.png",
+      "base_delivery_fee": 7.0
+    }
+  }
+]

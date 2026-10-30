@@ -12,8 +12,8 @@
     "deliveryTime": "15 - 25 min",
     "deliveryFee": 12,
     "minOrder": 40,
-    "neighborhood": "Ain Diab",
-    "address": "Boulevard de la Corniche, Ain Diab, Casablanca",
+    "neighborhood": "Agadir",
+    "address": "Boulevard Hassan II, Agadir",
     "badge": "Populaire",
     "isPromo": false,
     "promoLabel": "",
@@ -396,6 +396,43 @@
           }
         ]
       }
+    ],
+    "lat": 30.4215,
+    "lng": -9.5938,
+    "avgPrepMinutes": 12,
+    "branches": [
+      {
+        "id": "mcdo_hassan2",
+        "name": "McDonald's Hassan II - Centre Ville",
+        "neighborhood": "Centre Ville",
+        "address": "Boulevard Hassan II, Centre Ville, Agadir",
+        "lat": 30.4215,
+        "lng": -9.5938
+      },
+      {
+        "id": "mcdo_corniche",
+        "name": "McDonald's Corniche",
+        "neighborhood": "Corniche",
+        "address": "Boulevard 20 Août, Corniche, Agadir",
+        "lat": 30.4172,
+        "lng": -9.6012
+      },
+      {
+        "id": "mcdo_founty",
+        "name": "McDonald's Haut Founty",
+        "neighborhood": "Founty",
+        "address": "Avenue Mohamed V, Près Marjane, Founty, Agadir",
+        "lat": 30.3995,
+        "lng": -9.5658
+      },
+      {
+        "id": "mcdo_tikiouine",
+        "name": "McDonald's Tikiouine",
+        "neighborhood": "Tikiouine",
+        "address": "Route Nationale 8, Tikiouine, Agadir",
+        "lat": 30.4078,
+        "lng": -9.5321
+      }
     ]
   },
   {
@@ -411,8 +448,8 @@
     "deliveryTime": "20 - 30 min",
     "deliveryFee": 15,
     "minOrder": 50,
-    "neighborhood": "Gauthier",
-    "address": "Boulevard d'Anfa, Gauthier, Agadir",
+    "neighborhood": "Agadir",
+    "address": "Boulevard Hassan II, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -612,6 +649,27 @@
           }
         ]
       }
+    ],
+    "lat": 30.4208,
+    "lng": -9.596,
+    "avgPrepMinutes": 15,
+    "branches": [
+      {
+        "id": "kfc_centre",
+        "name": "KFC Centre Ville",
+        "neighborhood": "Centre Ville",
+        "address": "Boulevard Hassan II, Agadir",
+        "lat": 30.4208,
+        "lng": -9.596
+      },
+      {
+        "id": "kfc_founty",
+        "name": "KFC Founty",
+        "neighborhood": "Founty",
+        "address": "Centre Commercial Atacadao / Marjane, Founty, Agadir",
+        "lat": 30.401,
+        "lng": -9.567
+      }
     ]
   },
   {
@@ -627,8 +685,8 @@
     "deliveryTime": "25 - 35 min",
     "deliveryFee": 0,
     "minOrder": 60,
-    "neighborhood": "Maarif",
-    "address": "Boulevard Massira Al Khadra, Maarif, Casablanca",
+    "neighborhood": "Agadir",
+    "address": "Boulevard 20 Août, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -690,6 +748,27 @@
           }
         ]
       }
+    ],
+    "lat": 30.4165,
+    "lng": -9.6005,
+    "avgPrepMinutes": 18,
+    "branches": [
+      {
+        "id": "ph_corniche",
+        "name": "Pizza Hut Corniche",
+        "neighborhood": "Secteur Touristique",
+        "address": "Boulevard 20 Août, Agadir",
+        "lat": 30.4165,
+        "lng": -9.6005
+      },
+      {
+        "id": "ph_dakhla",
+        "name": "Pizza Hut Dakhla",
+        "neighborhood": "Dakhla",
+        "address": "Avenue Hassan I, Dakhla, Agadir",
+        "lat": 30.414,
+        "lng": -9.562
+      }
     ]
   },
   {
@@ -705,8 +784,8 @@
     "deliveryTime": "20 - 30 min",
     "deliveryFee": 10,
     "minOrder": 45,
-    "neighborhood": "Habous",
-    "address": "Avenue 2 Mars, Habous, Casablanca",
+    "neighborhood": "Agadir",
+    "address": "Avenue Hassan II, Talborjt, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -750,6 +829,35 @@
           }
         ]
       }
+    ],
+    "lat": 30.4228,
+    "lng": -9.5955,
+    "avgPrepMinutes": 14,
+    "branches": [
+      {
+        "id": "mc_hassan2",
+        "name": "Mister Cook Hassan II",
+        "neighborhood": "Talborjt",
+        "address": "Avenue Hassan II, Talborjt, Agadir",
+        "lat": 30.4228,
+        "lng": -9.5955
+      },
+      {
+        "id": "mc_dakhla",
+        "name": "Mister Cook Dakhla",
+        "neighborhood": "Dakhla",
+        "address": "Avenue des FAR, Dakhla, Agadir",
+        "lat": 30.4158,
+        "lng": -9.5602
+      },
+      {
+        "id": "mc_massira",
+        "name": "Mister Cook Al Massira",
+        "neighborhood": "Al Massira",
+        "address": "Boulevard Al Massira, Agadir",
+        "lat": 30.4112,
+        "lng": -9.5489
+      }
     ]
   },
   {
@@ -765,8 +873,8 @@
     "deliveryTime": "18 - 28 min",
     "deliveryFee": 12,
     "minOrder": 45,
-    "neighborhood": "Maarif",
-    "address": "Boulevard Bir Anzarane, Maarif, Casablanca",
+    "neighborhood": "Talborjt",
+    "address": "Rue de l'Entraide, Talborjt, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -810,7 +918,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.4245,
+    "lng": -9.5975,
+    "avgPrepMinutes": 11,
+    "branches": []
   },
   {
     "id": "burger-king",
@@ -825,8 +937,8 @@
     "deliveryTime": "18 - 28 min",
     "deliveryFee": 12,
     "minOrder": 40,
-    "neighborhood": "Centre Ville",
-    "address": "Avenue Mohammed V, Centre Ville, Agadir",
+    "neighborhood": "Secteur Touristique",
+    "address": "Boulevard 20 Août, Secteur Touristique, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -915,7 +1027,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.415,
+    "lng": -9.599,
+    "avgPrepMinutes": 12,
+    "branches": []
   },
   {
     "id": "dominos-pizza",
@@ -931,7 +1047,7 @@
     "deliveryFee": 10,
     "minOrder": 45,
     "neighborhood": "Agadir Bay",
-    "address": "Boulevard Hassan II, Agadir Bay, Agadir",
+    "address": "Boulevard Mohammed V, Agadir Bay, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1011,7 +1127,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.408,
+    "lng": -9.591,
+    "avgPrepMinutes": 15,
+    "branches": []
   },
   {
     "id": "o-tacos",
@@ -1027,7 +1147,7 @@
     "deliveryFee": 0,
     "minOrder": 35,
     "neighborhood": "Quartier Industriel",
-    "address": "Avenue des FAR, Quartier Industriel, Agadir",
+    "address": "Avenue Moulay Youssef, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1107,7 +1227,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.419,
+    "lng": -9.585,
+    "avgPrepMinutes": 14,
+    "branches": []
   },
   {
     "id": "tacos-beldi",
@@ -1123,7 +1247,7 @@
     "deliveryFee": 8,
     "minOrder": 30,
     "neighborhood": "Talborjt",
-    "address": "Boulevard Al Mouqawama, Talborjt, Agadir",
+    "address": "Rue de Fès, Talborjt, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1203,7 +1327,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.4265,
+    "lng": -9.597,
+    "avgPrepMinutes": 10,
+    "branches": []
   },
   {
     "id": "bocadillo-house",
@@ -1219,7 +1347,7 @@
     "deliveryFee": 10,
     "minOrder": 30,
     "neighborhood": "Secteur Touristique",
-    "address": "Boulevard du 20 Août, Secteur Touristique, Agadir",
+    "address": "Boulevard du 20 Août, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1290,7 +1418,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.4135,
+    "lng": -9.598,
+    "avgPrepMinutes": 11,
+    "branches": []
   },
   {
     "id": "master-food",
@@ -1306,7 +1438,7 @@
     "deliveryFee": 12,
     "minOrder": 35,
     "neighborhood": "Dakhla",
-    "address": "Avenue Allal Ben Abdellah, Dakhla, Agadir",
+    "address": "Avenue des FAR, Dakhla, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1377,7 +1509,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.416,
+    "lng": -9.559,
+    "avgPrepMinutes": 13,
+    "branches": []
   },
   {
     "id": "bready",
@@ -1392,8 +1528,8 @@
     "deliveryTime": "15 - 25 min",
     "deliveryFee": 15,
     "minOrder": 40,
-    "neighborhood": "Agadir",
-    "address": "Avenue Prince Moulay Abdellah, Agadir, Agadir",
+    "neighborhood": "Centre Ville",
+    "address": "Boulevard Hassan II, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1455,7 +1591,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.422,
+    "lng": -9.594,
+    "avgPrepMinutes": 10,
+    "branches": []
   },
   {
     "id": "pomme-de-pain",
@@ -1470,8 +1610,8 @@
     "deliveryTime": "15 - 25 min",
     "deliveryFee": 0,
     "minOrder": 35,
-    "neighborhood": "Agadir",
-    "address": "Boulevard Mohammed V, Agadir, Agadir",
+    "neighborhood": "Marina d'Agadir",
+    "address": "Front de Mer, Marina d'Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1533,7 +1673,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.425,
+    "lng": -9.608,
+    "avgPrepMinutes": 12,
+    "branches": []
   },
   {
     "id": "paul-maroc",
@@ -1549,7 +1693,7 @@
     "deliveryFee": 18,
     "minOrder": 50,
     "neighborhood": "Marina d'Agadir",
-    "address": "Marina d'Agadir, Front de Mer, Agadir",
+    "address": "Promenade de la Marina, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1620,7 +1764,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.426,
+    "lng": -9.609,
+    "avgPrepMinutes": 14,
+    "branches": []
   },
   {
     "id": "chic-chicken",
@@ -1636,7 +1784,7 @@
     "deliveryFee": 12,
     "minOrder": 35,
     "neighborhood": "Cité Al Qods",
-    "address": "Avenue Hassan I, Cité Al Qods, Agadir",
+    "address": "Avenue Al Qods, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1707,7 +1855,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.424,
+    "lng": -9.575,
+    "avgPrepMinutes": 11,
+    "branches": []
   },
   {
     "id": "le-paradis-du-tacos",
@@ -1723,7 +1875,7 @@
     "deliveryFee": 9,
     "minOrder": 30,
     "neighborhood": "Centre",
-    "address": "Boulevard Général Kettani, Centre, Agadir",
+    "address": "Rue de Marrakech, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1794,7 +1946,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.421,
+    "lng": -9.592,
+    "avgPrepMinutes": 12,
+    "branches": []
   },
   {
     "id": "snack-rafiq",
@@ -1809,8 +1965,8 @@
     "deliveryTime": "12 - 22 min",
     "deliveryFee": 0,
     "minOrder": 25,
-    "neighborhood": "Agadir Ville",
-    "address": "Boulevard Hassan II, Agadir Ville, Agadir",
+    "neighborhood": "Talborjt",
+    "address": "Rue de la Jeunesse, Talborjt, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1881,7 +2037,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.427,
+    "lng": -9.596,
+    "avgPrepMinutes": 9,
+    "branches": []
   },
   {
     "id": "chawarma-damas",
@@ -1896,8 +2056,8 @@
     "deliveryTime": "15 - 25 min",
     "deliveryFee": 10,
     "minOrder": 30,
-    "neighborhood": "Agadir",
-    "address": "Avenue My Youssef, Agadir, Agadir",
+    "neighborhood": "Centre",
+    "address": "Avenue Général Kettani, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -1968,7 +2128,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.423,
+    "lng": -9.593,
+    "avgPrepMinutes": 10,
+    "branches": []
   },
   {
     "id": "pizzeria-bella-napoli",
@@ -1984,7 +2148,7 @@
     "deliveryFee": 12,
     "minOrder": 45,
     "neighborhood": "Résidence Islane",
-    "address": "Boulevard Hassan II, Résidence Islane, Agadir",
+    "address": "Avenue Hassan I, Résidence Islane, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2064,7 +2228,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.418,
+    "lng": -9.572,
+    "avgPrepMinutes": 16,
+    "branches": []
   },
   {
     "id": "la-grillardiere",
@@ -2080,7 +2248,7 @@
     "deliveryFee": 14,
     "minOrder": 40,
     "neighborhood": "Centre Ville",
-    "address": "Avenue Hassan II, Centre Ville, Agadir",
+    "address": "Avenue Hassan II, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2160,7 +2328,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.4195,
+    "lng": -9.5945,
+    "avgPrepMinutes": 18,
+    "branches": []
   },
   {
     "id": "wok-to-walk",
@@ -2175,8 +2347,8 @@
     "deliveryTime": "15 - 25 min",
     "deliveryFee": 12,
     "minOrder": 35,
-    "neighborhood": "Agadir",
-    "address": "Avenue Hassan II, Agadir, Agadir",
+    "neighborhood": "Agadir Bay",
+    "address": "Boulevard Mohammed V, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2247,7 +2419,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.409,
+    "lng": -9.592,
+    "avgPrepMinutes": 11,
+    "branches": []
   },
   {
     "id": "sushiclub",
@@ -2263,7 +2439,7 @@
     "deliveryFee": 0,
     "minOrder": 50,
     "neighborhood": "Marina d'Agadir",
-    "address": "Marina d'Agadir, Quai Ouest, Agadir",
+    "address": "Marina d'Agadir, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2445,7 +2621,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.4255,
+    "lng": -9.6085,
+    "avgPrepMinutes": 18,
+    "branches": []
   },
   {
     "id": "franks-burgers",
@@ -2461,7 +2641,7 @@
     "deliveryFee": 10,
     "minOrder": 40,
     "neighborhood": "Agadir Bay",
-    "address": "Boulevard Hassan II, Agadir Bay, Agadir",
+    "address": "Zone Hôtelière, Agadir Bay, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2532,7 +2712,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.4075,
+    "lng": -9.5905,
+    "avgPrepMinutes": 13,
+    "branches": []
   },
   {
     "id": "venezia-ice",
@@ -2548,7 +2732,7 @@
     "deliveryFee": 0,
     "minOrder": 30,
     "neighborhood": "Agadir Plage",
-    "address": "Boulevard du 20 Août, Agadir Plage, Agadir",
+    "address": "Boulevard du 20 Août, Front de Mer, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2619,7 +2803,11 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.416,
+    "lng": -9.602,
+    "avgPrepMinutes": 8,
+    "branches": []
   },
   {
     "id": "dar-lassil",
@@ -2635,7 +2823,7 @@
     "deliveryFee": 15,
     "minOrder": 50,
     "neighborhood": "Secteur Résidentiel",
-    "address": "Rue des Orangers, Secteur Résidentiel, Agadir",
+    "address": "Avenue des Nations Unies, Agadir",
     "badge": "",
     "isPromo": false,
     "promoLabel": "",
@@ -2715,6 +2903,10 @@
           }
         ]
       }
-    ]
+    ],
+    "lat": 30.41,
+    "lng": -9.58,
+    "avgPrepMinutes": 20,
+    "branches": []
   }
 ]
