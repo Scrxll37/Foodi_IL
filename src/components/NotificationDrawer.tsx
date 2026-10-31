@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X, Bell, CheckCheck } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 export const NotificationDrawer: React.FC = () => {
   const { isNotifOpen, setIsNotifOpen, notifications, markNotificationRead } = useApp();
 
-  if (!isNotifOpen) return null;
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isNotifOpen);
+
+  useEffect(() => {
+    if (isNotifOpen) {
+      setShouldRender(true);
+      setIsClosing(false);
+    }
+  }, [isNotifOpen]);
+
+  const handleClose = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      setIsNotifOpen(false);
+      setShouldRender(false);
+    }, 280);
+  };
+
+  if (!shouldRender && !isNotifOpen) return null;
 
   const markAllRead = () => {
     notifications.forEach((n) => markNotificationRead(n.id));
@@ -14,12 +34,18 @@ export const NotificationDrawer: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div
-        onClick={() => setIsNotifOpen(false)}
-        className="absolute inset-0 bg-black/45 backdrop-blur-xs transition-opacity drawer-fade-in"
+        onClick={handleClose}
+        className={`absolute inset-0 bg-black/45 backdrop-blur-xs transition-opacity cursor-pointer ${
+          isClosing ? "drawer-fade-out" : "drawer-fade-in"
+        }`}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-sm bg-white shadow-2xl flex flex-col drawer-slide-in">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-none">
+        <div
+          className={`w-screen max-w-sm bg-white shadow-2xl flex flex-col pointer-events-auto ${
+            isClosing ? "drawer-slide-out" : "drawer-slide-in"
+          }`}
+        >
           <div className="px-5 py-4 border-b border-[#0B1020]/8 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-[#FFF3EA] text-[#FF5A00] flex items-center justify-center">
@@ -32,9 +58,9 @@ export const NotificationDrawer: React.FC = () => {
             </div>
 
             <button
-              onClick={() => setIsNotifOpen(false)}
+              onClick={handleClose}
               aria-label="Fermer"
-              className="w-8 h-8 rounded-full bg-[#0B1020]/5 text-[#3B4256] hover:bg-[#0B1020]/10 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full bg-[#0B1020]/5 text-[#3B4256] hover:bg-[#0B1020]/10 flex items-center justify-center transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>

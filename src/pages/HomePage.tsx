@@ -528,9 +528,11 @@ export const HomePage: React.FC = () => {
           {HERO_ADS.map((ad, idx) => {
             const isActive = idx === activeHeroSlide;
             return (
-              <div
+              <Link
                 key={ad.id}
+                to={`/restaurants/${ad.restaurantSlug}`}
                 className={`hero-slide ${isActive ? "active" : ""}`}
+                tabIndex={isActive ? 0 : -1}
               >
                 <img
                   src={ad.image}
@@ -539,18 +541,16 @@ export const HomePage: React.FC = () => {
                 />
                 <div className="hero-slide-overlay" />
 
-                <Link
-                  to={`/restaurants/${ad.restaurantSlug}`}
+                <div
                   className="hero-restu-logo-corner"
                   title={`Voir le menu de ${ad.restaurantName}`}
-                  tabIndex={isActive ? 0 : -1}
                 >
                   <img
                     src={ad.logo}
                     alt={ad.restaurantName}
                     className="hero-restu-logo-img"
                   />
-                </Link>
+                </div>
 
                 <div className="hero-slide-body">
                   <span className="hero-slide-badge">
@@ -558,17 +558,8 @@ export const HomePage: React.FC = () => {
                   </span>
                   <h2 className="hero-slide-title">{ad.title}</h2>
                   <p className="hero-slide-desc">{ad.tagline}</p>
-
-                  <Link
-                    to={`/restaurants/${ad.restaurantSlug}`}
-                    className="hero-order-btn hero-order-btn-desktop"
-                    tabIndex={isActive ? 0 : -1}
-                  >
-                    <span>Commander Maintenant</span>
-                    <ArrowRight size={15} />
-                  </Link>
                 </div>
-              </div>
+              </Link>
             );
           })}
 
@@ -593,14 +584,6 @@ export const HomePage: React.FC = () => {
                 {HERO_ADS[activeHeroSlide].rating}
               </span>
             </div>
-
-            <Link
-              to={`/restaurants/${HERO_ADS[activeHeroSlide].restaurantSlug}`}
-              className="hero-order-btn hero-order-btn-mobile"
-            >
-              <span>Commander Maintenant</span>
-              <ArrowRight size={13} />
-            </Link>
           </div>
         </section>
 

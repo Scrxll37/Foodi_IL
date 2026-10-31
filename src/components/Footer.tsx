@@ -55,19 +55,19 @@ export const Footer: React.FC = () => {
         </div>
 
         <div>
-          <h5 className="footer-col-title">Cadre Académique</h5>
+          <h5 className="footer-col-title">Projet Web</h5>
           <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "16px", padding: "16px", fontSize: "12px", color: "#64748B" }}>
-            <strong style={{ color: "#0F172A", display: "block", marginBottom: "4px" }}>
-              Projet de Fin d'Études
+            <strong style={{ color: "#0F172A", display: "block", marginBottom: "4px", fontSize: "13px" }}>
+              Projet Web IL • Faical
             </strong>
-            Architecture Frontend React + Vite + Tailwind CSS & Agadir Food Delivery.
+            Plateforme moderne de commande en ligne et livraison express à Agadir.
           </div>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <span>&copy; 2026 Foodi - Tous droits réservés.</span>
-        <span>Agadir, Maroc</span>
+        <span>&copy; 2026 Foodi — Tous droits réservés.  </span>
+        <span>Powered By Platvion / FAICAL BENOUCHEN Ingéniere Logiciel</span>
       </div>
     </footer>
   );
