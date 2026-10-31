@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
@@ -20,6 +20,7 @@ import { SearchOverlay } from "../components/SearchOverlay";
 import { CartDrawer } from "../components/CartDrawer";
 import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
+import { Footer } from "../components/Footer";
 import { useApp } from "../context/AppContext";
 import { getNearestBranchInfo } from "../utils/delivery";
 import restaurantsData from "../data/restaurants.json";
@@ -75,7 +76,7 @@ const HERO_ADS: HeroAd[] = [
     logo: "/images/restaurants/McDonalds.png",
     badge: "Partenaire Officiel",
     prepTime: "15-20'",
-    deliveryFee: "12.00 MAD",
+    deliveryFee: "12 DH",
     rating: "4.8",
     isFreeDelivery: false
   },
@@ -103,7 +104,7 @@ const HERO_ADS: HeroAd[] = [
     logo: "/images/restaurants/KFC.jpg",
     badge: "Recette Originale",
     prepTime: "20-25'",
-    deliveryFee: "10.00 MAD",
+    deliveryFee: "10 DH",
     rating: "4.7",
     isFreeDelivery: false
   }
@@ -203,12 +204,13 @@ export const HomePage: React.FC = () => {
 
   const [activeCuisine, setActiveCuisine] = useState<string>("all");
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(12);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [sectionInfo, setSectionInfo] = useState<SectionInfoModalData | null>(null);
 
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const filteredSentinelRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const filteredObserverRef = useRef<IntersectionObserver | null>(null);
+  const isFirstMount = useRef(true);
 
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
@@ -227,42 +229,47 @@ export const HomePage: React.FC = () => {
   }, [favorites]);
 
   useEffect(() => {
-    setVisibleCount(8);
-  }, [activeCuisine]);
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (activeCuisine === "all") {
+      setVisibleCount(restaurants.length);
+    } else {
+      setVisibleCount(8);
+    }
+  }, [activeCuisine, restaurants.length]);
+
+  const sentinelCallback = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+
+      if (node) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0]?.isIntersecting) {
+              setVisibleCount((prev) => Math.min(prev + 8, restaurants.length));
+            }
+          },
+          { rootMargin: "350px", threshold: 0.05 }
+        );
+        observer.observe(node);
+        observerRef.current = observer;
+      }
+    },
+    [restaurants.length]
+  );
 
   useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + 4, restaurants.length));
-        }
-      },
-      { rootMargin: "250px" }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [restaurants.length, visibleCount]);
-
-  useEffect(() => {
-    const sentinel = filteredSentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + 4, restaurants.length));
-        }
-      },
-      { rootMargin: "250px" }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [restaurants.length, visibleCount]);
+    return () => {
+      observerRef.current?.disconnect();
+      filteredObserverRef.current?.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -396,6 +403,29 @@ export const HomePage: React.FC = () => {
     return restaurants.slice(0, visibleCount);
   }, [restaurants, visibleCount]);
 
+  const filteredSentinelCallback = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (filteredObserverRef.current) {
+        filteredObserverRef.current.disconnect();
+        filteredObserverRef.current = null;
+      }
+
+      if (node) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0]?.isIntersecting) {
+              setVisibleCount((prev) => Math.min(prev + 8, filteredRestaurants.length));
+            }
+          },
+          { rootMargin: "350px", threshold: 0.05 }
+        );
+        observer.observe(node);
+        filteredObserverRef.current = observer;
+      }
+    },
+    [filteredRestaurants.length]
+  );
+
   const renderRestaurantCard = (restaurant: Restaurant) => {
     const deliv = getNearestBranchInfo(restaurant, userLat, userLng);
     const prepTime = deliv.formattedTime;
@@ -455,7 +485,7 @@ export const HomePage: React.FC = () => {
               ) : (
                 <span className="meta-item">
                   <Bike size={13} color="#FF5A00" />
-                  {fee.toFixed(0)} MAD
+                  {fee.toFixed(0)} DH
                 </span>
               )}
               <span className="meta-item">
@@ -682,7 +712,11 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 {visibleCount < filteredRestaurants.length ? (
-                  <div ref={filteredSentinelRef} className="infinite-scroll-sentinel">
+                  <div
+                    key={`filtered-sentinel-${visibleCount}`}
+                    ref={filteredSentinelCallback}
+                    className="infinite-scroll-sentinel"
+                  >
                     <div className="infinite-scroll-loading">
                       <span className="infinite-scroll-dot" />
                       <span className="infinite-scroll-dot" />
@@ -800,7 +834,7 @@ export const HomePage: React.FC = () => {
 
                             <span className={`most-demand-fee ${isFree ? "free" : ""}`}>
                               <Bike size={13} strokeWidth={2.2} />
-                              {isFree ? "Free" : `${fee.toFixed(0)} MAD`}
+                              {isFree ? "Free" : `${fee.toFixed(0)} DH`}
                             </span>
                           </div>
 
@@ -896,7 +930,7 @@ export const HomePage: React.FC = () => {
                             ) : (
                               <>
                                 <Bike size={13} color="#6B7280" />
-                                <span>{fee.toFixed(0)} MAD</span>
+                                <span>{fee.toFixed(0)} DH</span>
                               </>
                             )}
                           </div>
@@ -1009,7 +1043,11 @@ export const HomePage: React.FC = () => {
               </div>
 
               {visibleCount < restaurants.length ? (
-                <div ref={sentinelRef} className="infinite-scroll-sentinel">
+                <div
+                  key={`sentinel-${visibleCount}`}
+                  ref={sentinelCallback}
+                  className="infinite-scroll-sentinel"
+                >
                   <div className="infinite-scroll-loading">
                     <span className="infinite-scroll-dot" />
                     <span className="infinite-scroll-dot" />
@@ -1020,7 +1058,7 @@ export const HomePage: React.FC = () => {
               ) : (
                 <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
                   <div className="infinite-scroll-end">
-                    <span>✨ Tous les {restaurants.length} restaurants partenaires à Agadir sont affichés</span>
+                    <span>✨ Tous les {restaurants.length} restaurants sont affichés</span>
                   </div>
                 </div>
               )}
@@ -1091,74 +1129,7 @@ export const HomePage: React.FC = () => {
         )}
       </main>
 
-      <footer className="home-footer">
-        <div className="footer-grid">
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-              <img
-                src="/images/logo.png"
-                alt="Foodi"
-                style={{ width: "32px", height: "32px", objectFit: "contain" }}
-              />
-              <span style={{ fontWeight: "900", fontSize: "18px", color: "#0F172A" }}>
-                Food<span style={{ color: "#FF5A00" }}>i</span>
-              </span>
-            </div>
-            <p style={{ fontSize: "12px", color: "#64748B", lineHeight: "1.6", margin: 0 }}>
-              Application web de commande et livraison de repas dédiée aux meilleures enseignes d'Agadir.
-            </p>
-          </div>
-
-          <div>
-            <h5 className="footer-col-title">Enseignes</h5>
-            <ul className="footer-links-list">
-              {restaurants.slice(0, 6).map((r) => (
-                <li key={r.id}>
-                  <Link to={`/restaurants/${r.slug}`} className="footer-link-item">
-                    {r.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="footer-col-title">Spécialités</h5>
-            <ul className="footer-links-list">
-              {cuisines.slice(0, 6).map((c) => (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveCuisine(c.slug);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className="footer-link-item"
-                    style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
-                  >
-                    {c.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="footer-col-title">Cadre Académique</h5>
-            <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "16px", padding: "16px", fontSize: "12px", color: "#64748B" }}>
-              <strong style={{ color: "#0F172A", display: "block", marginBottom: "4px" }}>
-                Projet de Fin d'Études
-              </strong>
-              Architecture Frontend React + Vite + Tailwind CSS & Agadir Food Delivery.
-            </div>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <span>&copy; 2026 Foodi — Tous droits réservés.</span>
-          <span>Agadir, Maroc</span>
-        </div>
-      </footer>
+      <Footer />
 
       {sectionInfo && (
         <div className="modal-overlay" onClick={() => setSectionInfo(null)}>

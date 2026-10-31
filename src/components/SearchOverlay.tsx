@@ -133,7 +133,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                 }
               }}
               placeholder="Rechercher un restaurant, plat ou burger à Agadir..."
-              className="w-full bg-transparent text-sm md:text-base font-bold text-[#0B1020] placeholder-[#7A8194] focus:outline-none"
+              className="w-full bg-transparent text-base font-bold text-[#0B1020] placeholder-[#7A8194] focus:outline-none"
             />
             {query && (
               <button
@@ -227,16 +227,17 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                     Tous les restaurants disponibles
                   </h3>
                   <span className="text-xs font-bold text-[#7A8194]">
-                    {restaurants.length} établissements
+                    Top 10 à Agadir
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {restaurants.map((res) => (
+                  {restaurants.slice(0, 10).map((res, idx) => (
                     <div
                       key={res.id}
                       onClick={() => handleSelectRestaurant(res.slug)}
-                      className="p-3.5 rounded-2xl bg-white border border-[#0B1020]/8 hover:border-[#FF5A00]/40 hover:shadow-md transition-all cursor-pointer flex items-center gap-3.5 group"
+                      style={{ animationDelay: `${idx * 40}ms` }}
+                      className="filter-card-animate p-3.5 rounded-2xl bg-white border border-[#0B1020]/8 hover:border-[#FF5A00]/40 hover:shadow-md transition-all cursor-pointer flex items-center gap-3.5 group"
                     >
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#FAF8F5] border border-[#0B1020]/5 shrink-0 p-1">
                         <img
@@ -300,11 +301,12 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {results.map((res) => (
+                  {results.map((res, idx) => (
                     <div
                       key={res.id}
                       onClick={() => handleSelectRestaurant(res.slug)}
-                      className="foodi-card overflow-hidden group flex flex-col cursor-pointer bg-white"
+                      style={{ animationDelay: `${idx * 40}ms` }}
+                      className="filter-card-animate foodi-card overflow-hidden group flex flex-col cursor-pointer bg-white"
                     >
                       <div className="relative h-44 w-full bg-[#0B1020]/5 overflow-hidden">
                         <img
@@ -354,7 +356,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                             <span>{res.deliveryTime}</span>
                           </div>
                           <div className="font-extrabold text-[#12A150]">
-                            {res.deliveryFee === 0 ? "Livraison gratuite" : `${res.deliveryFee} MAD livr.`}
+                            {res.deliveryFee === 0 ? "Livraison gratuite" : `${res.deliveryFee} DH`}
                           </div>
                         </div>
                       </div>
