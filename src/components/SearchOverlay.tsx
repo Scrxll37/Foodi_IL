@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, X, Clock, ArrowRight, Star, MapPin, Bike, Sparkles } from "lucide-react";
 import restaurantsData from "../data/restaurants.json";
 import { Restaurant } from "../types";
+import { useApp } from "../context/AppContext";
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ const DEFAULT_POPULAR = [
 
 export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const { user } = useApp();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
@@ -92,6 +94,10 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
       saveSearchTerm(query);
     }
     onClose();
+    if (!user.isLoggedIn) {
+      navigate(`/login?redirect=${encodeURIComponent(`/restaurants/${slug}`)}`);
+      return;
+    }
     navigate(`/restaurants/${slug}`);
   };
 

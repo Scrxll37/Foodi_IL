@@ -1,142 +1,597 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { User, Mail, Phone, Lock, ArrowRight, ArrowLeft } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useApp } from "../context/AppContext";
+import { AuthLayoutShell } from "../components/AuthLayoutShell";
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
   const { login } = useApp();
 
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreed, setAgreed] = useState(true);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [captchaLoading, setCaptchaLoading] = useState(false);
+  const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateStep1 = (): boolean => {
+    const errs: Record<string, string> = {};
+    const trimmedName = name.trim();
+    const cleanEmail = email.trim();
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!trimmedName || trimmedName.length < 3) {
+      errs.name = "Veuillez renseigner votre nom complet (au moins 3 caractères).";
+    }
+
+    if (!cleanEmail || !emailRegex.test(cleanEmail)) {
+      errs.email = "Veuillez renseigner une adresse email valide.";
+    }
+
+    setClientErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const validateStep2 = (): boolean => {
+    const errs: Record<string, string> = {};
+
+    if (!password || password.length < 6) {
+      errs.password = "Le mot de passe doit comporter au moins 6 caractères.";
+    }
+
+    if (!passwordConfirmation) {
+      errs.password_confirmation = "Veuillez confirmer votre mot de passe.";
+    } else if (password !== passwordConfirmation) {
+      errs.password_confirmation = "Les mots de passe ne correspondent pas.";
+    }
+
+    setClientErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleNextToStep2 = () => {
+    if (validateStep1()) {
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleNextToStep3 = () => {
+    if (validateStep2()) {
+      setStep(3);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleTriggerCaptcha = () => {
+    if (captchaVerified || captchaLoading) return;
+    setCaptchaLoading(true);
+    setTimeout(() => {
+      setCaptchaLoading(false);
+      setCaptchaVerified(true);
+      setClientErrors((prev) => ({ ...prev, captcha: "" }));
+    }, 450);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(phone ? `+212 ${phone}` : email);
-    navigate("/");
+    if (isSubmitting) return;
+
+    if (!captchaVerified) {
+      setClientErrors((prev) => ({ ...prev, captcha: "Veuillez valider le contrôle de sécurité Foodi Shield." }));
+      return;
+    }
+
+    if (!agreed) {
+      setClientErrors((prev) => ({ ...prev, agreed: "Veuillez accepter les conditions d'utilisation." }));
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      login(email.trim(), {
+        name: name.trim(),
+        email: email.trim()
+      });
+      setIsSubmitting(false);
+      navigate(redirectPath, { replace: true });
+    }, 400);
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between p-4 md:p-8">
-      <div className="max-w-md w-full mx-auto flex items-center justify-between">
-        <Link
-          to="/"
-          aria-label="Retour accueil"
-          className="w-10 h-10 rounded-full bg-white border border-[#0B1020]/10 flex items-center justify-center text-[#0B1020] hover:text-[#FF5A00] transition-colors shadow-2xs"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <Link to="/">
-          <img src="/images/logohor.png" alt="Foodi Agadir" className="h-9 w-auto object-contain" />
-        </Link>
-        <div className="w-10" />
-      </div>
+    <AuthLayoutShell pageType="register" backHref="/">
+      <div className="auth-steps-bar">
+        <div className="auth-step-node">
+          <button
+            type="button"
+            onClick={() => setStep(1)}
+            className={`auth-step-pill ${step === 1 ? "active" : step > 1 ? "completed" : "inactive"}`}
+          >
+            {step > 1 ? <i className="fa-solid fa-check" /> : "1"}
+          </button>
+          <span className="auth-step-label">Profil</span>
+        </div>
 
-      <div className="max-w-md w-full mx-auto my-auto py-8">
-        <div className="bg-white rounded-3xl p-6 md:p-8 border border-[#0B1020]/8 shadow-xl shadow-[#0B1020]/4 space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-black text-[#0B1020]">Créer un compte Foodi</h1>
-            <p className="text-xs text-[#7A8194]">
-              Rejoignez des milliers de gourmands à Agadir
-            </p>
-          </div>
+        <div className={`auth-step-line ${step > 1 ? "completed" : ""}`} />
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                Nom complet *
-              </label>
-              <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl px-3.5 py-3 focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                <User className="w-4 h-4 text-[#7A8194] mr-2" />
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex: Youssef Amrani"
-                  className="w-full text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                />
-              </div>
-            </div>
+        <div className="auth-step-node">
+          <button
+            type="button"
+            onClick={() => {
+              if (validateStep1()) setStep(2);
+            }}
+            className={`auth-step-pill ${step === 2 ? "active" : step > 2 ? "completed" : "inactive"}`}
+          >
+            {step > 2 ? <i className="fa-solid fa-check" /> : "2"}
+          </button>
+          <span className="auth-step-label">Sécurité</span>
+        </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                Numéro de téléphone *
-              </label>
-              <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl overflow-hidden focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                <span className="px-3 text-xs font-black text-[#0B1020] border-r border-[#0B1020]/10">
-                  🇲🇦 +212
-                </span>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="6 00 00 00 00"
-                  className="w-full px-3 py-3 text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                />
-              </div>
-            </div>
+        <div className={`auth-step-line ${step > 2 ? "completed" : ""}`} />
 
-            <div>
-              <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                Email *
-              </label>
-              <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl px-3.5 py-3 focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                <Mail className="w-4 h-4 text-[#7A8194] mr-2" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="youssef@exemple.ma"
-                  className="w-full text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                Mot de passe *
-              </label>
-              <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl px-3.5 py-3 focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                <Lock className="w-4 h-4 text-[#7A8194] mr-2" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 6 caractères"
-                  className="w-full text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="foodi-btn-primary w-full py-3.5 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/25 cursor-pointer mt-4"
-            >
-              <span>Créer mon compte Foodi</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
-
-          <div className="text-center pt-2 border-t border-[#0B1020]/6">
-            <p className="text-xs text-[#7A8194]">
-              Vous avez déjà un compte ?{" "}
-              <Link to="/login" className="font-extrabold text-[#FF5A00] hover:underline">
-                Se connecter
-              </Link>
-            </p>
-          </div>
+        <div className="auth-step-node">
+          <button
+            type="button"
+            onClick={() => {
+              if (validateStep1() && validateStep2()) setStep(3);
+            }}
+            className={`auth-step-pill ${step === 3 ? "active" : "inactive"}`}
+            style={{ cursor: step === 3 ? "default" : "pointer" }}
+          >
+            3
+          </button>
+          <span className="auth-step-label">Confirmer</span>
         </div>
       </div>
 
-      <div className="text-center text-xs text-[#7A8194]">
-        © 2026 Foodi Maroc • Livraison de repas à Agadir
+      {step === 1 && (
+        <div className="auth-slide-in">
+          <div className="auth-header">
+            <h1 className="auth-title">
+              Créer un compte <i className="fa-solid fa-user-plus" style={{ color: "#F25C05", marginLeft: "6px" }} />
+            </h1>
+            <p className="auth-subtitle">
+              Étape 1 : Vos coordonnées de profil
+            </p>
+          </div>
+
+          <div className="auth-form">
+            <div className="auth-field-group">
+              <label htmlFor="name" className="auth-label">
+                Nom et prénom
+              </label>
+              <div
+                className="auth-input-container"
+                data-filled={Boolean(name)}
+                style={{ borderColor: clientErrors.name ? "#EF4444" : undefined }}
+              >
+                <i className="fa-solid fa-user auth-input-icon" />
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  autoFocus
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (clientErrors.name) setClientErrors((prev) => ({ ...prev, name: "" }));
+                  }}
+                  placeholder="Ex. Youssef Bennani"
+                  className="auth-input-element"
+                />
+              </div>
+              {clientErrors.name && (
+                <p
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "0.75rem",
+                    color: "#EF4444",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <i className="fa-solid fa-circle-exclamation" />
+                  <span>{clientErrors.name}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="auth-field-group">
+              <label htmlFor="email" className="auth-label">
+                Adresse Email
+              </label>
+              <div
+                className="auth-input-container"
+                data-filled={Boolean(email)}
+                style={{ borderColor: clientErrors.email ? "#EF4444" : undefined }}
+              >
+                <i className="fa-solid fa-envelope auth-input-icon" />
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  autoComplete="username"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (clientErrors.email) setClientErrors((prev) => ({ ...prev, email: "" }));
+                  }}
+                  placeholder="votre@email.com"
+                  className="auth-input-element"
+                />
+              </div>
+              {clientErrors.email && (
+                <p
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "0.75rem",
+                    color: "#EF4444",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <i className="fa-solid fa-circle-exclamation" />
+                  <span>{clientErrors.email}</span>
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleNextToStep2}
+              className="auth-action-btn"
+              style={{ marginTop: "0.5rem" }}
+            >
+              <span>Continuer</span>
+              <i className="fa-solid fa-arrow-right" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="auth-slide-in">
+          <div className="auth-header">
+            <h1 className="auth-title">
+              Sécurité du compte <i className="fa-solid fa-lock" style={{ color: "#F25C05", marginLeft: "6px" }} />
+            </h1>
+            <p className="auth-subtitle">
+              Étape 2 : Votre mot de passe de connexion
+            </p>
+          </div>
+
+          <div className="auth-form">
+            <div className="auth-field-group">
+              <label htmlFor="password" className="auth-label">
+                Mot de passe
+              </label>
+              <div
+                className="auth-input-container"
+                data-filled={Boolean(password)}
+                style={{ borderColor: clientErrors.password ? "#EF4444" : undefined }}
+              >
+                <i className="fa-solid fa-lock auth-input-icon" />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoFocus
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (clientErrors.password) setClientErrors((prev) => ({ ...prev, password: "" }));
+                  }}
+                  placeholder="Au moins 6 caractères"
+                  className="auth-input-element has-right-toggle"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="auth-toggle-btn"
+                  tabIndex={-1}
+                  title={showPassword ? "Masquer" : "Afficher"}
+                >
+                  <i className={showPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"} />
+                </button>
+              </div>
+              {clientErrors.password && (
+                <p
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "0.75rem",
+                    color: "#EF4444",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <i className="fa-solid fa-circle-exclamation" />
+                  <span>{clientErrors.password}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="auth-field-group">
+              <label htmlFor="password_confirmation" className="auth-label">
+                Confirmer le mot de passe
+              </label>
+              <div
+                className="auth-input-container"
+                data-filled={Boolean(passwordConfirmation)}
+                style={{ borderColor: clientErrors.password_confirmation ? "#EF4444" : undefined }}
+              >
+                <i className="fa-solid fa-shield-halved auth-input-icon" />
+                <input
+                  id="password_confirmation"
+                  type={showConfirmPassword ? "text" : "password"}
+                  required
+                  autoComplete="new-password"
+                  value={passwordConfirmation}
+                  onChange={(e) => {
+                    setPasswordConfirmation(e.target.value);
+                    if (clientErrors.password_confirmation) {
+                      setClientErrors((prev) => ({ ...prev, password_confirmation: "" }));
+                    }
+                  }}
+                  placeholder="Retapez votre mot de passe"
+                  className="auth-input-element has-right-toggle"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="auth-toggle-btn"
+                  tabIndex={-1}
+                  title={showConfirmPassword ? "Masquer" : "Afficher"}
+                >
+                  <i className={showConfirmPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"} />
+                </button>
+              </div>
+              {clientErrors.password_confirmation && (
+                <p
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "0.75rem",
+                    color: "#EF4444",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <i className="fa-solid fa-circle-exclamation" />
+                  <span>{clientErrors.password_confirmation}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="auth-step-actions">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="auth-secondary-btn"
+                style={{ flex: 1 }}
+              >
+                <i className="fa-solid fa-arrow-left" />
+                <span>Retour</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleNextToStep3}
+                className="auth-action-btn"
+                style={{ flex: 2 }}
+              >
+                <span>Continuer</span>
+                <i className="fa-solid fa-arrow-right" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="auth-slide-in">
+          <div className="auth-header">
+            <h1 className="auth-title">
+              Confirmation <i className="fa-solid fa-paper-plane" style={{ color: "#F25C05", marginLeft: "6px" }} />
+            </h1>
+            <p className="auth-subtitle">
+              Étape 3 : Vérifiez vos informations et confirmez
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-summary-card">
+              <div className="auth-summary-row">
+                <span className="auth-summary-key">Nom complet</span>
+                <span className="auth-summary-val">{name}</span>
+              </div>
+              <div className="auth-summary-row">
+                <span className="auth-summary-key">Adresse email</span>
+                <span className="auth-summary-val">{email}</span>
+              </div>
+              <div className="auth-summary-row">
+                <span className="auth-summary-key">Mot de passe</span>
+                <span className="auth-summary-val" style={{ letterSpacing: "0.15em" }}>
+                  ••••••••
+                </span>
+              </div>
+            </div>
+
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: "14px",
+                backgroundColor: "#F9FAFB",
+                border: captchaVerified
+                  ? "1.5px solid #10B981"
+                  : clientErrors.captcha
+                  ? "1.5px solid #EF4444"
+                  : "1.5px solid #E5E7EB",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                cursor: captchaVerified ? "default" : "pointer",
+                transition: "all 0.2s ease",
+                userSelect: "none"
+              }}
+              onClick={handleTriggerCaptcha}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div
+                  style={{
+                    width: "26px",
+                    height: "26px",
+                    borderRadius: "6px",
+                    border: captchaVerified
+                      ? "2px solid #10B981"
+                      : clientErrors.captcha
+                      ? "2px solid #EF4444"
+                      : "2px solid #D1D5DB",
+                    backgroundColor: captchaVerified ? "#10B981" : "#FFFFFF",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  {captchaLoading ? (
+                    <i className="fa-solid fa-spinner fa-spin" style={{ color: "#F25C05", fontSize: "13px" }} />
+                  ) : captchaVerified ? (
+                    <i className="fa-solid fa-check" style={{ color: "#FFFFFF", fontSize: "13px" }} />
+                  ) : null}
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: captchaVerified ? "#065F46" : clientErrors.captcha ? "#EF4444" : "#374151"
+                  }}
+                >
+                  {captchaVerified
+                    ? "Vérification humaine réussie"
+                    : "Je ne suis pas un robot (Cliquez pour valider)"}
+                </span>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", opacity: 0.6 }}>
+                <i
+                  className="fa-solid fa-shield-halved"
+                  style={{ fontSize: "18px", color: captchaVerified ? "#10B981" : "#6B7280" }}
+                />
+                <span style={{ fontSize: "9px", fontWeight: 600, color: "#6B7280", letterSpacing: "0.5px" }}>
+                  Foodi Shield
+                </span>
+              </div>
+            </div>
+            {clientErrors.captcha && (
+              <p
+                style={{
+                  marginTop: "4px",
+                  fontSize: "0.75rem",
+                  color: "#EF4444",
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px"
+                }}
+              >
+                <i className="fa-solid fa-circle-exclamation" />
+                <span>{clientErrors.captcha}</span>
+              </p>
+            )}
+
+            <div className="auth-checkbox-row" style={{ marginTop: "14px" }}>
+              <div
+                className={`auth-custom-checkbox ${agreed ? "checked" : ""}`}
+                onClick={() => {
+                  setAgreed(!agreed);
+                  if (clientErrors.agreed) setClientErrors((prev) => ({ ...prev, agreed: "" }));
+                }}
+              >
+                {agreed && <i className="fa-solid fa-check" />}
+              </div>
+              <span className="auth-checkbox-label">
+                <span
+                  onClick={() => {
+                    setAgreed(!agreed);
+                    if (clientErrors.agreed) setClientErrors((prev) => ({ ...prev, agreed: "" }));
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  J'accepte les conditions d'utilisation et la politique de confidentialité de Foodi
+                </span>
+              </span>
+            </div>
+            {clientErrors.agreed && (
+              <p
+                style={{
+                  marginTop: "2px",
+                  fontSize: "0.75rem",
+                  color: "#EF4444",
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px"
+                }}
+              >
+                <i className="fa-solid fa-circle-exclamation" />
+                <span>{clientErrors.agreed}</span>
+              </p>
+            )}
+
+            <div className="auth-step-actions" style={{ marginTop: "1rem" }}>
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="auth-secondary-btn"
+                style={{ flex: 1 }}
+              >
+                <i className="fa-solid fa-arrow-left" />
+                <span>Modifier</span>
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || !agreed || !captchaVerified}
+                className="auth-action-btn"
+                style={{
+                  flex: 2,
+                  opacity: agreed && captchaVerified ? 1 : 0.6,
+                  cursor: agreed && captchaVerified ? "pointer" : "not-allowed"
+                }}
+              >
+                <span>{isSubmitting ? "Création en cours..." : "Confirmer mon compte"}</span>
+                <i className="fa-solid fa-arrow-right" />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="auth-footer">
+        Vous avez déjà un compte ?{" "}
+        <Link
+          to={redirectPath !== "/" ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"}
+          className="auth-footer-link"
+        >
+          Se connecter
+        </Link>
       </div>
-    </div>
+    </AuthLayoutShell>
   );
 };

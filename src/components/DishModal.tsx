@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Plus, Minus, Check } from "lucide-react";
 import { Dish } from "../types";
 import { useApp } from "../context/AppContext";
@@ -11,7 +12,8 @@ interface DishModalProps {
 }
 
 export const DishModal: React.FC<DishModalProps> = ({ dish, restaurantId, restaurantName, onClose }) => {
-  const { addToCart } = useApp();
+  const navigate = useNavigate();
+  const { addToCart, user } = useApp();
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
@@ -25,6 +27,12 @@ export const DishModal: React.FC<DishModalProps> = ({ dish, restaurantId, restau
   };
 
   const handleAddToCart = () => {
+    if (!user.isLoggedIn) {
+      onClose();
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
     addToCart({
       dishId: dish.id,
       restaurantId,
@@ -44,11 +52,11 @@ export const DishModal: React.FC<DishModalProps> = ({ dish, restaurantId, restau
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="dish-modal-overlay"
       />
 
       <div className="flex min-h-full items-end sm:items-center justify-center p-0 sm:p-4">
-        <div className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+        <div className="dish-modal-container z-10 animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
           <button
             onClick={onClose}
             aria-label="Fermer"

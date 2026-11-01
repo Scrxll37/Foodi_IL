@@ -6,12 +6,21 @@ import { HomeHeader } from "../components/HomeHeader";
 import { CartDrawer } from "../components/CartDrawer";
 import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
+import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import { UserAddress } from "../types";
 
 export const MyAddressPage: React.FC = () => {
   const navigate = useNavigate();
   const { address, saveAddress, user } = useApp();
+  const [pageLoading, setPageLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [isEditing, setIsEditing] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
@@ -138,6 +147,10 @@ export const MyAddressPage: React.FC = () => {
     setIsEditing(false);
     setStep(1);
   };
+
+  if (pageLoading) {
+    return <Loader fullScreen message="Chargement de votre adresse..." />;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] pb-24 md:pb-16">

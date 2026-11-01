@@ -23,7 +23,17 @@ export interface Dish {
 export interface MenuCategory {
   id: string;
   name: string;
+  description?: string;
   dishes: Dish[];
+}
+
+export interface CuisineType {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+  icon?: string;
 }
 
 export interface RestaurantBranch {

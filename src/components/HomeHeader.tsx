@@ -23,49 +23,57 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
     }
   };
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <>
-      <header className="sticky top-0 z-40 w-full px-3 pt-2.5 pb-1 pointer-events-none md:px-6 md:pt-3.5">
-        <div className="pointer-events-auto max-w-[1380px] mx-auto h-[60px] md:h-[70px] flex items-center justify-between gap-2.5 md:gap-4 px-3 md:px-5 foodi-header-bar rounded-2xl md:rounded-[24px]">
-          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+      <header className="foodi-header-sticky">
+        <div className="foodi-header-bar">
+          <div className="foodi-header-left">
             {showBackButton ? (
               <button
                 type="button"
-                onClick={() => navigate("/")}
+                onClick={handleBack}
                 aria-label="Retour"
-                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#0B1020]/10 flex items-center justify-center text-[#0B1020] hover:bg-[#FFF3EA] hover:text-[#FF5A00] transition-colors md:hidden shadow-xs cursor-pointer shrink-0"
+                className="foodi-header-back-btn"
               >
-                <ArrowLeft className="w-4.5 h-4.5" />
+                <ArrowLeft size={18} />
               </button>
             ) : null}
 
-            <Link to="/" className="flex items-center shrink-0">
+            <Link to="/" className="foodi-header-logo-link">
               <img
                 src="/images/logo.png"
                 alt="Foodi"
-                className="w-8 h-8 md:hidden object-contain rounded-lg"
+                className="foodi-header-logo-mobile"
               />
               <img
                 src="/images/logohor.png"
                 alt="Foodi Agadir"
-                className="hidden md:block h-9 w-auto object-contain"
+                className="foodi-header-logo-desktop"
               />
             </Link>
 
             <button
               onClick={handleAddressClick}
               type="button"
-              className="hidden md:flex items-center gap-2.5 py-1.5 px-3 rounded-xl hover:bg-[#0B1020]/5 transition-colors text-left cursor-pointer"
+              className="foodi-header-address-btn"
             >
-              <div className="w-9 h-9 rounded-xl bg-[#FFF3EA] text-[#FF5A00] flex items-center justify-center shrink-0">
-                <MapPin className="w-4.5 h-4.5" />
+              <div className="foodi-header-address-icon-box">
+                <MapPin size={18} />
               </div>
-              <div className="flex flex-col leading-tight">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#12A150]">
+              <div className="foodi-header-address-info">
+                <div className="foodi-header-address-tag">
                   <span className="pulse-dot"></span>
                   <span>Livraison à Agadir</span>
                 </div>
-                <span className="text-[14px] font-extrabold text-[#0B1020] max-w-[200px] truncate">
+                <span className="foodi-header-address-text">
                   {user.isLoggedIn ? (address ? `${address.neighborhood}, Agadir` : "Choisir l'adresse") : "Connexion requise"}
                 </span>
               </div>
@@ -74,27 +82,27 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
 
           <div
             onClick={() => setIsSearchOpen(true)}
-            className="flex-1 md:max-w-md h-10 md:h-11 px-3.5 md:px-4 flex items-center gap-2.5 md:gap-3 bg-[#FAF8F5] md:bg-[#0B1020]/5 border border-[#0B1020]/8 md:border-transparent hover:border-[#FF5A00]/40 hover:bg-white rounded-xl md:rounded-2xl transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+            className="foodi-header-search-bar"
           >
-            <Search className="w-4 h-4 text-[#FF5A00] md:text-[#7A8194] shrink-0" />
-            <span className="text-xs md:text-[13.5px] font-medium text-[#7A8194] truncate">
+            <Search className="foodi-header-search-icon" />
+            <span className="foodi-header-search-text">
               <span className="md:hidden">Rechercher un plat, restaurant...</span>
               <span className="hidden md:inline">Rechercher burgers, tacos, pizzas à Agadir...</span>
             </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 md:gap-3 shrink-0">
+          <div className="foodi-header-actions">
             {user.isLoggedIn ? (
               <>
                 <button
                   type="button"
                   onClick={() => setIsNotifOpen(true)}
                   aria-label="Notifications"
-                  className="relative w-10 h-10 rounded-xl bg-white border border-[#0B1020]/10 flex items-center justify-center text-[#3B4256] hover:text-[#FF5A00] hover:border-[#FF5A00]/40 transition-colors cursor-pointer"
+                  className="foodi-header-btn"
                 >
-                  <Bell className="w-4.5 h-4.5" />
+                  <Bell size={18} />
                   {unreadNotificationsCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-[#FF5A00] text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white">
+                    <span className="foodi-header-btn-badge">
                       {unreadNotificationsCount}
                     </span>
                   )}
@@ -103,31 +111,37 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
                 <Link
                   to="/dashboard"
                   aria-label="Mon Compte"
-                  className="flex items-center gap-2 h-10 px-3.5 rounded-xl bg-white border border-[#0B1020]/10 text-[13.5px] font-bold text-[#0B1020] hover:border-[#FF5A00]/40 hover:text-[#FF5A00] transition-colors"
+                  className="foodi-header-user-link"
                 >
-                  <UserIcon className="w-4 h-4 text-[#FF5A00]" />
+                  <UserIcon size={16} color="#FF5A00" />
                   <span className="max-w-[90px] truncate">{user.name.split(" ")[0]}</span>
                 </Link>
               </>
             ) : (
               <Link
                 to="/login"
-                className="h-10 px-4 rounded-xl bg-white border border-[#0B1020]/10 text-[13.5px] font-bold text-[#0B1020] hover:bg-[#FFF3EA] hover:border-[#FF5A00]/40 hover:text-[#FF5A00] transition-colors flex items-center gap-1.5"
+                className="foodi-header-login-link"
               >
-                <UserIcon className="w-4 h-4" />
+                <UserIcon size={16} />
                 <span>Connexion</span>
               </Link>
             )}
 
             <button
               type="button"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => {
+                if (!user.isLoggedIn) {
+                  navigate("/login");
+                  return;
+                }
+                setIsCartOpen(true);
+              }}
               aria-label="Panier"
-              className="relative w-10 h-10 rounded-xl bg-white border border-[#0B1020]/10 flex items-center justify-center text-[#FF5A00] hover:bg-[#FFF3EA] hover:border-[#FF5A00]/40 transition-colors cursor-pointer shadow-2xs"
+              className="foodi-header-btn"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag size={20} color="#FF5A00" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-4.5 h-4.5 px-1 bg-[#FF5A00] text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white">
+                <span className="foodi-header-btn-badge">
                   {cartCount}
                 </span>
               )}

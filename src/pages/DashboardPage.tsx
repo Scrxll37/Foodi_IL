@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, MapPin, Package, Bike, CheckCircle2, RotateCcw, LogOut } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
 import { CartDrawer } from "../components/CartDrawer";
 import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
+import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import ordersData from "../data/orders.json";
 import { OrderRecord } from "../types";
@@ -12,6 +13,14 @@ import { OrderRecord } from "../types";
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout, address, addToCart } = useApp();
+  const [pageLoading, setPageLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, []);
 
   const orders: OrderRecord[] = ordersData as OrderRecord[];
 
@@ -33,6 +42,10 @@ export const DashboardPage: React.FC = () => {
       });
     });
   };
+
+  if (pageLoading) {
+    return <Loader fullScreen message="Chargement de votre compte..." />;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] pb-24 md:pb-16">

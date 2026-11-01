@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "./home.css";
+@import "./components.css";
+@import "./auth.css";
 
 :root {
   --fd-brand: #FF5A00;

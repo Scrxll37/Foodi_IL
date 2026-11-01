@@ -12,57 +12,58 @@ export const MobileBottomNav: React.FC = () => {
   const isDashboard = location.pathname === "/dashboard";
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#0B1020]/8 px-4 py-2 flex items-center justify-around md:hidden shadow-lg">
+    <div className="mobile-bottom-nav">
       <Link
         to="/"
-        className={`flex flex-col items-center gap-1 text-[11px] font-bold transition-colors ${
-          isHome ? "text-[#FF5A00]" : "text-[#7A8194] hover:text-[#0B1020]"
-        }`}
+        className={`bottom-nav-link ${isHome ? "active" : ""}`}
       >
-        <Home className="w-5 h-5" />
+        <Home size={20} />
         <span>Accueil</span>
       </Link>
 
       <Link
-        to="/restaurants"
-        className={`flex flex-col items-center gap-1 text-[11px] font-bold transition-colors ${
-          isRestaurants ? "text-[#FF5A00]" : "text-[#7A8194] hover:text-[#0B1020]"
-        }`}
+        to={user.isLoggedIn ? "/restaurants" : "/login?redirect=/restaurants"}
+        className={`bottom-nav-link ${isRestaurants ? "active" : ""}`}
       >
-        <Compass className="w-5 h-5" />
+        <Compass size={20} />
         <span>Restaurants</span>
       </Link>
 
       <button
-        onClick={() => setIsCartOpen(true)}
-        className="relative flex flex-col items-center gap-1 text-[11px] font-bold text-[#FF5A00] cursor-pointer"
+        type="button"
+        onClick={() => {
+          if (!user.isLoggedIn) {
+            window.location.href = "/login";
+            return;
+          }
+          setIsCartOpen(true);
+        }}
+        className="bottom-nav-cart-btn"
       >
-        <div className="w-10 h-10 rounded-full bg-[#FF5A00] text-white flex items-center justify-center -mt-5 shadow-lg shadow-[#FF5A00]/35 ring-4 ring-white">
-          <ShoppingBag className="w-5 h-5" />
+        <div className="bottom-nav-cart-bubble">
+          <ShoppingBag size={20} />
           {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-[#0B1020] text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center ring-2 ring-white">
+            <span className="bottom-nav-cart-badge">
               {cartCount}
             </span>
           )}
         </div>
-        <span className="text-[#FF5A00] font-extrabold">Panier</span>
+        <span>Panier</span>
       </button>
 
       <Link
-        to={user.isLoggedIn ? "/dashboard" : "/login"}
-        className={`flex flex-col items-center gap-1 text-[11px] font-bold transition-colors ${
-          isDashboard ? "text-[#FF5A00]" : "text-[#7A8194] hover:text-[#0B1020]"
-        }`}
+        to={user.isLoggedIn ? "/dashboard" : "/login?redirect=/dashboard"}
+        className={`bottom-nav-link ${isDashboard ? "active" : ""}`}
       >
-        <Clock className="w-5 h-5" />
+        <Clock size={20} />
         <span>Commandes</span>
       </Link>
 
       <Link
         to={user.isLoggedIn ? "/dashboard" : "/login"}
-        className="flex flex-col items-center gap-1 text-[11px] font-bold text-[#7A8194] hover:text-[#0B1020] transition-colors"
+        className="bottom-nav-link"
       >
-        <User className="w-5 h-5" />
+        <User size={20} />
         <span>{user.isLoggedIn ? "Profil" : "Connexion"}</span>
       </Link>
     </div>

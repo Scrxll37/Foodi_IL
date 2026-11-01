@@ -21,6 +21,7 @@ import { CartDrawer } from "../components/CartDrawer";
 import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Footer } from "../components/Footer";
+import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import { getNearestBranchInfo } from "../utils/delivery";
 import restaurantsData from "../data/restaurants.json";
@@ -194,7 +195,7 @@ const SECTION_INFOS: Record<string, SectionInfoModalData> = {
 };
 
 export const HomePage: React.FC = () => {
-  const { address } = useApp();
+  const { address, user } = useApp();
   const userLat = address?.lat || 30.4278;
   const userLng = address?.lng || -9.5981;
 
@@ -207,6 +208,7 @@ export const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(12);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [sectionInfo, setSectionInfo] = useState<SectionInfoModalData | null>(null);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const filteredObserverRef = useRef<IntersectionObserver | null>(null);
@@ -220,6 +222,13 @@ export const HomePage: React.FC = () => {
       return [];
     }
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     try {
@@ -437,7 +446,7 @@ export const HomePage: React.FC = () => {
     return (
       <Link
         key={restaurant.id}
-        to={`/restaurants/${restaurant.slug}`}
+        to={user.isLoggedIn ? `/restaurants/${restaurant.slug}` : `/login?redirect=${encodeURIComponent(`/restaurants/${restaurant.slug}`)}`}
         className="restaurant-card"
       >
         <div className="restaurant-card-banner-box">
@@ -460,7 +469,7 @@ export const HomePage: React.FC = () => {
             className={`restaurant-card-fav-btn ${isFav ? "active" : ""}`}
             title="Favoris"
           >
-            <Heart size={16} fill={isFav ? "#EF4444" : "none"} color={isFav ? "#EF4444" : "#FFFFFF"} />
+            <Heart size={16} fill={isFav ? "#EF4444" : "none"} color={isFav ? "#EF4444" : "#94A3B8"} strokeWidth={2.2} />
           </button>
 
           <div className="restaurant-card-logo-carre">
@@ -504,6 +513,10 @@ export const HomePage: React.FC = () => {
     );
   };
 
+  if (pageLoading) {
+    return <Loader fullScreen message="Chargement des restaurants d'Agadir..." />;
+  }
+
   return (
     <div className="home-root">
       <HomeHeader />
@@ -530,7 +543,7 @@ export const HomePage: React.FC = () => {
             return (
               <Link
                 key={ad.id}
-                to={`/restaurants/${ad.restaurantSlug}`}
+                to={user.isLoggedIn ? `/restaurants/${ad.restaurantSlug}` : `/login?redirect=${encodeURIComponent(`/restaurants/${ad.restaurantSlug}`)}`}
                 className={`hero-slide ${isActive ? "active" : ""}`}
                 tabIndex={isActive ? 0 : -1}
               >
@@ -792,7 +805,7 @@ export const HomePage: React.FC = () => {
                     return (
                       <Link
                         key={`demand-${restaurant.id}`}
-                        to={`/restaurants/${restaurant.slug}`}
+                        to={user.isLoggedIn ? `/restaurants/${restaurant.slug}` : `/login?redirect=${encodeURIComponent(`/restaurants/${restaurant.slug}`)}`}
                         className="most-demand-card"
                       >
                         <div className="most-demand-logo-box">
@@ -875,7 +888,7 @@ export const HomePage: React.FC = () => {
                     return (
                       <Link
                         key={`budget-${meal.id}`}
-                        to={`/restaurants/${meal.restaurant?.slug}`}
+                        to={user.isLoggedIn ? `/restaurants/${meal.restaurant?.slug}` : `/login?redirect=${encodeURIComponent(`/restaurants/${meal.restaurant?.slug}`)}`}
                         className="budget-item-card"
                       >
                         <div className="budget-photo-box">
@@ -1013,7 +1026,7 @@ export const HomePage: React.FC = () => {
                   </p>
                 </div>
                 <Link
-                  to="/restaurants"
+                  to={user.isLoggedIn ? "/restaurants" : "/login?redirect=/restaurants"}
                   className="section-view-all-link"
                 >
                   <span>Découvrir tout</span>

@@ -3,6 +3,12 @@ import { CartItem, UserAddress, UserProfile, FoodiNotification } from "../types"
 import initialAddresses from "../data/addresses.json";
 import initialNotifications from "../data/notifications.json";
 
+export interface CartConflictData {
+  pendingItem: Omit<CartItem, "id">;
+  currentRestaurantName: string;
+  newRestaurantName: string;
+}
+
 interface AppContextType {
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, "id">) => void;
@@ -16,21 +22,24 @@ interface AppContextType {
   isNotifOpen: boolean;
   setIsNotifOpen: (open: boolean) => void;
   user: UserProfile;
-  login: (identifier: string) => void;
+  login: (identifier: string, details?: { name?: string; phone?: string; email?: string }) => void;
   logout: () => void;
   address: UserAddress;
   saveAddress: (addr: UserAddress) => void;
   notifications: FoodiNotification[];
   markNotificationRead: (id: string) => void;
+  conflictData: CartConflictData | null;
+  confirmConflictReplace: () => void;
+  cancelConflict: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const defaultUser: UserProfile = {
-  name: "Fayçal Agadir",
-  phone: "+212 6 12 34 56 78",
-  email: "faycal@foodi.ma",
-  isLoggedIn: true
+const defaultGuestUser: UserProfile = {
+  name: "",
+  phone: "",
+  email: "",
+  isLoggedIn: false
 };
 
 const defaultAddr: UserAddress = initialAddresses[0] as UserAddress;
@@ -47,10 +56,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [user, setUser] = useState<UserProfile>(() => {
     try {
-      const stored = localStorage.getItem("foodi_user");
-      return stored ? JSON.parse(stored) : defaultUser;
+      const isAuth = localStorage.getItem("foodi_authenticated");
+      if (isAuth === "true") {
+        const stored = localStorage.getItem("foodi_user");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.isLoggedIn) {
+            return parsed;
+          }
+        }
+      }
+      return defaultGuestUser;
     } catch {
-      return defaultUser;
+      return defaultGuestUser;
     }
   });
 
@@ -74,6 +92,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [conflictData, setConflictData] = useState<CartConflictData | null>(null);
 
   useEffect(() => {
     localStorage.setItem("foodi_cart", JSON.stringify(cart));
@@ -91,7 +110,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem("foodi_notifications", JSON.stringify(notifications));
   }, [notifications]);
 
-  const addToCart = (item: Omit<CartItem, "id">) => {
+  const applyItemToCart = (item: Omit<CartItem, "id">) => {
     const existingIndex = cart.findIndex(
       (c) =>
         c.dishId === item.dishId &&
@@ -112,6 +131,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCart((prev) => [...prev, newItem]);
     }
     setIsCartOpen(true);
+  };
+
+  const addToCart = (item: Omit<CartItem, "id">) => {
+    if (!user.isLoggedIn) {
+      const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = `/login?redirect=${currentUrl}`;
+      return;
+    }
+
+    if (cart.length > 0 && cart[0].restaurantId && item.restaurantId && cart[0].restaurantId !== item.restaurantId) {
+      setConflictData({
+        pendingItem: item,
+        currentRestaurantName: cart[0].restaurantName || "le restaurant actuel",
+        newRestaurantName: item.restaurantName || "le nouveau restaurant"
+      });
+      return;
+    }
+
+    applyItemToCart(item);
+  };
+
+  const confirmConflictReplace = () => {
+    if (!conflictData) return;
+    const itemToInsert = conflictData.pendingItem;
+    const newItem: CartItem = {
+      ...itemToInsert,
+      id: `${itemToInsert.dishId}-${Date.now()}`
+    };
+    setCart([newItem]);
+    setConflictData(null);
+    setIsCartOpen(true);
+  };
+
+  const cancelConflict = () => {
+    setConflictData(null);
   };
 
   const updateQuantity = (id: string, delta: number) => {
@@ -136,24 +190,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCart([]);
   };
 
-  const login = (identifier: string) => {
+  const login = (identifier: string, details?: { name?: string; phone?: string; email?: string }) => {
     const isPhone = identifier.includes("+") || /^\d+$/.test(identifier.replace(/\s+/g, ""));
     const updated: UserProfile = {
-      name: "Client Foodi",
-      email: isPhone ? "client@foodi.ma" : identifier,
-      phone: isPhone ? identifier : "+212 6 00 00 00 00",
+      name: details?.name || "Fayçal Agadir",
+      email: details?.email || (isPhone ? "faycal@foodi.ma" : identifier),
+      phone: details?.phone || (isPhone ? identifier : "+212 6 12 34 56 78"),
       isLoggedIn: true
     };
+    localStorage.setItem("foodi_authenticated", "true");
     setUser(updated);
   };
 
   const logout = () => {
-    setUser({
-      name: "",
-      phone: "",
-      email: "",
-      isLoggedIn: false
-    });
+    localStorage.removeItem("foodi_authenticated");
+    localStorage.removeItem("foodi_user");
+    setUser(defaultGuestUser);
+    setCart([]);
   };
 
   const saveAddress = (addr: UserAddress) => {
@@ -189,7 +242,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         address,
         saveAddress,
         notifications,
-        markNotificationRead
+        markNotificationRead,
+        conflictData,
+        confirmConflictReplace,
+        cancelConflict
       }}
     >
       {children}

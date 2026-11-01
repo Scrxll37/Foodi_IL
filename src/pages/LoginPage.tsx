@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Mail, Phone, Lock, ArrowRight, ArrowLeft } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import { AuthLayoutShell } from "../components/AuthLayoutShell";
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -9,219 +9,192 @@ export const LoginPage: React.FC = () => {
   const redirectPath = searchParams.get("redirect") || "/";
   const { login } = useApp();
 
-  const [authMode, setAuthMode] = useState<"phone" | "email">("phone");
-  const [phone, setPhone] = useState("06 12 34 56 78");
-  const [email, setEmail] = useState("client@foodi.ma");
-  const [password, setPassword] = useState("••••••••");
-  const [otpStep, setOtpStep] = useState(false);
-  const [otpCode, setOtpCode] = useState(["4", "8", "1", "9"]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [clientError, setClientError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (authMode === "phone" && !otpStep) {
-      setOtpStep(true);
+    if (isSubmitting) return;
+    setClientError("");
+
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setClientError("Veuillez saisir votre adresse email.");
       return;
     }
 
-    setIsLoading(true);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setClientError("Format d'adresse email invalide.");
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setClientError("Le mot de passe doit comporter au moins 6 caractères.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     setTimeout(() => {
-      login(authMode === "phone" ? `+212 ${phone}` : email);
-      setIsLoading(false);
-      navigate(redirectPath);
+      login(cleanEmail);
+      setIsSubmitting(false);
+      navigate(redirectPath, { replace: true });
     }, 400);
   };
 
+  const fillQuickAccount = (demoEmail: string) => {
+    setEmail(demoEmail);
+    setPassword("password123");
+    setClientError("");
+  };
+
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between p-4 md:p-8">
-      <div className="max-w-md w-full mx-auto flex items-center justify-between">
-        <Link
-          to="/"
-          aria-label="Retour accueil"
-          className="w-10 h-10 rounded-full bg-white border border-[#0B1020]/10 flex items-center justify-center text-[#0B1020] hover:text-[#FF5A00] transition-colors shadow-2xs"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <Link to="/">
-          <img src="/images/logohor.png" alt="Foodi Agadir" className="h-9 w-auto object-contain" />
-        </Link>
-        <div className="w-10" />
+    <AuthLayoutShell pageType="login" backHref="/">
+      <div className="auth-header">
+        <h1 className="auth-title">
+          Bienvenue <i className="fa-solid fa-utensils" style={{ color: "#F25C05", marginLeft: "6px" }} />
+        </h1>
+        <p className="auth-subtitle">
+          Connectez-vous pour continuer vos commandes
+        </p>
       </div>
 
-      <div className="max-w-md w-full mx-auto my-auto py-8">
-        <div className="bg-white rounded-3xl p-6 md:p-8 border border-[#0B1020]/8 shadow-xl shadow-[#0B1020]/4 space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-black text-[#0B1020]">Bon retour sur Foodi</h1>
-            <p className="text-xs text-[#7A8194]">
-              Accédez à vos commandes, adresses et restaurants favoris à Agadir
-            </p>
-          </div>
+      {clientError && (
+        <div
+          style={{
+            marginBottom: "1rem",
+            padding: "0.75rem",
+            borderRadius: "12px",
+            backgroundColor: "#FEF2F2",
+            border: "1px solid #FECACA",
+            color: "#991B1B",
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px"
+          }}
+        >
+          <i className="fa-solid fa-triangle-exclamation" style={{ color: "#EF4444" }} />
+          <span>{clientError}</span>
+        </div>
+      )}
 
-          <div className="flex bg-[#FAF8F5] p-1 rounded-2xl border border-[#0B1020]/6">
-            <button
-              type="button"
-              onClick={() => {
-                setAuthMode("phone");
-                setOtpStep(false);
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="auth-field-group">
+          <label htmlFor="email" className="auth-label">
+            Adresse Email
+          </label>
+          <div className="auth-input-container" data-filled={Boolean(email)}>
+            <i className="fa-solid fa-envelope auth-input-icon" />
+            <input
+              id="email"
+              type="email"
+              required
+              autoFocus
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setClientError("");
               }}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                authMode === "phone"
-                  ? "bg-white text-[#FF5A00] shadow-2xs border border-[#0B1020]/5"
-                  : "text-[#7A8194] hover:text-[#0B1020]"
-              }`}
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <span>Téléphone</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setAuthMode("email");
-                setOtpStep(false);
-              }}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                authMode === "email"
-                  ? "bg-white text-[#FF5A00] shadow-2xs border border-[#0B1020]/5"
-                  : "text-[#7A8194] hover:text-[#0B1020]"
-              }`}
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Email</span>
-            </button>
-          </div>
-
-          {isLoading ? (
-            <div className="py-12 flex flex-col items-center justify-center space-y-4">
-              <div className="relative">
-                <img
-                  src="/images/logohor.png"
-                  alt="Foodi"
-                  className="h-10 w-auto animate-pulse object-contain"
-                />
-              </div>
-              <div className="w-6 h-6 border-2 border-[#FF5A00] border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs font-extrabold text-[#7A8194]">Connexion instantanée...</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {authMode === "phone" ? (
-                !otpStep ? (
-                  <div>
-                    <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                      Numéro de téléphone marocain
-                    </label>
-                    <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl overflow-hidden focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                      <span className="px-3.5 text-xs font-black text-[#0B1020] border-r border-[#0B1020]/10 flex items-center gap-1.5">
-                        🇲🇦 +212
-                      </span>
-                      <input
-                        type="tel"
-                        required
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="6 12 34 56 78"
-                        className="w-full px-3.5 py-3 text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <label className="block text-xs font-bold text-[#3B4256] text-center">
-                      Code de vérification SMS envoyé au +212 {phone}
-                    </label>
-                    <div className="flex justify-center gap-2">
-                      {otpCode.map((digit, index) => (
-                        <input
-                          key={index}
-                          type="text"
-                          maxLength={1}
-                          value={digit}
-                          onChange={(e) => {
-                            const newOtp = [...otpCode];
-                            newOtp[index] = e.target.value;
-                            setOtpCode(newOtp);
-                          }}
-                          className="w-12 h-12 text-center text-lg font-black bg-[#FAF8F5] border border-[#0B1020]/10 rounded-xl focus:outline-none focus:border-[#FF5A00] focus:bg-white"
-                        />
-                      ))}
-                    </div>
-                    <div className="text-center">
-                      <button
-                        type="button"
-                        onClick={() => setOtpStep(false)}
-                        className="text-xs text-[#FF5A00] font-bold hover:underline"
-                      >
-                        Changer de numéro
-                      </button>
-                    </div>
-                  </div>
-                )
-              ) : (
-                <>
-                  <div>
-                    <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                      Adresse email
-                    </label>
-                    <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl px-3.5 py-3 focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                      <Mail className="w-4 h-4 text-[#7A8194] mr-2" />
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="vous@domaine.ma"
-                        className="w-full text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#3B4256] mb-1.5">
-                      Mot de passe
-                    </label>
-                    <div className="flex items-center bg-[#FAF8F5] border border-[#0B1020]/10 rounded-2xl px-3.5 py-3 focus-within:border-[#FF5A00] focus-within:bg-white transition-all">
-                      <Lock className="w-4 h-4 text-[#7A8194] mr-2" />
-                      <input
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full text-xs font-bold text-[#0B1020] bg-transparent focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <button
-                type="submit"
-                className="foodi-btn-primary w-full py-3.5 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/25 cursor-pointer mt-4"
-              >
-                <span>
-                  {authMode === "phone" && !otpStep
-                    ? "Recevoir mon code SMS"
-                    : "Connexion sécurisée"}
-                </span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-          )}
-
-          <div className="text-center pt-2 border-t border-[#0B1020]/6">
-            <p className="text-xs text-[#7A8194]">
-              Nouveau client ?{" "}
-              <Link to="/register" className="font-extrabold text-[#FF5A00] hover:underline">
-                Créer un compte
-              </Link>
-            </p>
+              placeholder="votre@email.com"
+              className="auth-input-element"
+            />
           </div>
         </div>
+
+        <div className="auth-field-group">
+          <div className="auth-label-row">
+            <label htmlFor="password" className="auth-label">
+              Mot de passe
+            </label>
+            <span
+              className="auth-forgot-link"
+              style={{ cursor: "default", opacity: 0.85, userSelect: "none" }}
+            >
+              Mot de passe oublié ?
+            </span>
+          </div>
+          <div className="auth-input-container" data-filled={Boolean(password)}>
+            <i className="fa-solid fa-lock auth-input-icon" />
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setClientError("");
+              }}
+              placeholder="Votre mot de passe"
+              className="auth-input-element has-right-toggle"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="auth-toggle-btn"
+              tabIndex={-1}
+              title={showPassword ? "Masquer" : "Afficher"}
+            >
+              <i className={showPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"} />
+            </button>
+          </div>
+        </div>
+
+        <div className="auth-checkbox-row" onClick={() => setRemember(!remember)}>
+          <div className={`auth-custom-checkbox ${remember ? "checked" : ""}`}>
+            {remember && <i className="fa-solid fa-check" />}
+          </div>
+          <span className="auth-checkbox-label">Se souvenir de moi</span>
+        </div>
+
+        <button type="submit" disabled={isSubmitting} className="auth-action-btn">
+          <span>{isSubmitting ? "Connexion en cours..." : "Se connecter"}</span>
+          <i className="fa-solid fa-arrow-right" />
+        </button>
+      </form>
+
+      <div className="auth-divider">
+        <div className="auth-divider-line" />
+        <span className="auth-divider-text">OU</span>
       </div>
 
-      <div className="text-center text-xs text-[#7A8194]">
-        © 2026 Foodi Maroc • Livraison de repas à Agadir
+      <div className="auth-social-row">
+        <button
+          type="button"
+          onClick={() => fillQuickAccount("youssef.foodi@gmail.com")}
+          className="auth-social-btn"
+          title="Continuer avec Google"
+        >
+          <i className="fa-brands fa-google" style={{ color: "#EA4335" }} />
+          <span>Google</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => fillQuickAccount("ali.apple@foodi.ma")}
+          className="auth-social-btn"
+          title="Continuer avec Apple"
+        >
+          <i className="fa-brands fa-apple" style={{ color: "#000000" }} />
+          <span>Apple</span>
+        </button>
       </div>
-    </div>
+
+      <div className="auth-footer">
+        Pas encore de compte ?{" "}
+        <Link
+          to={redirectPath !== "/" ? `/register?redirect=${encodeURIComponent(redirectPath)}` : "/register"}
+          className="auth-footer-link"
+        >
+          Créer un compte
+        </Link>
+      </div>
+    </AuthLayoutShell>
   );
 };
