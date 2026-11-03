@@ -8,6 +8,9 @@ import { MyAddressPage } from "./pages/MyAddressPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { OrderConfirmationPage } from "./pages/OrderConfirmationPage";
+import { OrderTrackingPage } from "./pages/OrderTrackingPage";
+import { TestBoardPage } from "./pages/TestBoardPage";
 import { ConflictModal } from "./components/ConflictModal";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -64,6 +67,25 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/order-confirmation"
+            element={
+              <ProtectedRoute>
+                <OrderConfirmationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/track/:token"
+            element={
+              <ProtectedRoute>
+                <OrderTrackingPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/test" element={<TestBoardPage />} />
+          <Route path="/test-board" element={<TestBoardPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

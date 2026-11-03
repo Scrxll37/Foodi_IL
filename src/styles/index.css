@@ -134,6 +134,13 @@ button, input, select, textarea {
   scrollbar-width: none;
 }
 
+.custom-pin-wrapper,
+.glovo-pin-wrapper,
+.glovo-courier-wrapper {
+  background: transparent !important;
+  border: none !important;
+}
+
 .custom-leaflet-pin {
   display: flex;
   flex-direction: column;
@@ -156,11 +163,233 @@ button, input, select, textarea {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #00BFA5;
+  background: #FF5A00;
   border: 3px solid #FFFFFF;
-  box-shadow: 0 4px 14px rgba(0, 191, 165, 0.45);
+  box-shadow: 0 4px 14px rgba(255, 90, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #FFFFFF;
+}
+
+.custom-courier-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #0B1020;
+  border: 3px solid #FF5A00;
+  box-shadow: 0 4px 18px rgba(255, 90, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  position: relative;
+}
+
+.custom-restaurant-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 3px solid #0B1020;
+  box-shadow: 0 4px 12px rgba(11, 16, 32, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0B1020;
+  overflow: hidden;
+}
+
+.foodi-pin-icon-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+}
+
+.pin-small-restaurant {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2.5px solid #0B1020;
+  box-shadow: 0 4px 10px rgba(11, 16, 32, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0B1020;
+}
+
+.pin-small-house {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #12A150;
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 4px 12px rgba(18, 161, 80, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.pin-small-courier {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FF5A00;
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 4px 14px rgba(255, 90, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  position: relative;
+}
+
+.pin-small-courier::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 50%;
+  background: rgba(255, 90, 0, 0.35);
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  z-index: -1;
+}
+
+@keyframes checkmarkStroke {
+  0% {
+    stroke-dashoffset: 48;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes checkmarkCircle {
+  0% {
+    stroke-dashoffset: 157;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-checkmark-circle {
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  animation: checkmarkCircle 0.5s ease-out forwards;
+}
+
+.animate-checkmark-check {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: checkmarkStroke 0.35s ease-out 0.35s forwards;
+}
+
+@keyframes radarWave {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-radar-1 {
+  animation: radarWave 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.animate-radar-2 {
+  animation: radarWave 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite 0.75s;
+}
+
+@keyframes cookSteam {
+  0% {
+    transform: translateY(0) scaleY(0.7);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-5px) scaleY(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-11px) scaleY(1.2);
+    opacity: 0;
+  }
+}
+
+.animate-steam-1 {
+  animation: cookSteam 1.8s ease-in-out infinite;
+}
+
+.animate-steam-2 {
+  animation: cookSteam 1.8s ease-in-out infinite 0.6s;
+}
+
+.animate-steam-3 {
+  animation: cookSteam 1.8s ease-in-out infinite 1.2s;
+}
+
+@keyframes pulseGently {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+.animate-pulse-gentle {
+  animation: pulseGently 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes entranceSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-entrance-slide-up {
+  animation: entranceSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes ctaBounceGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 18px rgba(255, 90, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 26px rgba(255, 90, 0, 0.5);
+  }
+}
+
+.animate-cta-glow {
+  animation: ctaBounceGlow 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-radar-1,
+  .animate-radar-2,
+  .animate-steam-1,
+  .animate-steam-2,
+  .animate-steam-3,
+  .animate-pulse-gentle,
+  .animate-ping,
+  .animate-spin {
+    animation: none !important;
+  }
 }

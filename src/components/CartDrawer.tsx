@@ -48,10 +48,10 @@ export const CartDrawer: React.FC = () => {
   const handleCheckout = () => {
     handleClose();
     if (!user.isLoggedIn) {
-      navigate("/login?redirect=/dashboard");
+      navigate("/login?redirect=/order-confirmation");
       return;
     }
-    navigate("/dashboard");
+    navigate("/order-confirmation");
   };
 
   return (
@@ -219,7 +219,7 @@ export const CartDrawer: React.FC = () => {
                 onClick={handleCheckout}
                 className="cart-checkout-btn"
               >
-                <span>Passer la commande</span>
+                <span>Commander maintenant</span>
                 <ArrowRight size={16} />
               </button>
             </div>

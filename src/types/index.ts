@@ -102,6 +102,9 @@ export interface UserProfile {
   phone: string;
   email: string;
   isLoggedIn: boolean;
+  notifyTracking?: boolean;
+  notifyPromos?: boolean;
+  notifyEmail?: boolean;
 }
 
 export interface FoodiNotification {
@@ -113,19 +116,53 @@ export interface FoodiNotification {
   type: "order" | "promo" | "system";
 }
 
+export type OrderStatus =
+  | "pending_confirmation"
+  | "accepted"
+  | "preparing"
+  | "in_prep"
+  | "searching_driver"
+  | "heading_to_restaurant"
+  | "in_delivery"
+  | "delivered"
+  | "cancelled"
+  | "rejected";
+
 export interface OrderRecord {
   id: string;
+  token?: string;
   restaurantName: string;
   restaurantLogo: string;
   neighborhood: string;
+  buildingNameNumber?: string;
+  floorNumber?: string;
+  doorNumber?: string;
+  street?: string;
   date: string;
-  status: "in_prep" | "in_delivery" | "delivered";
+  status: OrderStatus;
   statusLabel: string;
+  cookingTime?: number;
+  travelTime?: number;
+  totalTime?: number;
+  arrivalTime?: string;
+  courierName?: string;
+  courierPhone?: string;
+  shopLat?: number;
+  shopLng?: number;
+  courierLat?: number;
+  courierLng?: number;
+  lat?: number;
+  lng?: number;
+  instructions?: string;
+  paymentMethod?: "card" | "cash";
+  paymentLabel?: string;
+  createdAt?: number;
   items: {
     name: string;
     quantity: number;
     price: number;
     options?: string;
+    image?: string;
   }[];
   subtotal: number;
   deliveryFee: number;

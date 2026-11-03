@@ -23,6 +23,7 @@ interface AppContextType {
   setIsNotifOpen: (open: boolean) => void;
   user: UserProfile;
   login: (identifier: string, details?: { name?: string; phone?: string; email?: string }) => void;
+  updateProfile: (data: Partial<UserProfile>) => void;
   logout: () => void;
   address: UserAddress;
   saveAddress: (addr: UserAddress) => void;
@@ -202,6 +203,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser(updated);
   };
 
+  const updateProfile = (data: Partial<UserProfile>) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...data };
+      localStorage.setItem("foodi_user", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const logout = () => {
     localStorage.removeItem("foodi_authenticated");
     localStorage.removeItem("foodi_user");
@@ -238,6 +247,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsNotifOpen,
         user,
         login,
+        updateProfile,
         logout,
         address,
         saveAddress,
