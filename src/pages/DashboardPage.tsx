@@ -31,7 +31,6 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout, address, saveAddress, updateProfile } = useApp();
   const [pageLoading, setPageLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"orders" | "settings">("orders");
 
   const [name, setName] = useState(user.name || "Client Foodi");
   const [email, setEmail] = useState(user.email || "client@foodi.ma");
@@ -174,206 +173,89 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 border-b border-[#0B1020]/8 pb-2">
-          <button
-            onClick={() => setActiveTab("orders")}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === "orders"
-                ? "bg-[#0B1020] text-white shadow-md shadow-[#0B1020]/15"
-                : "bg-white text-[#7A8194] hover:text-[#0B1020] border border-[#0B1020]/6"
-            }`}
+          <Link
+            to="/orders"
+            className="px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer bg-white text-[#7A8194] hover:text-[#FF5A00] border border-[#0B1020]/6 hover:border-[#FF5A00]/30 shadow-xs"
           >
-            <Package className="w-3.5 h-3.5" />
+            <Package className="w-3.5 h-3.5 text-[#FF5A00]" />
             <span>Mes commandes</span>
             {activeOrders.length > 0 && (
               <span className="w-5 h-5 rounded-full bg-[#FF5A00] text-white text-[10px] flex items-center justify-center font-black">
                 {activeOrders.length}
               </span>
             )}
-          </button>
+            <ArrowRight className="w-3.5 h-3.5 text-[#7A8194]" />
+          </Link>
 
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === "settings"
-                ? "bg-[#0B1020] text-white shadow-md shadow-[#0B1020]/15"
-                : "bg-white text-[#7A8194] hover:text-[#0B1020] border border-[#0B1020]/6"
-            }`}
-          >
+          <div className="px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 bg-[#0B1020] text-white shadow-md shadow-[#0B1020]/15">
             <Settings className="w-3.5 h-3.5" />
             <span>Paramètres utilisateur</span>
-          </button>
+          </div>
         </div>
 
-        {activeTab === "orders" && (
-          <div className="space-y-6">
-            {activeOrders.length > 0 && (
-              <div className="bg-gradient-to-br from-[#0B1020] via-[#131A2E] to-[#1E293B] text-white rounded-3xl p-6 shadow-xl space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#12A150] animate-ping" />
-                    <span className="text-xs font-black uppercase tracking-wider text-[#12A150]">
-                      Commande en cours
-                    </span>
-                  </div>
-                  <span className="text-xs font-mono text-white/70">
-                    {activeOrders[0].id}
-                  </span>
-                </div>
-
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
-                  <div>
-                    <h3 className="text-lg font-black">{activeOrders[0].restaurantName}</h3>
-                    <p className="text-xs text-white/70 mt-0.5">
-                      Livraison estimée :{" "}
-                      <strong className="text-white">
-                        {activeOrders[0].arrivalTime || "14h15"} (~{activeOrders[0].totalTime || 25} min)
-                      </strong>
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-sm font-black text-[#FF5A00] bg-white/10 px-3 py-1.5 rounded-xl">
-                      Total : {activeOrders[0].total} MAD
-                    </span>
-                    {activeOrders[0].token && (
-                      <Link
-                        to={`/track/${activeOrders[0].token}`}
-                        className="foodi-btn-primary py-2.5 px-4 text-xs font-black shadow-lg shadow-[#FF5A00]/30 flex items-center gap-1.5"
-                      >
-                        <Bike className="w-3.5 h-3.5" />
-                        <span>Suivre en direct</span>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/10 text-center text-xs">
-                  <div className="space-y-1.5">
-                    <div className="w-8 h-8 mx-auto rounded-full bg-[#12A150] text-white flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold block text-[11px] text-white">Validée</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    <div className="w-8 h-8 mx-auto rounded-full bg-[#12A150] text-white flex items-center justify-center">
-                      <Package className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold block text-[11px] text-white">En cuisine</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    <div className="w-8 h-8 mx-auto rounded-full bg-[#FF5A00] text-white flex items-center justify-center ring-4 ring-[#FF5A00]/30 animate-pulse">
-                      <Bike className="w-4 h-4" />
-                    </div>
-                    <span className="font-black block text-[11px] text-[#FF5A00]">En livraison</span>
-                  </div>
-                  <div className="space-y-1.5 opacity-50">
-                    <div className="w-8 h-8 mx-auto rounded-full bg-white/10 text-white flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold block text-[11px]">Livrée</span>
-                  </div>
-                </div>
+        {activeOrders.length > 0 && (
+          <div className="bg-gradient-to-br from-[#0B1020] via-[#131A2E] to-[#1E293B] text-white rounded-3xl p-5 sm:p-6 shadow-xl space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#12A150] animate-ping" />
+                <span className="text-xs font-black uppercase tracking-wider text-[#12A150]">
+                  Commande en cours ({activeOrders.length})
+                </span>
               </div>
-            )}
+              <span className="text-xs font-mono text-white/70">
+                {activeOrders[0].id}
+              </span>
+            </div>
 
-            <div className="space-y-4">
-              <h2 className="text-xl font-black text-[#0B1020]">Historique de mes commandes</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+              <div>
+                <h3 className="text-lg font-black">{activeOrders[0].restaurantName}</h3>
+                <p className="text-xs text-white/70">
+                  Arrivée estimée : <strong className="text-white">~{activeOrders[0].arrivalTime || "20 min"}</strong>
+                </p>
+              </div>
 
-              {orders.length === 0 ? (
-                <div className="bg-white rounded-3xl p-8 border border-[#0B1020]/8 text-center space-y-3">
-                  <Package className="w-10 h-10 text-[#7A8194] mx-auto" />
-                  <p className="text-xs text-[#7A8194]">Aucune commande passée pour l'instant.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {orders.map((ord) => {
-                    const isCompleted = ord.status === "delivered";
-
-                    return (
-                      <div
-                        key={ord.id}
-                        className="bg-white rounded-3xl p-5 md:p-6 border border-[#0B1020]/8 shadow-xs space-y-4"
-                      >
-                        <div className="flex items-start justify-between gap-3 pb-3 border-b border-[#0B1020]/8">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={ord.restaurantLogo}
-                              alt={ord.restaurantName}
-                              className="w-12 h-12 rounded-xl object-contain border border-[#0B1020]/10 p-1"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
-                              }}
-                            />
-                            <div>
-                              <h4 className="font-extrabold text-base text-[#0B1020]">
-                                {ord.restaurantName}
-                              </h4>
-                              <p className="text-xs text-[#7A8194]">
-                                {ord.neighborhood} • {ord.date}
-                              </p>
-                            </div>
-                          </div>
-
-                          <span
-                            className={`text-xs font-black px-3 py-1 rounded-full ${
-                              isCompleted
-                                ? "text-[#12A150] bg-emerald-50"
-                                : "text-[#FF5A00] bg-[#FFF3EA]"
-                            }`}
-                          >
-                            {ord.statusLabel}
-                          </span>
-                        </div>
-
-                        <div className="space-y-2">
-                          {ord.items.map((item, idx) => (
-                            <div key={idx} className="flex justify-between items-center text-xs">
-                              <span className="text-[#3B4256] font-semibold">
-                                <strong className="text-[#0B1020]">{item.quantity}x</strong> {item.name}
-                                {item.options ? ` (${item.options})` : ""}
-                              </span>
-                              <span className="font-bold text-[#0B1020]">
-                                {item.price * item.quantity} MAD
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="pt-3 border-t border-[#0B1020]/8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="text-xs text-[#7A8194]">
-                            Total payé :{" "}
-                            <strong className="text-sm font-black text-[#0B1020]">{ord.total} MAD</strong>
-                          </div>
-
-                          <div className="flex items-center gap-2 self-start sm:self-auto">
-                            {!isCompleted && ord.token && (
-                              <Link
-                                to={`/track/${ord.token}`}
-                                className="foodi-btn-primary py-2 px-4 text-xs font-black shadow-md shadow-[#FF5A00]/20 flex items-center gap-1.5"
-                              >
-                                <Bike className="w-3.5 h-3.5" />
-                                <span>Suivre la commande</span>
-                              </Link>
-                            )}
-
-                            {isCompleted && (
-                              <span className="text-xs font-bold text-[#12A150] bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100 flex items-center gap-1.5">
-                                <Check className="w-3.5 h-3.5" />
-                                <span>Commande terminée</span>
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                {activeOrders[0].token && (
+                  <Link
+                    to={`/track/${activeOrders[0].token}`}
+                    className="foodi-btn-primary py-2.5 px-4 text-xs font-black shadow-lg shadow-[#FF5A00]/30 flex items-center gap-1.5"
+                  >
+                    <Bike className="w-3.5 h-3.5" />
+                    <span>Suivre en direct</span>
+                  </Link>
+                )}
+                <Link
+                  to="/orders"
+                  className="py-2.5 px-4 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-colors"
+                >
+                  Page commandes
+                </Link>
+              </div>
             </div>
           </div>
         )}
 
-        {activeTab === "settings" && (
-          <form onSubmit={handleSaveSettings} className="space-y-6">
+        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#0B1020]/8 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#FFF3EA] text-[#FF5A00] flex items-center justify-center shrink-0">
+              <Package className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-[#0B1020]">Suivi & Historique des commandes</h3>
+              <p className="text-xs text-[#7A8194]">Consultez vos commandes en cours et vos récapitulatifs complets</p>
+            </div>
+          </div>
+          <Link
+            to="/orders"
+            className="foodi-btn-primary py-2.5 px-5 text-xs font-black shadow-md shadow-[#FF5A00]/25 flex items-center gap-2 self-stretch sm:self-auto justify-center"
+          >
+            <span>Accéder aux commandes</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <form onSubmit={handleSaveSettings} className="space-y-6">
             {savedSuccess && (
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2.5 animate-in fade-in duration-200">
                 <Check className="w-4 h-4 text-[#12A150] shrink-0" />
@@ -585,7 +467,6 @@ export const DashboardPage: React.FC = () => {
               </button>
             </div>
           </form>
-        )}
       </main>
 
       <CartDrawer />

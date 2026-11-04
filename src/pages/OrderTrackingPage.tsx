@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import ordersData from "../data/orders.json";
 import { OrderRecord, OrderStatus } from "../types";
+import { useApp } from "../context/AppContext";
+import { HomeHeader } from "../components/HomeHeader";
 import {
   fetchRoadRoute,
   buildRouteGeometry,
@@ -51,6 +53,12 @@ const STEPS: StepConfig[] = [
 export const OrderTrackingPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const { user } = useApp();
+
+  const truncateText = (text?: string, max: number = 10) => {
+    if (!text) return "";
+    return text.length > max ? text.slice(0, max) + "..." : text;
+  };
 
   const [order, setOrder] = useState<OrderRecord | null>(null);
   const [isValidToken, setIsValidToken] = useState<boolean>(true);
@@ -390,53 +398,47 @@ export const OrderTrackingPage: React.FC = () => {
       L.control.zoom({ position: "bottomright" }).addTo(map);
 
       const restaurantPin = L.divIcon({
-        className: "glovo-pin-wrapper",
+        className: "foodi-pin-wrapper",
         html: `
           <div class="relative flex items-center justify-center">
-            <div class="w-10 h-10 rounded-full bg-white border-2 border-[#0B1020] shadow-md flex items-center justify-center p-1.5 overflow-hidden">
+            <div class="w-8 h-8 rounded-full bg-white border-2 border-[#1E293B] shadow-md flex items-center justify-center p-1 overflow-hidden">
               <img src="${order?.restaurantLogo || '/images/restaurants/McDonalds.png'}" class="w-full h-full object-contain" alt="Restaurant" />
             </div>
-            <div class="absolute -bottom-1 w-2.5 h-2.5 bg-[#0B1020] rotate-45"></div>
+            <div class="absolute -bottom-1 w-2 h-2 bg-[#1E293B] rotate-45"></div>
           </div>
         `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
       });
 
       const housePin = L.divIcon({
-        className: "glovo-pin-wrapper",
+        className: "foodi-dest-pin",
         html: `
           <div class="relative flex items-center justify-center">
-            <div class="w-10 h-10 rounded-full bg-[#12A150] border-2 border-white shadow-md flex items-center justify-center text-white">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
+            <div class="absolute w-8 h-8 rounded-full bg-[#FF5A00]/30 animate-ping"></div>
+            <div class="w-7 h-7 rounded-full bg-[#FF5A00] border-3 border-white shadow-xl flex items-center justify-center">
+              <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+            </div>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+
+      const courierPin = L.divIcon({
+        className: "foodi-courier-pin",
+        html: `
+          <div class="relative flex items-center justify-center cursor-pointer">
+            <div class="absolute w-12 h-12 rounded-full bg-[#18181B]/20 animate-ping"></div>
+            <div id="foodi-live-courier-icon" class="w-10 h-10 rounded-full bg-[#18181B] border-2 border-white shadow-xl flex items-center justify-center text-white transition-transform duration-300">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
               </svg>
             </div>
-            <div class="absolute -bottom-1 w-2.5 h-2.5 bg-[#12A150] rotate-45"></div>
           </div>
         `,
         iconSize: [40, 40],
         iconAnchor: [20, 20]
-      });
-
-      const courierPin = L.divIcon({
-        className: "glovo-courier-wrapper",
-        html: `
-          <div class="relative flex items-center justify-center cursor-pointer">
-            <div class="absolute w-12 h-12 rounded-full bg-[#FF5A00]/25 animate-ping"></div>
-            <div id="foodi-live-courier-icon" class="w-11 h-11 rounded-full bg-[#FF5A00] border-2 border-white shadow-lg flex items-center justify-center text-white transition-transform duration-300">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="18.5" cy="17.5" r="3.5"/>
-                <circle cx="5.5" cy="17.5" r="3.5"/>
-                <circle cx="15" cy="5" r="1"/>
-                <path d="M12 17.5V14l-3-3 4-3 2 3h2"/>
-              </svg>
-            </div>
-          </div>
-        `,
-        iconSize: [44, 44],
-        iconAnchor: [22, 22]
       });
 
       L.marker(coords.shop, { icon: restaurantPin }).addTo(map);
@@ -449,8 +451,8 @@ export const OrderTrackingPage: React.FC = () => {
       courierMarkerRef.current = marker;
 
       const roadLine = L.polyline([], {
-        color: "#FF5A00",
-        weight: 5,
+        color: "#1E293B",
+        weight: 4.5,
         opacity: 0.9,
         lineCap: "round",
         lineJoin: "round"
@@ -537,7 +539,7 @@ export const OrderTrackingPage: React.FC = () => {
 
           <div className="pt-2 flex flex-col gap-2.5">
             <Link
-              to="/dashboard"
+              to="/orders"
               className="foodi-btn-primary w-full py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer"
             >
               Consulter mes commandes
@@ -650,7 +652,7 @@ export const OrderTrackingPage: React.FC = () => {
               <span>Retour à l'accueil</span>
             </Link>
             <Link
-              to="/dashboard"
+              to="/orders"
               className="w-full sm:w-auto py-3 px-5 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors text-center"
             >
               Mes commandes
@@ -741,105 +743,24 @@ export const OrderTrackingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] flex flex-col font-sans text-[#0B1020] animate-entrance-slide-up">
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#0B1020]/8 px-4 sm:px-6 py-3">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/dashboard")}
-              aria-label="Retour"
-              className="w-9 h-9 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-colors cursor-pointer border border-[#0B1020]/10"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-
-            <Link to="/" className="flex items-center gap-2">
-              <img
-                src="/images/logohor.png"
-                alt="Foodi"
-                className="h-7 w-auto object-contain hidden sm:block"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/images/logo.png";
-                }}
-              />
-              <img
-                src="/images/logo.png"
-                alt="Foodi"
-                className="h-7 w-7 object-contain sm:hidden"
-              />
-            </Link>
-
-            <div className="h-5 w-px bg-[#0B1020]/10 mx-1 hidden sm:block" />
-
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-xs sm:text-sm text-[#0B1020]">
-                  {order.id}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase text-[#12A150] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#12A150] animate-ping" />
-                  Direct
-                </span>
-              </div>
-              <p className="text-[11px] text-[#7A8194] truncate max-w-[180px] sm:max-w-none">
-                {order.restaurantName}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Link
-              to="/"
-              className="h-9 px-3 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-[#0B1020]/10"
-              title="Retour à l'accueil"
-            >
-              <Home className="w-3.5 h-3.5 text-[#FF5A00]" />
-              <span className="hidden sm:inline">Accueil</span>
-            </Link>
-
-            <button
-              onClick={handleCopyLink}
-              className="h-9 px-3 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-[#0B1020]/10"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-[#12A150]" />
-                  <span className="text-[#12A150]">Copié</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Partager</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#0B1020]">
+      <HomeHeader title="Location Tracking" showBackButton />
 
       {networkError && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-xs font-semibold text-amber-800 flex items-center justify-center gap-2">
           <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-          <span>Synchronisation réseau ralentie. Nouvelle tentative automatique en cours...</span>
+          <span>Synchronisation réseau en cours...</span>
         </div>
       )}
 
       <main className="max-w-[1400px] w-full mx-auto p-3 sm:p-6 flex-1 flex flex-col lg:flex-row gap-5 items-stretch">
-        <div className="w-full lg:flex-1 h-[420px] sm:h-[520px] lg:h-auto min-h-[420px] rounded-3xl overflow-hidden bg-white border border-[#0B1020]/8 shadow-sm relative flex flex-col">
+        <div className="w-full lg:flex-1 h-[360px] sm:h-[480px] lg:h-[660px] rounded-3xl overflow-hidden bg-white border border-[#0B1020]/8 shadow-sm relative flex flex-col">
           <div ref={mapContainerRef} className="w-full h-full z-0 flex-1" />
 
-          <div className="absolute top-4 left-4 z-[1000] bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-sm border border-[#0B1020]/8 flex items-center gap-2.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FF5A00] animate-ping" />
+          <div className="absolute top-4 left-4 z-[1000] bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-2xl shadow-sm border border-[#0B1020]/8 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#FF5A00] animate-ping" />
             <span className="text-xs font-black text-[#0B1020]">
-              {order.status === "pending_confirmation"
-                ? "En attente du restaurant"
-                : order.status === "preparing"
-                ? "Préparation en cuisine"
-                : order.status === "searching_driver"
-                ? "Recherche d'un livreur"
-                : order.status === "heading_to_restaurant"
-                ? "Livreur en route vers restaurant"
-                : "Livreur en route vers chez vous"}
+              {order.statusLabel || "En direct"}
             </span>
           </div>
 
@@ -847,7 +768,7 @@ export const OrderTrackingPage: React.FC = () => {
             <button
               onClick={handleRecenter}
               title="Centrer la carte"
-              className="bg-white/95 hover:bg-white text-[#0B1020] px-3.5 py-2 rounded-2xl shadow-sm border border-[#0B1020]/8 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              className="bg-white/95 hover:bg-white text-[#0B1020] px-3 py-1.5 rounded-xl shadow-sm border border-[#0B1020]/8 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Navigation className="w-3.5 h-3.5 text-[#FF5A00]" />
               <span>Centrer</span>
@@ -855,20 +776,20 @@ export const OrderTrackingPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full lg:w-[440px] xl:w-[470px] flex flex-col gap-4">
-          <section className="bg-white rounded-3xl p-5 sm:p-6 border border-[#0B1020]/8 shadow-xs space-y-4">
+        <div className="w-full lg:w-[440px] xl:w-[470px]">
+          <div className="bg-[#18181B] text-white rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-1.5 text-[#FF5A00] bg-[#FFF3EA]">
+                <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-1.5 text-[#FF5A00] bg-white/10 border border-white/10">
                   Arrivée estimée
                 </span>
 
-                <h2 className="text-2xl sm:text-3xl font-black text-[#0B1020] tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   {order.arrivalTime ? `~${order.arrivalTime}` : `~${order.totalTime || 25} min`}
                 </h2>
               </div>
 
-              <div className="w-13 h-13 rounded-2xl bg-[#FFF3EA] text-[#FF5A00] flex items-center justify-center shrink-0">
+              <div className="w-13 h-13 rounded-2xl bg-white/10 text-[#FF5A00] flex items-center justify-center shrink-0 border border-white/10">
                 {order.status === "preparing" ? (
                   <ChefHat className="w-7 h-7 text-[#FF5A00]" />
                 ) : order.status === "searching_driver" ? (
@@ -880,7 +801,7 @@ export const OrderTrackingPage: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-base sm:text-lg font-black text-[#0B1020] leading-snug">
+              <h3 className="text-base sm:text-lg font-black text-white leading-snug">
                 {order.status === "pending_confirmation"
                   ? "Nous attendons la confirmation du restaurant"
                   : order.status === "preparing"
@@ -891,27 +812,27 @@ export const OrderTrackingPage: React.FC = () => {
                   ? `${order.courierName || "Le livreur"} se rend au restaurant`
                   : "Votre commande est en route !"}
               </h3>
-              <p className="text-xs text-[#7A8194] leading-relaxed">
+              <p className="text-xs text-white/70 leading-relaxed">
                 {order.status === "pending_confirmation"
-                  ? "Votre commande a bien été envoyée et transmise à l'établissement. Confirmation sous 1 à 2 min."
+                  ? "Votre commande a bien été transmise à l'établissement."
                   : order.status === "preparing"
-                  ? "Les chefs cuisinent vos plats avec des ingrédients frais. Emballage soigné."
+                  ? "Les chefs cuisinent vos plats avec des ingrédients frais."
                   : order.status === "searching_driver"
-                  ? "Attribution du coursier partenaire le plus proche pour une récupération immédiate."
+                  ? "Attribution du coursier partenaire le plus proche."
                   : order.status === "heading_to_restaurant"
                   ? `Le coursier récupère votre paquet chez ${order.restaurantName}.`
-                  : `Le livreur approche de votre adresse à ${order.neighborhood}. Préparez-vous à le recevoir.`}
+                  : `Le livreur approche de ${truncateText(order.neighborhood || order.address, 10)}.`}
               </p>
             </div>
 
             {order.status === "pending_confirmation" && (
-              <div className="bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#0B1020]/6 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-100/80 text-amber-700 flex items-center justify-center shrink-0">
+              <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/10 text-amber-400 flex items-center justify-center shrink-0 border border-white/10">
                   <Clock className="w-4 h-4 animate-pulse-gentle" />
                 </div>
                 <div className="text-xs">
-                  <span className="font-bold text-[#0B1020] block">En attente de confirmation</span>
-                  <span className="text-[#7A8194] text-[11px]">
+                  <span className="font-bold text-white block">En attente de confirmation</span>
+                  <span className="text-white/60 text-[11px]">
                     Envoyée à {order.date?.split("à")[1] || "l'instant"} • Réf {order.id}
                   </span>
                 </div>
@@ -919,18 +840,18 @@ export const OrderTrackingPage: React.FC = () => {
             )}
 
             {order.status === "preparing" && (
-              <div className="bg-[#FFF3EA] p-3.5 rounded-2xl border border-[#FF5A00]/15 flex items-center gap-3.5">
+              <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 flex items-center gap-3.5">
                 <div className="relative w-10 h-10 flex items-center justify-center">
                   <div className="absolute top-1 left-2.5 w-1 h-2.5 rounded-full bg-[#FF5A00] animate-steam-1" />
                   <div className="absolute top-0.5 left-4.5 w-1 h-3 rounded-full bg-[#FF5A00] animate-steam-2" />
                   <div className="absolute top-1 left-6.5 w-1 h-2.5 rounded-full bg-[#FF5A00] animate-steam-3" />
-                  <div className="w-9 h-9 rounded-xl bg-white text-[#FF5A00] flex items-center justify-center shadow-xs">
+                  <div className="w-9 h-9 rounded-xl bg-white/10 text-[#FF5A00] flex items-center justify-center border border-white/10">
                     <ChefHat className="w-5 h-5" />
                   </div>
                 </div>
                 <div className="text-xs">
-                  <span className="font-black text-[#0B1020] block">Cuisine en action</span>
-                  <span className="text-[#7A8194] text-[11px]">
+                  <span className="font-black text-white block">Cuisine en action</span>
+                  <span className="text-white/60 text-[11px]">
                     Temps de préparation estimé : ~{order.cookingTime || 15} minutes
                   </span>
                 </div>
@@ -938,18 +859,18 @@ export const OrderTrackingPage: React.FC = () => {
             )}
 
             {order.status === "searching_driver" && (
-              <div className="bg-[#FFF3EA] p-3.5 rounded-2xl border border-[#FF5A00]/15 flex items-center gap-3.5">
+              <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 flex items-center gap-3.5">
                 <div className="relative w-10 h-10 flex items-center justify-center">
                   <div className="absolute w-8 h-8 rounded-full bg-[#FF5A00]/25 animate-radar-1" />
                   <div className="absolute w-8 h-8 rounded-full bg-[#FF5A00]/25 animate-radar-2" />
-                  <div className="w-9 h-9 rounded-xl bg-white text-[#FF5A00] flex items-center justify-center shadow-xs z-10">
+                  <div className="w-9 h-9 rounded-xl bg-white/10 text-[#FF5A00] flex items-center justify-center border border-white/10 z-10">
                     <Search className="w-4 h-4" />
                   </div>
                 </div>
                 <div className="text-xs">
-                  <span className="font-black text-[#0B1020] block">Recherche radar active</span>
-                  <span className="text-[#7A8194] text-[11px]">
-                    Détection des coursiers disponibles à proximité immédiate
+                  <span className="font-black text-white block">Recherche radar active</span>
+                  <span className="text-white/60 text-[11px]">
+                    Détection des coursiers disponibles à proximité
                   </span>
                 </div>
               </div>
@@ -957,7 +878,7 @@ export const OrderTrackingPage: React.FC = () => {
 
             <div className="pt-2">
               <div className="flex items-center justify-between text-center relative">
-                <div className="absolute top-3.5 left-4 right-4 h-1 bg-[#0B1020]/5 -z-0">
+                <div className="absolute top-3.5 left-4 right-4 h-1 bg-white/10 -z-0">
                   <div
                     className="h-full bg-[#FF5A00] transition-all duration-500 rounded-full"
                     style={{
@@ -975,10 +896,10 @@ export const OrderTrackingPage: React.FC = () => {
                       <div
                         className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold transition-all shadow-xs ${
                           isCurrent
-                            ? "bg-[#FF5A00] text-white ring-4 ring-[#FF5A00]/20 scale-105"
+                            ? "bg-[#FF5A00] text-white ring-4 ring-[#FF5A00]/30 scale-105"
                             : isPassed
                             ? "bg-[#FF5A00] text-white"
-                            : "bg-[#0B1020]/10 text-[#0B1020]/40"
+                            : "bg-white/10 text-white/40 border border-white/10"
                         }`}
                       >
                         {isPassed ? "✓" : step.number}
@@ -986,10 +907,10 @@ export const OrderTrackingPage: React.FC = () => {
                       <span
                         className={`text-[10px] hidden sm:block ${
                           isCurrent
-                            ? "font-black text-[#0B1020]"
+                            ? "font-black text-white"
                             : isPassed
-                            ? "font-bold text-[#0B1020]/80"
-                            : "font-semibold text-[#7A8194]"
+                            ? "font-bold text-white/80"
+                            : "font-semibold text-white/40"
                         }`}
                       >
                         {step.shortLabel}
@@ -999,132 +920,124 @@ export const OrderTrackingPage: React.FC = () => {
                 })}
               </div>
             </div>
-          </section>
 
-          {courierAssigned && (
-            <section className="bg-white rounded-3xl p-4 sm:p-5 border border-[#0B1020]/8 shadow-xs flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-[#FF5A00] text-white flex items-center justify-center font-black text-lg shadow-xs">
-                    <Bike className="w-6 h-6 text-white" />
+            {courierAssigned && (
+              <div className="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full bg-[#FF5A00] text-white flex items-center justify-center font-black text-lg shadow-xs">
+                      <Bike className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-[#12A150] border-2 border-[#18181B]" />
                   </div>
-                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-[#12A150] border-2 border-white" />
+                  <div>
+                    <h4 className="font-black text-sm text-white">
+                      {order.courierName || "Amine Tazi"}
+                    </h4>
+                    <p className="text-xs text-white/60">
+                      Coursier Foodi • Scooter
+                    </p>
+                    <span className="text-[10px] font-extrabold text-[#FF5A00] bg-white/10 px-2 py-0.5 rounded-md inline-block mt-1">
+                      ★ 4.9 (420+ courses)
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-black text-sm text-[#0B1020]">
-                    {order.courierName || "Amine Tazi"}
-                  </h4>
-                  <p className="text-xs text-[#7A8194]">
-                    Coursier Foodi • Scooter
-                  </p>
-                  <span className="text-[10px] font-extrabold text-[#FF5A00] bg-[#FFF3EA] px-2 py-0.5 rounded-md inline-block mt-1">
-                    ★ 4.9 (420+ courses)
-                  </span>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`tel:${order.courierPhone || "+212662102030"}`}
+                    className="w-10 h-10 rounded-full bg-[#FF5A00] hover:bg-[#e04f00] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-md cursor-pointer"
+                    title="Appeler le coursier"
+                  >
+                    <Phone className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={`sms:${order.courierPhone || "+212662102030"}`}
+                    className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-transform hover:scale-105 border border-white/10 cursor-pointer"
+                    title="Envoyer un SMS"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                  </a>
                 </div>
               </div>
+            )}
 
-              <div className="flex items-center gap-1.5">
-                <a
-                  href={`tel:${order.courierPhone || "+212662102030"}`}
-                  className="w-10 h-10 rounded-full bg-[#FAF8F5] hover:bg-[#FF5A00] hover:text-white text-[#0B1020] flex items-center justify-center transition-colors cursor-pointer border border-[#0B1020]/10"
-                  title="Appeler le coursier"
-                >
-                  <Phone className="w-4 h-4" />
-                </a>
-                <a
-                  href={`sms:${order.courierPhone || "+212662102030"}`}
-                  className="w-10 h-10 rounded-full bg-[#FAF8F5] hover:bg-[#FF5A00] hover:text-white text-[#0B1020] flex items-center justify-center transition-colors cursor-pointer border border-[#0B1020]/10"
-                  title="Envoyer un SMS"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                </a>
+            <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-black uppercase text-white">
+                <MapPin className="w-4 h-4 text-[#FF5A00]" />
+                <span>Adresse de livraison</span>
               </div>
-            </section>
-          )}
-
-          <section className="bg-white rounded-3xl p-4 sm:p-5 border border-[#0B1020]/8 shadow-xs space-y-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase text-[#0B1020]">
-              <MapPin className="w-4 h-4 text-[#FF5A00]" />
-              <span>Adresse de livraison</span>
-            </div>
-            <p className="text-sm font-black text-[#0B1020]">
-              {order.neighborhood}
-              {order.buildingNameNumber ? `, ${order.buildingNameNumber}` : ""}
-              {order.floorNumber ? `, Étage ${order.floorNumber}` : ""}
-              {order.doorNumber ? `, Porte ${order.doorNumber}` : ""}
-            </p>
-            {order.street && (
-              <p className="text-xs text-[#7A8194] leading-relaxed">
-                {order.street}
+              <p className="text-sm font-black text-white" title={order.address}>
+                {truncateText(order.neighborhood || order.address, 10)}
               </p>
-            )}
-            {order.instructions && (
-              <div className="text-[11px] text-[#7A8194] bg-[#FAF8F5] p-2.5 rounded-xl border border-[#0B1020]/6 mt-1">
-                <span className="font-bold text-[#0B1020]">Consigne : </span>
-                {order.instructions}
-              </div>
-            )}
-          </section>
-
-          <section className="bg-white rounded-3xl p-4 sm:p-5 border border-[#0B1020]/8 shadow-xs space-y-3">
-            <button
-              onClick={() => setShowReceiptDetails(!showReceiptDetails)}
-              className="w-full flex items-center justify-between text-left cursor-pointer"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-white border border-[#0B1020]/10 p-1 flex items-center justify-center shrink-0">
-                  <img
-                    src={order.restaurantLogo}
-                    alt={order.restaurantName}
-                    className="w-full h-full object-contain"
-                  />
+              {order.instructions && (
+                <div className="text-[11px] text-white/70 bg-white/5 p-2 rounded-xl border border-white/10 mt-1">
+                  <span className="font-bold text-white">Consigne : </span>
+                  {order.instructions}
                 </div>
-                <div>
-                  <h4 className="font-extrabold text-xs text-[#0B1020]">
-                    {order.restaurantName}
-                  </h4>
-                  <p className="text-[10px] text-[#7A8194]">
-                    {order.items.length} article(s) • Total : {order.total} DH
-                  </p>
-                </div>
-              </div>
-              {showReceiptDetails ? (
-                <ChevronUp className="w-4 h-4 text-[#7A8194]" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-[#7A8194]" />
               )}
-            </button>
+            </div>
 
-            {showReceiptDetails && (
-              <div className="pt-2 border-t border-[#0B1020]/6 space-y-2 text-xs divide-y divide-[#0B1020]/6">
-                {order.items.map((it, idx) => (
-                  <div key={idx} className="pt-2 first:pt-0 flex justify-between gap-2">
-                    <span className="text-[#0B1020]">
-                      <strong>{it.quantity}x</strong> {it.name}
-                      {it.options && (
-                        <span className="block text-[10px] text-[#7A8194]">
-                          {it.options}
-                        </span>
-                      )}
-                    </span>
-                    <span className="font-black text-[#0B1020] shrink-0">
-                      {it.price * it.quantity} DH
+            <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-3">
+              <button
+                onClick={() => setShowReceiptDetails(!showReceiptDetails)}
+                className="w-full flex items-center justify-between text-left cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center shrink-0">
+                    <img
+                      src={order.restaurantLogo}
+                      alt={order.restaurantName}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-xs text-white">
+                      {order.restaurantName}
+                    </h4>
+                    <p className="text-[10px] text-white/60">
+                      Menu commandé • Total : {order.total} DH
+                    </p>
+                  </div>
+                </div>
+                {showReceiptDetails ? (
+                  <ChevronUp className="w-4 h-4 text-white/60" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-white/60" />
+                )}
+              </button>
+
+              {showReceiptDetails && (
+                <div className="pt-2 border-t border-white/10 space-y-2 text-xs divide-y divide-white/10">
+                  {order.items.map((it, idx) => (
+                    <div key={idx} className="pt-2 first:pt-0 flex justify-between gap-2">
+                      <span className="text-white/80">
+                        <strong className="text-white">{it.quantity}x</strong> {it.name}
+                        {it.options && (
+                          <span className="block text-[10px] text-white/60">
+                            {it.options}
+                          </span>
+                        )}
+                      </span>
+                      <span className="font-black text-white shrink-0">
+                        {it.price * it.quantity} DH
+                      </span>
+                    </div>
+                  ))}
+                  <div className="pt-2 flex justify-between text-xs font-bold text-white/60">
+                    <span>Frais de livraison</span>
+                    <span>{order.deliveryFee === 0 ? "Gratuit" : `${order.deliveryFee} DH`}</span>
+                  </div>
+                  <div className="pt-2 flex justify-between text-sm font-black text-white">
+                    <span>Total</span>
+                    <span className="text-[#FF5A00]">
+                      {order.total} DH ({order.paymentLabel || "Espèces"})
                     </span>
                   </div>
-                ))}
-                <div className="pt-2 flex justify-between text-xs font-bold text-[#7A8194]">
-                  <span>Frais de livraison</span>
-                  <span>{order.deliveryFee === 0 ? "Gratuit" : `${order.deliveryFee} DH`}</span>
                 </div>
-                <div className="pt-2 flex justify-between text-sm font-black text-[#0B1020]">
-                  <span>Total</span>
-                  <span className="text-[#FF5A00]">
-                    {order.total} DH ({order.paymentLabel || "Espèces"})
-                  </span>
-                </div>
-              </div>
-            )}
-          </section>
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>

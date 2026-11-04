@@ -33,6 +33,13 @@
     box-sizing: border-box;
 }
 
+@media (max-width: 767px) {
+    .foodi-header-desktop-only,
+    .foodi-header-desktop-only .foodi-header-bar {
+        display: none !important;
+    }
+}
+
 @media (min-width: 768px) {
     .foodi-header-bar {
         height: 70px;

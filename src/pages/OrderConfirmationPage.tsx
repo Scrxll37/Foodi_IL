@@ -20,6 +20,7 @@ import { useApp } from "../context/AppContext";
 import restaurantsData from "../data/restaurants.json";
 import ordersData from "../data/orders.json";
 import { Restaurant } from "../types";
+import { HomeHeader } from "../components/HomeHeader";
 
 export const OrderConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -397,13 +398,7 @@ export const OrderConfirmationPage: React.FC = () => {
                 <span className="text-[10px] text-[#7A8194] font-bold block uppercase">Référence</span>
                 <div className="flex items-center gap-1.5 font-mono font-black text-[#0B1020]">
                   <span>{confirmedOrder.id}</span>
-                  <button
-                    onClick={() => handleCopyRef(confirmedOrder.id)}
-                    className="p-1 rounded bg-white hover:text-[#FF5A00] transition-colors cursor-pointer border border-[#0B1020]/8"
-                    title="Copier la référence"
-                  >
-                    {copiedRef ? <Check className="w-3 h-3 text-[#12A150]" /> : <Copy className="w-3 h-3 text-[#7A8194]" />}
-                  </button>
+                
                 </div>
               </div>
             </div>
@@ -434,16 +429,11 @@ export const OrderConfirmationPage: React.FC = () => {
               <MapPin className="w-4 h-4 text-[#FF5A00] shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <span className="text-[10px] text-[#7A8194] font-bold block uppercase">Adresse de livraison</span>
-                <p className="text-[#0B1020] font-black text-xs leading-snug">
-                  {confirmedOrder.neighborhood}
-                  {confirmedOrder.buildingNameNumber ? `, ${confirmedOrder.buildingNameNumber}` : ""}
-                  </p>
+                <p className="text-[#0B1020] font-black text-xs leading-snug" title={confirmedOrder.neighborhood}>
+                  {confirmedOrder.neighborhood.length > 10 ? confirmedOrder.neighborhood.slice(0, 10) + "..." : confirmedOrder.neighborhood}
+                </p>
                
-                {confirmedOrder.instructions && (
-                  <p className="text-[10px] text-[#3B4256] bg-white px-2 py-1 rounded-md border border-[#0B1020]/6 inline-block mt-1 font-semibold">
-                    Consigne : {confirmedOrder.instructions}
-                  </p>
-                )}
+                
               </div>
             </div>
           </div>
@@ -494,36 +484,8 @@ export const OrderConfirmationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] flex flex-col">
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#0B1020]/8 px-4 sm:px-6 py-3.5">
-        <div className="max-w-[1160px] mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              aria-label="Retour"
-              className="w-9 h-9 rounded-xl bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-colors border border-[#0B1020]/6 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div>
-              <h1 className="text-sm sm:text-base font-black text-[#0B1020]">
-                Validation de la commande
-              </h1>
-              <p className="text-[11px] text-[#7A8194] font-medium">
-                Dernière étape avant la préparation en cuisine
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#12A150] bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Paiement sécurisé</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#FFFDF9] flex flex-col font-sans">
+      <HomeHeader title="Validation" showBackButton />
 
       <main className="max-w-[1160px] w-full mx-auto px-4 sm:px-6 py-6 flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -621,8 +583,8 @@ export const OrderConfirmationPage: React.FC = () => {
               </div>
 
               <div className="space-y-1 text-xs">
-                <p className="font-black text-sm text-[#0B1020]">
-                  {address?.neighborhood || "Talborjt"}, {address?.street || "Avenue Hassan II"}
+                <p className="font-black text-sm text-[#0B1020]" title={address?.neighborhood || "Agadir"}>
+                  {(address?.neighborhood || "Talborjt").length > 10 ? (address?.neighborhood || "Talborjt").slice(0, 10) + "..." : (address?.neighborhood || "Talborjt")}
                 </p>
                 <p className="text-[#7A8194] font-medium">
                   {address?.buildingNameNumber ? `Bâtiment ${address.buildingNameNumber} • ` : ""}

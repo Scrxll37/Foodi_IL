@@ -9,6 +9,7 @@ export const MobileBottomNav: React.FC = () => {
 
   const isHome = location.pathname === "/";
   const isRestaurants = location.pathname.startsWith("/restaurants");
+  const isOrders = location.pathname.startsWith("/orders") || location.pathname.startsWith("/my-orders");
   const isDashboard = location.pathname === "/dashboard";
 
   return (
@@ -52,8 +53,8 @@ export const MobileBottomNav: React.FC = () => {
       </button>
 
       <Link
-        to={user.isLoggedIn ? "/dashboard" : "/login?redirect=/dashboard"}
-        className={`bottom-nav-link ${isDashboard ? "active" : ""}`}
+        to={user.isLoggedIn ? "/orders" : "/login?redirect=/orders"}
+        className={`bottom-nav-link ${isOrders ? "active" : ""}`}
       >
         <Clock size={20} />
         <span>Commandes</span>
@@ -61,7 +62,7 @@ export const MobileBottomNav: React.FC = () => {
 
       <Link
         to={user.isLoggedIn ? "/dashboard" : "/login"}
-        className="bottom-nav-link"
+        className={`bottom-nav-link ${isDashboard ? "active" : ""}`}
       >
         <User size={20} />
         <span>{user.isLoggedIn ? "Profil" : "Connexion"}</span>

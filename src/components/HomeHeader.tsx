@@ -1,19 +1,50 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { MapPin, Search, ShoppingBag, Bell, User as UserIcon, ArrowLeft } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  MapPin,
+  Search,
+  ShoppingBag,
+  Bell,
+  User as UserIcon,
+  ArrowLeft,
+  Package,
+  MoreVertical
+} from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { SearchOverlay } from "./SearchOverlay";
 
 interface HomeHeaderProps {
   showBackButton?: boolean;
+  title?: string;
 }
 
-export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }) => {
+export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false, title }) => {
   const { cartCount, setIsCartOpen, setIsNotifOpen, user, address, notifications } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
+
+  const isHomePage = location.pathname === "/";
+
+  const truncateText = (text: string, max: number = 10) => {
+    if (!text) return "";
+    return text.length > max ? text.slice(0, max) + "..." : text;
+  };
+
+  const getAutoTitle = () => {
+    if (title) return title;
+    const p = location.pathname;
+    if (p.startsWith("/track")) return "Location Tracking";
+    if (p.startsWith("/orders") || p.startsWith("/my-orders")) return "Mes commandes";
+    if (p.startsWith("/order-confirmation")) return "Confirmation";
+    if (p.startsWith("/restaurants/")) return "Restaurant";
+    if (p.startsWith("/restaurants")) return "Restaurants";
+    if (p.startsWith("/dashboard")) return "Mon compte";
+    if (p.startsWith("/myaddress")) return "Mon adresse";
+    return "Foodi";
+  };
 
   const handleAddressClick = () => {
     if (user.isLoggedIn) {
@@ -34,9 +65,36 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
   return (
     <>
       <header className="foodi-header-sticky">
+        {!isHomePage && (
+          <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white/95 backdrop-blur-md border-b border-[#0B1020]/8 sticky top-0 z-40">
+            <button
+              type="button"
+              onClick={handleBack}
+              aria-label="Retour"
+              className="w-9 h-9 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-colors border border-[#0B1020]/10 shrink-0 cursor-pointer shadow-xs"
+            >
+              <ArrowLeft size={18} />
+            </button>
+
+            <h1 className="text-sm font-black text-[#0B1020] truncate max-w-[200px] text-center tracking-tight">
+              {getAutoTitle()}
+            </h1>
+
+            <button
+              type="button"
+              onClick={() => navigate(user.isLoggedIn ? "/orders" : "/login")}
+              aria-label="Options"
+              className="w-9 h-9 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-colors border border-[#0B1020]/10 shrink-0 cursor-pointer shadow-xs"
+            >
+              <MoreVertical size={18} />
+            </button>
+          </div>
+        )}
+
+        <div className={!isHomePage ? "hidden md:block foodi-header-desktop-only" : ""}>
         <div className="foodi-header-bar">
           <div className="foodi-header-left">
-            {showBackButton ? (
+            {showBackButton && isHomePage ? (
               <button
                 type="button"
                 onClick={handleBack}
@@ -74,7 +132,9 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
                   <span>Livraison à Agadir</span>
                 </div>
                 <span className="foodi-header-address-text">
-                  {user.isLoggedIn ? (address ? `${address.neighborhood}, Agadir` : "Choisir l'adresse") : "Connexion requise"}
+                  {user.isLoggedIn
+                    ? (address ? `${truncateText(address.neighborhood, 10)}, Agadir` : "Choisir l'adresse")
+                    : "Connexion requise"}
                 </span>
               </div>
             </button>
@@ -107,6 +167,15 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
                     </span>
                   )}
                 </button>
+
+                <Link
+                  to="/orders"
+                  aria-label="Mes Commandes"
+                  className="hidden md:flex items-center gap-1.5 h-10 px-3 rounded-xl border border-[#0B1020]/10 bg-white hover:bg-[#FFF3EA] hover:text-[#FF5A00] text-xs font-black text-[#0B1020] transition-colors"
+                >
+                  <Package size={15} className="text-[#FF5A00]" />
+                  <span>Commandes</span>
+                </Link>
 
                 <Link
                   to="/dashboard"
@@ -147,6 +216,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false }
               )}
             </button>
           </div>
+        </div>
         </div>
       </header>
 

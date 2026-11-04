@@ -139,6 +139,7 @@ export interface OrderRecord {
   doorNumber?: string;
   street?: string;
   date: string;
+  deliveredAt?: string;
   status: OrderStatus;
   statusLabel: string;
   cookingTime?: number;

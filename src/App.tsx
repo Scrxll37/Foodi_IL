@@ -8,6 +8,7 @@ import { MyAddressPage } from "./pages/MyAddressPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { OrdersPage } from "./pages/OrdersPage";
 import { OrderConfirmationPage } from "./pages/OrderConfirmationPage";
 import { OrderTrackingPage } from "./pages/OrderTrackingPage";
 import { TestBoardPage } from "./pages/TestBoardPage";
@@ -56,6 +57,22 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <MyAddressPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-orders"
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
               </ProtectedRoute>
             }
           />
