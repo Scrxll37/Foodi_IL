@@ -8,6 +8,16 @@
     box-sizing: border-box;
 }
 
+.foodi-header-mobile-bar {
+    pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+    .foodi-header-sticky-subpage {
+        padding: 0 !important;
+    }
+}
+
 @media (min-width: 768px) {
     .foodi-header-sticky {
         padding: 14px 24px 6px;

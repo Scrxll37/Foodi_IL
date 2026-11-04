@@ -7,8 +7,7 @@ import {
   Bell,
   User as UserIcon,
   ArrowLeft,
-  Package,
-  MoreVertical
+  Package
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { SearchOverlay } from "./SearchOverlay";
@@ -55,6 +54,23 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false, 
   };
 
   const handleBack = () => {
+    const p = location.pathname;
+    if (p.startsWith("/track")) {
+      navigate("/orders");
+      return;
+    }
+    if (p.startsWith("/orders") || p.startsWith("/my-orders")) {
+      navigate("/");
+      return;
+    }
+    if (p.startsWith("/order-confirmation")) {
+      navigate("/");
+      return;
+    }
+    if (p.startsWith("/dashboard")) {
+      navigate("/");
+      return;
+    }
     if (window.history.length > 1) {
       navigate(-1);
     } else {
@@ -64,29 +80,31 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false, 
 
   return (
     <>
-      <header className="foodi-header-sticky">
+      <header className={`foodi-header-sticky ${!isHomePage ? "foodi-header-sticky-subpage" : ""}`}>
         {!isHomePage && (
-          <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white/95 backdrop-blur-md border-b border-[#0B1020]/8 sticky top-0 z-40">
-            <button
-              type="button"
-              onClick={handleBack}
-              aria-label="Retour"
-              className="w-9 h-9 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-colors border border-[#0B1020]/10 shrink-0 cursor-pointer shadow-xs"
-            >
-              <ArrowLeft size={18} />
-            </button>
+          <div className="md:hidden foodi-header-mobile-bar pointer-events-auto w-full flex items-center justify-between px-3.5 py-2.5 bg-white/95 backdrop-blur-md border-b border-[#0B1020]/8 sticky top-0 z-50">
+            <Link to="/" className="flex items-center shrink-0">
+              <img
+                src="/images/logohor.png"
+                alt="Foodi"
+                className="h-6 w-auto object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/images/logo.png";
+                }}
+              />
+            </Link>
 
-            <h1 className="text-sm font-black text-[#0B1020] truncate max-w-[200px] text-center tracking-tight">
+            <h1 className="text-xs sm:text-sm font-black text-[#0B1020] truncate text-center px-2 flex-1 tracking-tight">
               {getAutoTitle()}
             </h1>
 
             <button
               type="button"
-              onClick={() => navigate(user.isLoggedIn ? "/orders" : "/login")}
-              aria-label="Options"
-              className="w-9 h-9 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-colors border border-[#0B1020]/10 shrink-0 cursor-pointer shadow-xs"
+              onClick={handleBack}
+              aria-label="Retour"
+              className="w-8 h-8 rounded-full bg-[#FAF8F5] hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] flex items-center justify-center transition-transform active:scale-90 border border-[#0B1020]/10 shrink-0 cursor-pointer shadow-xs pointer-events-auto"
             >
-              <MoreVertical size={18} />
+              <ArrowLeft size={16} />
             </button>
           </div>
         )}
