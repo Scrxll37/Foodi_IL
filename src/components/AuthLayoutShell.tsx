@@ -1,5 +1,6 @@
 import React, { type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 interface AuthLayoutShellProps {
   children: ReactNode;
@@ -36,65 +37,60 @@ export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({
   const resolvedMobile = mobileImage || defaultMobileImages[pageType] || "/images/auth/phone-login.png";
 
   return (
-    <div className="auth-page">
-      <div className="auth-split">
-        <div className="auth-hero-mobile" key={`mobile-hero-${pageType}`}>
-          <img
-            key={`mobile-img-${pageType}`}
-            src={resolvedMobile}
-            alt="Foodi"
-            className="auth-hero-mobile-img"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = "/images/auth/authhero.png";
-            }}
-          />
-          <div className="auth-curve-divider-mobile">
-            <svg viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" className="auth-curve-svg-mobile">
-              <path d="M0,36 Q720,-10 1440,36 L1440,60 L0,60 Z" fill="#FAF8F5" />
-            </svg>
+    <div className="min-h-screen bg-white font-sans text-[#0B1020]">
+      <div className="min-h-screen flex flex-col lg:flex-row">
+        <div className="w-full lg:w-[48%] xl:w-[45%] flex flex-col justify-between p-6 sm:p-10 lg:p-12 min-h-screen bg-white">
+          <div className="flex items-center justify-between w-full">
+            <Link
+              to={backHref}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0B1020]/10 bg-white text-xs font-bold text-[#0B1020] hover:bg-[#FAF8F5] transition-colors shadow-2xs cursor-pointer"
+              title="Retour à l'accueil"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#0B1020]" />
+              <span>Retour</span>
+            </Link>
+
+            <div />
           </div>
 
-          <Link to={backHref} className="auth-back-btn" title="Retour à l'accueil">
-            <i className="fa-solid fa-arrow-left" />
-          </Link>
+          <div className="w-full max-w-[380px] mx-auto my-auto py-8">
+            {children}
+          </div>
+
+          <div className="text-center pt-4">
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#7A8194]/60">
+              Foodi • Agadir
+            </span>
+          </div>
         </div>
 
-        <div className="auth-hero-desktop" key={`desktop-hero-${pageType}`}>
+        <div className="hidden lg:flex lg:w-[52%] xl:w-[55%] relative overflow-hidden bg-[#0B1020] p-10 xl:p-14 flex-col justify-end">
           <img
             key={`desktop-img-${pageType}`}
             src={resolvedDesktop}
-            alt="Foodi - Vos plats préférés, en un clic !"
-            className="auth-hero-img"
+            alt="Foodi - Livraison de repas à Agadir"
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-70"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = "/images/auth/authhero.png";
             }}
           />
-          <div className="auth-curve-divider-desktop">
-            <svg viewBox="0 0 60 1440" fill="none" preserveAspectRatio="none" className="auth-curve-svg-desktop">
-              <path d="M36,0 Q-10,720 36,1440 L60,1440 L60,0 Z" fill="#FAF8F5" />
-            </svg>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/20" />
 
-          <Link to={backHref} className="auth-back-btn" title="Retour à l'accueil">
-            <i className="fa-solid fa-arrow-left" />
-            <span>Retour à l'accueil</span>
-          </Link>
-        </div>
-
-        <div className="auth-form-side">
-         
-
-          <div className="auth-content-box" key={`content-box-${pageType}`}>
-            <div className="auth-logo-wrap">
-              <Link to="/">
-                <img src="/images/logohor.png" alt="Foodi" className="auth-logo-img" />
-              </Link>
+          <div className="relative z-10 max-w-lg space-y-4 text-white">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-white text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
+              <span>Foodi Agadir</span>
             </div>
-
-            {children}
+            <h2 className="text-3xl xl:text-4xl font-black text-white leading-tight">
+              Vos plats préférés, livrés en un clic.
+            </h2>
+            <p className="text-xs xl:text-sm text-white/80 leading-relaxed font-normal">
+              Découvrez une expérience culinaire unique, suivez votre coursier en temps réel et profitez du meilleur d'Agadir.
+            </p>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default AuthLayoutShell;

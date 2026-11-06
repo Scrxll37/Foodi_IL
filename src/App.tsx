@@ -12,6 +12,7 @@ import { OrdersPage } from "./pages/OrdersPage";
 import { OrderConfirmationPage } from "./pages/OrderConfirmationPage";
 import { OrderTrackingPage } from "./pages/OrderTrackingPage";
 import { TestBoardPage } from "./pages/TestBoardPage";
+import { DriverDashboardPage } from "./pages/DriverDashboardPage";
 import { ConflictModal } from "./components/ConflictModal";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -103,6 +104,8 @@ export const App: React.FC = () => {
 
           <Route path="/test" element={<TestBoardPage />} />
           <Route path="/test-board" element={<TestBoardPage />} />
+          <Route path="/driver" element={<DriverDashboardPage />} />
+          <Route path="/courier" element={<DriverDashboardPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
