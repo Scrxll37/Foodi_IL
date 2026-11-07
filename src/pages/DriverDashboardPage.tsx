@@ -44,9 +44,16 @@ import {
   EyeOff,
   Edit3,
   Camera,
-  RotateCcw
+  RotateCcw,
+  Menu,
+  PhoneCall,
+  Search,
+  MessageSquare,
+  Share2,
+  Layers
 } from "lucide-react";
 import { OrderRecord, OrderStatus } from "../types";
+import ordersData from "../data/orders.json";
 import { fetchRoadRoute, buildRouteGeometry, LatLng } from "../utils/routing";
 import { EmailChangeModal } from "../components/EmailChangeModal";
 import { DriverHeroIllustration } from "../components/DriverHeroIllustration";
@@ -100,7 +107,10 @@ export const DriverDashboardPage: React.FC = () => {
   const [licenseNumber, setLicenseNumber] = useState<string>("33/89210");
 
   const [driverState, setDriverState] = useState<DriverState>("offline");
-  const [activeTab, setActiveTab] = useState<"home" | "deliveries" | "profile" | "settings" | "help">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "deliveries" | "profile" | "settings">("home");
+  const [orderDetailsTab, setOrderDetailsTab] = useState<"order" | "customer">("order");
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState<boolean>(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState<boolean>(false);
   const [emailSuccessToast, setEmailSuccessToast] = useState<string>("");
@@ -123,7 +133,7 @@ export const DriverDashboardPage: React.FC = () => {
   const [isDemoLocation, setIsDemoLocation] = useState<boolean>(true);
 
   const [activeOrder, setActiveOrder] = useState<OrderRecord | null>(null);
-  const [offerTimer, setOfferTimer] = useState<number>(30);
+  const [incomingOffers, setIncomingOffers] = useState<Array<OrderRecord & { remainingSeconds: number }>>([]);
   const [isAccepting, setIsAccepting] = useState<boolean>(false);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState<boolean>(false);
   const [pickupCodeInput, setPickupCodeInput] = useState<string>("");
@@ -166,11 +176,141 @@ export const DriverDashboardPage: React.FC = () => {
     }
   ]);
 
+  const [trackingDeliveries, setTrackingDeliveries] = useState<Array<{
+    id: string;
+    loadNum: string;
+    status: "in_transit" | "delivered";
+    statusLabel: string;
+    restaurantName: string;
+    restaurantLogo: string;
+    restaurantAddress: string;
+    neighborhood: string;
+    customerName: string;
+    customerPhone: string;
+    customerAddress: string;
+    distance: string;
+    time: string;
+    duration: string;
+    earned: number;
+    shopCoords: LatLng;
+    customerCoords: LatLng;
+    steps: Array<{
+      title: string;
+      location: string;
+      time: string;
+      status: "completed" | "current" | "pending";
+    }>;
+  }>>([
+    {
+      id: "CMD-AGD-4921",
+      loadNum: "41239110",
+      status: "in_transit",
+      statusLabel: "En transit",
+      restaurantName: "McDonald's Agadir",
+      restaurantLogo: "/images/restaurants/McDonalds.png",
+      restaurantAddress: "362 C Ave, Seattle",
+      neighborhood: "Talborjt",
+      customerName: "David Martinez",
+      customerPhone: "+212 6 71 82 93 04",
+      customerAddress: "789 Pine Street, Talborjt",
+      distance: "4.2 km",
+      time: "18:30",
+      duration: "18 min",
+      earned: 25,
+      shopCoords: [30.4167, -9.6],
+      customerCoords: [30.4278, -9.5981],
+      steps: [
+        { title: "Prise en charge (Restaurant)", location: "McDonald's Agadir, Boulevard Mohammed V", time: "18:15", status: "completed" },
+        { title: "En transit vers le client", location: "Avenue Hassan II, Talborjt", time: "En cours (≈ 12 min)", status: "current" },
+        { title: "Livraison au client", location: "789 Pine Street, Talborjt", time: "Estimée 18:35", status: "pending" }
+      ]
+    },
+    {
+      id: "CMD-AGD-3568",
+      loadNum: "3568129",
+      status: "delivered",
+      statusLabel: "Livrée",
+      restaurantName: "KFC Hassan II",
+      restaurantLogo: "/images/restaurants/KFC.jpg",
+      restaurantAddress: "456 Oak Avenue, Founty",
+      neighborhood: "Haut Founty",
+      customerName: "Jessica Turner",
+      customerPhone: "+212 6 61 44 55 66",
+      customerAddress: "789 Pine Street, Chicago",
+      distance: "5.8 km",
+      time: "17:15",
+      duration: "24 min",
+      earned: 28,
+      shopCoords: [30.419, -9.587],
+      customerCoords: [30.412, -9.579],
+      steps: [
+        { title: "Prise en charge (Restaurant)", location: "KFC Hassan II, Boulevard Mohammed V", time: "16:50", status: "completed" },
+        { title: "En transit vers le client", location: "Boulevard Hassan II", time: "17:05", status: "completed" },
+        { title: "Livré au client", location: "789 Pine Street, Haut Founty", time: "17:15", status: "completed" }
+      ]
+    },
+    {
+      id: "CMD-AGD-1248",
+      loadNum: "1248075",
+      status: "delivered",
+      statusLabel: "Livrée",
+      restaurantName: "Pizza Hut Marina",
+      restaurantLogo: "/images/restaurants/PIZZAHUT.png",
+      restaurantAddress: "456 Oak Avenue, Marina",
+      neighborhood: "Marina",
+      customerName: "Ashley Roberts",
+      customerPhone: "+212 6 70 99 88 77",
+      customerAddress: "789 Pine Street, Marina Bay",
+      distance: "2.9 km",
+      time: "14:40",
+      duration: "12 min",
+      earned: 22,
+      shopCoords: [30.428, -9.615],
+      customerCoords: [30.432, -9.621],
+      steps: [
+        { title: "Prise en charge (Restaurant)", location: "Pizza Hut Marina, Quai des Yachts", time: "14:20", status: "completed" },
+        { title: "En transit vers le client", location: "Promenade de la Marina", time: "14:32", status: "completed" },
+        { title: "Livré au client", location: "Résidence Marina Bay, Appt 12", time: "14:40", status: "completed" }
+      ]
+    },
+    {
+      id: "CMD-AGD-0892",
+      loadNum: "9821430",
+      status: "delivered",
+      statusLabel: "Livrée",
+      restaurantName: "Tacos de Lyon",
+      restaurantLogo: "/images/restaurants/otacos.png",
+      restaurantAddress: "Avenue des FAR, Agadir",
+      neighborhood: "Dakhla",
+      customerName: "Ismail M.",
+      customerPhone: "+212 6 63 77 88 99",
+      customerAddress: "Rue 204, Quartier Dakhla",
+      distance: "3.6 km",
+      time: "13:00",
+      duration: "15 min",
+      earned: 22,
+      shopCoords: [30.415, -9.582],
+      customerCoords: [30.408, -9.565],
+      steps: [
+        { title: "Prise en charge (Restaurant)", location: "Tacos de Lyon, Avenue des FAR", time: "12:45", status: "completed" },
+        { title: "En transit vers le client", location: "Boulevard Hassan I", time: "12:55", status: "completed" },
+        { title: "Livré au client", location: "Rue 204, Dakhla", time: "13:00", status: "completed" }
+      ]
+    }
+  ]);
+
+  const [trackingSearchQuery, setTrackingSearchQuery] = useState<string>("");
+  const [trackingFilter, setTrackingFilter] = useState<"all" | "in_transit" | "delivered">("all");
+  const [selectedDeliveryId, setSelectedDeliveryId] = useState<string>("CMD-AGD-4921");
+  const [trackingSubTab, setTrackingSubTab] = useState<"info" | "docs">("info");
+  const [trackingMobileView, setTrackingMobileView] = useState<"list" | "detail">("list");
+
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const driverMarkerRef = useRef<L.Marker | null>(null);
   const destMarkerRef = useRef<L.Marker | null>(null);
   const routePolylineRef = useRef<L.Polyline | null>(null);
+  const simulationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   const playChime = useCallback(() => {
     try {
@@ -261,15 +401,15 @@ export const DriverDashboardPage: React.FC = () => {
     return L.divIcon({
       className: "foodi-map-marker-pin",
       html: `
-        <div class="foodi-marker-bubble driver">Livreur Foodi</div>
+        <div class="foodi-marker-bubble driver">Votre position (Livreur)</div>
         <div class="foodi-marker-icon-box driver">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/>
           </svg>
         </div>
       `,
-      iconSize: [80, 56],
-      iconAnchor: [40, 56]
+      iconSize: [110, 56],
+      iconAnchor: [55, 56]
     });
   };
 
@@ -298,6 +438,13 @@ export const DriverDashboardPage: React.FC = () => {
     driverState === "picked_up" ||
     driverState === "heading_to_customer" ||
     driverState === "arrived_at_customer";
+
+  const isOrderActive = isNavigating || isAccepting;
+
+  const isNavigatingRef = useRef<boolean>(isNavigating);
+  isNavigatingRef.current = isNavigating;
+  const driverStateRef = useRef<DriverState>(driverState);
+  driverStateRef.current = driverState;
 
   const isHeadingToRestaurant =
     driverState === "heading_to_restaurant" || driverState === "arrived_at_restaurant";
@@ -387,6 +534,24 @@ export const DriverDashboardPage: React.FC = () => {
     };
   }, [isNavigating, isHeadingToRestaurant, activeOrder, driverLocation]);
 
+  const filteredTrackingDeliveries = trackingDeliveries.filter((d) => {
+    const matchesFilter =
+      trackingFilter === "all" ? true : d.status === trackingFilter;
+    const matchesQuery =
+      trackingSearchQuery.trim() === ""
+        ? true
+        : d.id.toLowerCase().includes(trackingSearchQuery.toLowerCase()) ||
+          d.loadNum.includes(trackingSearchQuery) ||
+          d.customerName.toLowerCase().includes(trackingSearchQuery.toLowerCase()) ||
+          d.restaurantName.toLowerCase().includes(trackingSearchQuery.toLowerCase());
+    return matchesFilter && matchesQuery;
+  });
+
+  const selectedDelivery =
+    trackingDeliveries.find((d) => d.id === selectedDeliveryId) ||
+    filteredTrackingDeliveries[0] ||
+    trackingDeliveries[0];
+
   const handleRecenter = () => {
     if (!mapInstanceRef.current) return;
     mapInstanceRef.current.setView(driverLocation, 15, { animate: true });
@@ -397,19 +562,32 @@ export const DriverDashboardPage: React.FC = () => {
   };
 
   const handleGoOffline = () => {
+    if (isOrderActive) return;
+    clearSimulationTimeouts();
     setDriverState("offline");
+    setIncomingOffers([]);
     setActiveOrder(null);
   };
 
-  const handleTriggerSimulatedOffer = () => {
-    if (driverState !== "online_searching") return;
+  const clearSimulationTimeouts = useCallback(() => {
+    simulationTimeoutsRef.current.forEach((t) => clearTimeout(t));
+    simulationTimeoutsRef.current = [];
+  }, []);
 
-    const demo: OrderRecord = {
-      id: `CMD-AGD-${Math.floor(1000 + Math.random() * 9000)}`,
-      token: `trk_demo_${Date.now()}`,
+  useEffect(() => {
+    return () => {
+      simulationTimeoutsRef.current.forEach((t) => clearTimeout(t));
+      simulationTimeoutsRef.current = [];
+    };
+  }, []);
+
+  const mockOfferPool: Array<Omit<OrderRecord, "id" | "token">> = [
+    {
       restaurantName: "McDonald's Agadir",
       restaurantLogo: "/images/restaurants/McDonalds.png",
-      neighborhood: "Talborjt, Agadir",
+      mealImage: "/images/meals/1791902884_mcdo2.png",
+      neighborhood: "Talborjt",
+      shopNeighborhood: "Talborjt",
       street: "Avenue Hassan II",
       buildingNameNumber: "Résidence Najah, Bât B",
       floorNumber: "2ème",
@@ -426,57 +604,387 @@ export const DriverDashboardPage: React.FC = () => {
         { name: "McFlurry Oreo", quantity: 1, price: 20 }
       ],
       instructions: "Sonner à l'interphone et monter au 2ème étage.",
+      customerName: "Youssef Bennani",
+      customerPhone: "+212 6 71 82 93 04",
       shopLat: 30.4167,
       shopLng: -9.6,
       lat: 30.4278,
       lng: -9.5981
+    },
+    {
+      restaurantName: "KFC Hassan II",
+      restaurantLogo: "/images/restaurants/KFC.jpg",
+      mealImage: "/images/banners/1791902905_kfc1.png",
+      neighborhood: "Haut Founty",
+      shopNeighborhood: "Hassan II",
+      street: "Boulevard Mohammed V",
+      buildingNameNumber: "Immeuble Al Amal, Entrée 2",
+      floorNumber: "1er",
+      doorNumber: "Appt 3",
+      date: "Aujourd'hui",
+      status: "searching_driver",
+      statusLabel: "Recherche d'un coursier Foodi",
+      total: 112,
+      subtotal: 112,
+      deliveryFee: 28,
+      address: "Haut Founty, Agadir",
+      items: [
+        { name: "Bucket 12 Tenders Hot & Spicy", quantity: 1, price: 89 },
+        { name: "Grande Frite", quantity: 1, price: 23 }
+      ],
+      instructions: "Laisser au gardien de la résidence si pas de réponse.",
+      customerName: "Sara Mansouri",
+      customerPhone: "+212 6 61 44 55 66",
+      shopLat: 30.419,
+      shopLng: -9.587,
+      lat: 30.412,
+      lng: -9.579
+    },
+    {
+      restaurantName: "Pizza Hut Agadir",
+      restaurantLogo: "/images/restaurants/PIZZAHUT.png",
+      mealImage: "/images/banners/1791902911_pizzahut.jpg",
+      neighborhood: "Marina Agadir",
+      shopNeighborhood: "Marina",
+      street: "Quai des Yachts",
+      buildingNameNumber: "Résidence Marina Bay",
+      floorNumber: "3ème",
+      doorNumber: "Appt 12",
+      date: "Aujourd'hui",
+      status: "searching_driver",
+      statusLabel: "Recherche d'un coursier Foodi",
+      total: 135,
+      subtotal: 135,
+      deliveryFee: 22,
+      address: "Marina, Agadir",
+      items: [
+        { name: "Pizza Pan Super Supreme (Large)", quantity: 1, price: 110 },
+        { name: "Pain à l'ail Mozzarella", quantity: 1, price: 25 }
+      ],
+      instructions: "Code barrière d'accès : 4820.",
+      customerName: "Mehdi Alami",
+      customerPhone: "+212 6 70 99 88 77",
+      shopLat: 30.428,
+      shopLng: -9.615,
+      lat: 30.432,
+      lng: -9.621
+    },
+    {
+      restaurantName: "Tacos de Lyon",
+      restaurantLogo: "/images/restaurants/otacos.png",
+      mealImage: "/images/meals/1791902884_mcdo2.png",
+      neighborhood: "Quartier Salam",
+      shopNeighborhood: "Dakhla",
+      street: "Avenue des FAR",
+      buildingNameNumber: "Résidence Atlas, Bât C",
+      floorNumber: "1er",
+      doorNumber: "Appt 4",
+      date: "Aujourd'hui",
+      status: "searching_driver",
+      statusLabel: "Recherche d'un coursier Foodi",
+      total: 85,
+      subtotal: 85,
+      deliveryFee: 22,
+      address: "Salam, Agadir",
+      items: [
+        { name: "Maxi Tacos Viande Hachée", quantity: 1, price: 65 },
+        { name: "Boisson Tiramisu", quantity: 1, price: 20 }
+      ],
+      instructions: "Appeler dès arrivée devant la pharmacie.",
+      customerName: "Ismail M.",
+      customerPhone: "+212 6 63 77 88 99",
+      shopLat: 30.411,
+      shopLng: -9.575,
+      lat: 30.418,
+      lng: -9.562
+    }
+  ];
+
+  const appendSimulatedOrder = useCallback((indexOffset: number) => {
+    const poolLength = mockOfferPool.length;
+    setIncomingOffers((prev) => {
+      const template = mockOfferPool[(prev.length + indexOffset) % poolLength];
+      const newOrder: OrderRecord & { remainingSeconds: number } = {
+        ...template,
+        id: `CMD-AGD-${Math.floor(1000 + Math.random() * 9000)}`,
+        token: `trk_demo_${Date.now()}_${indexOffset}`,
+        remainingSeconds: 15
+      };
+      return [...prev, newOrder];
+    });
+    setDriverState("offer_received");
+    playChime();
+  }, [playChime, mockOfferPool]);
+
+  const declinedOrderIdsRef = useRef<Set<string>>(new Set());
+  const processedOrderIdsRef = useRef<Set<string>>(new Set());
+
+  const fetchAllOrders = useCallback(async (): Promise<OrderRecord[]> => {
+    let apiOrders: OrderRecord[] = [];
+    try {
+      const res = await fetch("/api/orders");
+      if (res.ok) {
+        apiOrders = await res.json();
+      }
+    } catch {}
+
+    let localOrders: OrderRecord[] = [];
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) {
+        localOrders = JSON.parse(raw);
+      }
+    } catch {}
+
+    const map = new Map<string, OrderRecord>();
+    const staticBaseline = ordersData as unknown as OrderRecord[];
+    [...staticBaseline, ...apiOrders, ...localOrders].forEach((ord) => {
+      if (ord && ord.id) {
+        map.set(ord.id, { ...map.get(ord.id), ...ord });
+      }
+    });
+
+    return Array.from(map.values());
+  }, []);
+
+  const formatOrderAsOffer = useCallback((ord: OrderRecord): OrderRecord & { remainingSeconds: number } => {
+    return {
+      ...ord,
+      restaurantName: ord.restaurantName || "Restaurant Foodi",
+      restaurantLogo: ord.restaurantLogo || "/images/restaurants/McDonalds.png",
+      neighborhood: ord.neighborhood || "Talborjt",
+      shopNeighborhood: ord.shopNeighborhood || ord.neighborhood || "Talborjt",
+      deliveryFee: ord.deliveryFee || 25,
+      remainingSeconds: 25,
+      mealImage: ord.mealImage || ord.items?.[0]?.image || ord.restaurantLogo || "/images/meals/1791902884_mcdo2.png"
+    };
+  }, []);
+
+  const checkNewOrders = useCallback(async () => {
+    if (driverStateRef.current === "offline" || isNavigatingRef.current) return;
+
+    const allOrders = await fetchAllOrders();
+    const candidateOrders = allOrders.filter((ord) => {
+      if (!ord || !ord.id) return false;
+      if (declinedOrderIdsRef.current.has(ord.id)) return false;
+      if (activeOrder?.id === ord.id) return false;
+      const isPending =
+        ord.status === "searching_driver" ||
+        ord.status === "pending_confirmation" ||
+        ord.status === "preparing";
+      return isPending;
+    });
+
+    if (candidateOrders.length === 0) return;
+
+    setIncomingOffers((prev) => {
+      const existingIds = new Set(prev.map((o) => o.id));
+      const newItems = candidateOrders
+        .filter((o) => !existingIds.has(o.id) && !processedOrderIdsRef.current.has(o.id))
+        .map(formatOrderAsOffer);
+
+      if (newItems.length === 0) return prev;
+
+      newItems.forEach((it) => processedOrderIdsRef.current.add(it.id));
+      setDriverState("offer_received");
+      playChime();
+      return [...newItems, ...prev];
+    });
+  }, [fetchAllOrders, activeOrder, formatOrderAsOffer, playChime]);
+
+  useEffect(() => {
+    if (driverState !== "online_searching" || isNavigating) return;
+
+    checkNewOrders();
+    const interval = setInterval(() => {
+      checkNewOrders();
+    }, 2500);
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "foodi_orders") {
+        checkNewOrders();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [driverState, isNavigating, checkNewOrders]);
+
+  const updateLiveOrderStatus = async (status: OrderStatus, statusLabel: string) => {
+    if (!activeOrder) return;
+    const patch = {
+      id: activeOrder.id,
+      token: activeOrder.token,
+      status,
+      statusLabel,
+      courierName: `${driverFirstName} ${driverLastName}`,
+      courierPhone: driverPhone
     };
 
-    setActiveOrder(demo);
-    setDriverState("offer_received");
-    setOfferTimer(30);
-    playChime();
+    try {
+      await fetch("/api/orders/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch)
+      });
+    } catch {}
+
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) {
+        const list = JSON.parse(raw);
+        const updated = list.map((o: any) =>
+          o.id === activeOrder.id || (activeOrder.token && o.token === activeOrder.token)
+            ? { ...o, ...patch }
+            : o
+        );
+        localStorage.setItem("foodi_orders", JSON.stringify(updated));
+      }
+    } catch {}
+  };
+
+  const handleTriggerSimulatedOffer = (count: number = 1) => {
+    if (isOrderActive) return;
+
+    clearSimulationTimeouts();
+
+    if (count === 1) {
+      appendSimulatedOrder(0);
+      return;
+    }
+
+    appendSimulatedOrder(0);
+
+    const t1 = setTimeout(() => {
+      if (driverStateRef.current === "offline" || isNavigatingRef.current) return;
+      appendSimulatedOrder(1);
+    }, 3000);
+
+    const t2 = setTimeout(() => {
+      if (driverStateRef.current === "offline" || isNavigatingRef.current) return;
+      appendSimulatedOrder(2);
+    }, 8000);
+
+    simulationTimeoutsRef.current = [t1, t2];
   };
 
   useEffect(() => {
-    if (driverState !== "offer_received") return;
+    if (incomingOffers.length === 0 || isNavigating) return;
+
     const interval = setInterval(() => {
-      setOfferTimer((prev) => {
-        if (prev <= 1) {
+      setIncomingOffers((prevList) => {
+        const nextList = prevList
+          .map((item) => ({ ...item, remainingSeconds: item.remainingSeconds - 1 }))
+          .filter((item) => item.remainingSeconds > 0);
+
+        if (nextList.length === 0) {
           setDriverState("online_searching");
-          setActiveOrder(null);
-          return 0;
         }
-        return prev - 1;
+        return nextList;
       });
     }, 1000);
-    return () => clearInterval(interval);
-  }, [driverState]);
 
-  const handleAcceptDelivery = () => {
-    if (!activeOrder) return;
+    return () => clearInterval(interval);
+  }, [incomingOffers.length, isNavigating]);
+
+  const handleAcceptSingleOffer = async (offer: OrderRecord) => {
+    clearSimulationTimeouts();
+    setIsProfileDropdownOpen(false);
+    setIsMobileSidebarOpen(false);
+    setActiveTab("home");
+    setActiveOrder(offer);
+    setIncomingOffers([]);
     setIsAccepting(true);
     playChime();
+
+    const patch = {
+      id: offer.id,
+      token: offer.token,
+      status: "heading_to_restaurant" as OrderStatus,
+      statusLabel: "Coursier assigné, en route vers le restaurant",
+      courierName: `${driverFirstName} ${driverLastName}`,
+      courierPhone: driverPhone
+    };
+
+    try {
+      await fetch("/api/orders/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch)
+      });
+    } catch {}
+
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) {
+        const list = JSON.parse(raw);
+        const updated = list.map((o: any) =>
+          o.id === offer.id || (offer.token && o.token === offer.token)
+            ? { ...o, ...patch }
+            : o
+        );
+        localStorage.setItem("foodi_orders", JSON.stringify(updated));
+      }
+    } catch {}
 
     setTimeout(() => {
       setIsAccepting(false);
       setDriverState("heading_to_restaurant");
       setPickupCodeInput("");
       setPickupCodeError("");
-    }, 700);
+
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight || document.body.scrollHeight,
+          behavior: "smooth"
+        });
+        const bottomPanel = document.querySelector(".driver-bottom-panel");
+        if (bottomPanel) {
+          bottomPanel.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }, 250);
+    }, 600);
   };
 
-  const handleDeclineDelivery = () => {
-    setActiveOrder(null);
-    setDriverState("online_searching");
+  useEffect(() => {
+    if (isNavigating) {
+      setActiveTab("home");
+      const timer = setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight || document.body.scrollHeight,
+          behavior: "smooth"
+        });
+        const bottomPanel = document.querySelector(".driver-bottom-panel");
+        if (bottomPanel) {
+          bottomPanel.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isNavigating]);
+
+  const handleDeclineSingleOffer = (offerId: string) => {
+    declinedOrderIdsRef.current.add(offerId);
+    setIncomingOffers((prevList) => {
+      const nextList = prevList.filter((item) => item.id !== offerId);
+      if (nextList.length === 0) {
+        setDriverState("online_searching");
+      }
+      return nextList;
+    });
   };
 
   const handleArrivedAtRestaurant = () => {
     setDriverState("arrived_at_restaurant");
+    updateLiveOrderStatus("heading_to_restaurant", "Coursier arrivé au restaurant, retrait en cours");
   };
 
   const handleOrderPickedUp = () => {
     setDriverState("picked_up");
+    updateLiveOrderStatus("in_delivery", "Commande récupérée, coursier en route vers votre adresse");
     setTimeout(() => {
       setDriverState("heading_to_customer");
     }, 450);
@@ -484,11 +992,15 @@ export const DriverDashboardPage: React.FC = () => {
 
   const handleArrivedAtCustomer = () => {
     setDriverState("arrived_at_customer");
+    updateLiveOrderStatus("in_delivery", "Coursier arrivé devant votre adresse");
   };
 
   const handleCompleteDelivery = () => {
     if (!activeOrder) return;
-    const earned = 25;
+    clearSimulationTimeouts();
+    const earned = activeOrder.deliveryFee || 25;
+
+    updateLiveOrderStatus("delivered", "Commande livrée avec succès");
 
     setTodayEarnings((prev) => prev + earned);
     setTodayDeliveriesCount((prev) => prev + 1);
@@ -500,7 +1012,35 @@ export const DriverDashboardPage: React.FC = () => {
         neighborhood: activeOrder.neighborhood,
         earned,
         time: "À l'instant",
-        distance: "5.2 km"
+        distance: routeDistance || "4.2 km"
+      },
+      ...prev
+    ]);
+
+    setTrackingDeliveries((prev) => [
+      {
+        id: activeOrder.id,
+        loadNum: activeOrder.id.replace(/\D/g, "") || String(Date.now()).slice(-7),
+        status: "delivered",
+        statusLabel: "Livrée",
+        restaurantName: activeOrder.restaurantName,
+        restaurantLogo: activeOrder.restaurantLogo || "/images/restaurants/McDonalds.png",
+        restaurantAddress: activeOrder.street || activeOrder.address || "Restaurant, Agadir",
+        neighborhood: activeOrder.neighborhood || "Talborjt",
+        customerName: activeOrder.customerName || "Client Foodi",
+        customerPhone: activeOrder.customerPhone || "+212 6 71 82 93 04",
+        customerAddress: activeOrder.address || "Agadir",
+        distance: routeDistance || "4.2 km",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        duration: routeDuration || "18 min",
+        earned,
+        shopCoords: [activeOrder.shopLat || 30.4167, activeOrder.shopLng || -9.6],
+        customerCoords: [activeOrder.lat || 30.4278, activeOrder.lng || -9.5981],
+        steps: [
+          { title: "Prise en charge (Restaurant)", location: `${activeOrder.restaurantName}, Agadir`, time: "Validé", status: "completed" },
+          { title: "En transit vers le client", location: activeOrder.neighborhood || "Agadir", time: "Validé", status: "completed" },
+          { title: "Livré au client", location: activeOrder.address || "Agadir", time: "À l'instant", status: "completed" }
+        ]
       },
       ...prev
     ]);
@@ -556,12 +1096,12 @@ export const DriverDashboardPage: React.FC = () => {
     return (
       <div className="driver-onboard-page">
         <header className="driver-onboard-header">
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="driver-onboard-logo-area">
             <Link to="/">
               <img src="/images/logohor.png" alt="Foodi" style={{ height: 32, objectFit: "contain" }} />
             </Link>
-            <span style={{ height: 20, width: 1, backgroundColor: "rgba(11, 16, 32, 0.15)" }} />
-            <span style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5, color: "#0B1020" }}>
+            <span className="driver-onboard-title-divider" />
+            <span className="driver-onboard-title-text">
               Inscription Coursier Partenaire
             </span>
           </div>
@@ -571,7 +1111,7 @@ export const DriverDashboardPage: React.FC = () => {
               <span className={`driver-onboard-step-num ${onboardStep >= 1 ? "active" : "pending"}`}>
                 1
               </span>
-              <span>Véhicule</span>
+              <span className="driver-onboard-step-label">Véhicule</span>
             </div>
 
             <div className="driver-onboard-step-line" />
@@ -580,7 +1120,7 @@ export const DriverDashboardPage: React.FC = () => {
               <span className={`driver-onboard-step-num ${onboardStep >= 2 ? "active" : "pending"}`}>
                 2
               </span>
-              <span>Identité & Permis</span>
+              <span className="driver-onboard-step-label">Identité & Permis</span>
             </div>
 
             <div className="driver-onboard-step-line" />
@@ -589,7 +1129,7 @@ export const DriverDashboardPage: React.FC = () => {
               <span className={`driver-onboard-step-num ${onboardStep === 3 ? "done" : "pending"}`}>
                 3
               </span>
-              <span>Validation</span>
+              <span className="driver-onboard-step-label">Validation</span>
             </div>
           </div>
         </header>
@@ -699,7 +1239,7 @@ export const DriverDashboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+                <div className="driver-onboard-input-grid">
                   <div>
                     <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
                       Marque du véhicule
@@ -830,13 +1370,13 @@ export const DriverDashboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 10 }}>
+                <div className="driver-onboard-form-actions">
                   <button
                     type="submit"
-                    className="driver-btn-panel-primary"
-                    style={{ flex: "none", padding: "14px 28px" }}
+                    className="driver-btn-panel-primary driver-onboard-submit-btn"
                   >
-                    <span>Continuer vers les informations personnelles</span>
+                    <span className="driver-text-desktop">Continuer vers les informations personnelles</span>
+                    <span className="driver-text-mobile">Continuer</span>
                     <ArrowRight size={18} />
                   </button>
                 </div>
@@ -855,7 +1395,7 @@ export const DriverDashboardPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+                <div className="driver-onboard-input-grid">
                   <div>
                     <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
                       Prénom
@@ -979,21 +1519,20 @@ export const DriverDashboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10 }}>
+                <div className="driver-onboard-form-actions-split">
                   <button
                     type="button"
                     onClick={() => setOnboardStep(1)}
-                    className="driver-btn-decline"
-                    style={{ flex: "none", padding: "12px 24px" }}
+                    className="driver-btn-decline driver-onboard-back-btn"
                   >
                     Retour
                   </button>
                   <button
                     type="submit"
-                    className="driver-btn-panel-primary"
-                    style={{ flex: "none", padding: "14px 28px" }}
+                    className="driver-btn-panel-primary driver-onboard-submit-btn"
                   >
-                    <span>Valider et terminer mon inscription</span>
+                    <span className="driver-text-desktop">Valider et terminer mon inscription</span>
+                    <span className="driver-text-mobile">Valider mon inscription</span>
                     <Check size={18} />
                   </button>
                 </div>
@@ -1034,201 +1573,440 @@ export const DriverDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="driver-app">
-      <header className="driver-header">
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Link to="/" className="driver-header-brand">
-            <img src="/images/logohor.png" alt="Foodi" className="driver-header-logo" />
-            <span className="driver-badge-driver">Driver</span>
+    <div className="driver-layout">
+      <aside className="driver-sidebar">
+        <div>
+          <Link
+            to={isOrderActive ? "#" : "/"}
+            onClick={(e) => { if (isOrderActive) e.preventDefault(); }}
+            className={`driver-sidebar-logo-wrap ${isOrderActive ? "locked" : ""}`}
+            title={isOrderActive ? "Livraison en cours" : "Accueil Foodi"}
+          >
+            <div className="driver-sidebar-logo-icon">F</div>
+            <span className="driver-sidebar-logo-text">Foodi</span>
           </Link>
 
-          <nav className="driver-header-nav">
+          <nav className="driver-sidebar-menu">
             <button
               type="button"
-              onClick={() => { setActiveTab("home"); if (driverState === "delivered") setDriverState("online_searching"); }}
-              className={`driver-nav-tab ${activeTab === "home" ? "active" : ""}`}
+              disabled={isOrderActive}
+              onClick={() => {
+                if (isOrderActive) return;
+                setActiveTab("home");
+                if (driverState === "delivered") setDriverState("online_searching");
+              }}
+              className={`driver-sidebar-link ${activeTab === "home" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
             >
-              <Bike size={16} />
-              <span>Accueil</span>
+              <Bike size={18} />
+              <span>{isOrderActive ? "Course en cours" : driverState === "online_searching" ? "En attente d'une commande" : "Accueil"}</span>
             </button>
+
             <button
               type="button"
-              onClick={() => setActiveTab("deliveries")}
-              className={`driver-nav-tab ${activeTab === "deliveries" ? "active" : ""}`}
+              disabled={isOrderActive}
+              onClick={() => {
+                if (isOrderActive) return;
+                setActiveTab("deliveries");
+              }}
+              className={`driver-sidebar-link ${activeTab === "deliveries" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+              title={isOrderActive ? "Livraison en cours : vous ne pouvez pas quitter cet écran" : undefined}
             >
-              <PackageCheck size={16} />
-              <span>Mes courses</span>
+              <PackageCheck size={18} />
+              <span>Mes livraisons</span>
             </button>
+
             <button
               type="button"
-              onClick={() => setActiveTab("profile")}
-              className={`driver-nav-tab ${activeTab === "profile" ? "active" : ""}`}
+              disabled={isOrderActive}
+              onClick={() => {
+                if (isOrderActive) return;
+                setActiveTab("profile");
+              }}
+              className={`driver-sidebar-link ${activeTab === "profile" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+              title={isOrderActive ? "Livraison en cours : vous ne pouvez pas quitter cet écran" : undefined}
             >
-              <User size={16} />
+              <User size={18} />
               <span>Mon profil</span>
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("help")}
-              className={`driver-nav-tab ${activeTab === "help" ? "active" : ""}`}
-            >
-              <HelpCircle size={16} />
-              <span>Support</span>
-            </button>
+
+           
+
+           
           </nav>
         </div>
 
-        <div className="driver-header-right">
-          <div className="driver-earnings-pill">
-            <span className="driver-earnings-label">Gains du jour</span>
-            <span className="driver-earnings-val">{todayEarnings}.00 MAD</span>
+        <div className="driver-sidebar-bottom">
+          <div className="driver-sidebar-online-card">
+            <div className="driver-sidebar-online-row">
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span className={`driver-status-dot ${isOrderActive || driverState !== "offline" ? "online" : "offline"}`} />
+                <span style={{ fontSize: 13, fontWeight: 800, color: driverState !== "offline" ? "#FFFFFF" : "#94A3B8" }}>
+                  {isOrderActive ? "Course active" : driverState !== "offline" ? "En ligne" : "Hors ligne"}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                disabled={isOrderActive}
+                onClick={() => {
+                  if (isOrderActive) return;
+                  if (driverState === "offline") {
+                    handleGoOnline();
+                  } else {
+                    handleGoOffline();
+                  }
+                }}
+                className={`driver-switch-toggle ${driverState !== "offline" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+                title={isOrderActive ? "Impossible de passer hors ligne pendant une course" : driverState !== "offline" ? "Passer hors ligne" : "Passer en ligne"}
+              >
+                <span className="driver-switch-handle" />
+              </button>
+            </div>
+            <span style={{ fontSize: 11, color: isOrderActive ? "#FF7A1A" : "#94A3B8" }}>
+              {isOrderActive ? "Verrouillé : terminez la livraison" : driverState !== "offline" ? "Vous recevez les commandes" : "Vous êtes hors ligne"}
+            </span>
           </div>
 
-          <div className="driver-header-profile">
-            <div className="driver-avatar-circle">
-              {driverFirstName.slice(0, 1).toUpperCase()}{driverLastName.slice(0, 1).toUpperCase()}
-            </div>
-            <div className="driver-profile-meta">
-              <span className="driver-profile-name">{driverFirstName} {driverLastName}</span>
-              <span className={`driver-status-chip ${driverState !== "offline" ? "online" : "offline"}`}>
-                <span className={`driver-status-dot ${driverState !== "offline" ? "online" : "offline"}`} />
-                <span>{driverState !== "offline" ? "En ligne" : "Hors ligne"}</span>
-              </span>
-            </div>
-          </div>
+          <button
+            type="button"
+            disabled={isOrderActive}
+            onClick={() => {
+              if (isOrderActive) return;
+              navigate("/login");
+            }}
+            className={`driver-sidebar-logout-btn ${isOrderActive ? "locked" : ""}`}
+            title={isOrderActive ? "Déconnexion impossible pendant une livraison" : "Se déconnecter"}
+          >
+            <LogOut size={16} />
+            <span>Se déconnecter</span>
+          </button>
         </div>
-      </header>
+      </aside>
 
-      <main className="driver-main">
-        {activeTab === "home" && !isNavigating && driverState !== "delivered" && (
-          <div className="driver-home-wrapper">
-            <div className={`driver-control-card ${driverState === "online_searching" ? "online" : ""}`}>
-              {driverState === "offline" ? (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, maxWidth: 520 }}>
-                  <div style={{ width: 68, height: 68, borderRadius: 9999, backgroundColor: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B" }}>
-                    <Power size={32} />
+      <div className="driver-canvas">
+        <header className="driver-canvas-header">
+          <div className="driver-canvas-header-left">
+            {!isOrderActive && (
+              <button
+                type="button"
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="driver-header-hamburger-btn"
+                title="Ouvrir le menu"
+                aria-label="Menu"
+              >
+                <Menu size={22} />
+              </button>
+            )}
+
+            {isOrderActive ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  cursor: "not-allowed",
+                  userSelect: "none"
+                }}
+                title="Livraison active en cours"
+              >
+                <div style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: "#FF5A00", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontStyle: "italic", fontSize: 16 }}>F</div>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "#FF5A00", letterSpacing: "-0.5px" }}>Foodi</span>
+              </div>
+            ) : (
+              <Link
+                to="/"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  textDecoration: "none"
+                }}
+                title="Accueil Foodi"
+              >
+                <div style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: "#FF5A00", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontStyle: "italic", fontSize: 16 }}>F</div>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "#FF5A00", letterSpacing: "-0.5px" }}>Foodi</span>
+              </Link>
+            )}
+          </div>
+
+          <div className="driver-canvas-header-right">
+            <div className="driver-header-profile-wrap">
+              <button
+                type="button"
+                disabled={isOrderActive}
+                onClick={() => {
+                  if (isOrderActive) return;
+                  setIsProfileDropdownOpen(!isProfileDropdownOpen);
+                }}
+                className={`driver-header-profile-btn ${isOrderActive ? "locked" : ""}`}
+                title={isOrderActive ? "Course active : profil verrouillé" : "Menu profil"}
+              >
+                <div className="driver-avatar-box">
+                  {driverFirstName.slice(0, 1).toUpperCase()}
+                </div>
+                <div className="driver-profile-meta" style={{ textAlign: "left" }}>
+                  <span className="driver-profile-name">{driverFirstName} {driverLastName}</span>
+                  <span className={`driver-status-chip ${driverState !== "offline" ? "online" : "offline"}`}>
+                    <span className={`driver-status-dot ${driverState !== "offline" ? "online" : "offline"}`} />
+                    <span>{isOrderActive ? "Course active" : driverState !== "offline" ? "En ligne" : "Hors ligne"}</span>
+                  </span>
+                </div>
+              </button>
+
+              {isProfileDropdownOpen && !isOrderActive && (
+                <>
+                  <div
+                    className="driver-dropdown-backdrop"
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                  />
+                  <div className="driver-profile-dropdown">
+                    <div className="driver-dropdown-user-header">
+                      <div className="driver-dropdown-user-name">{driverFirstName} {driverLastName}</div>
+                      <div className="driver-dropdown-user-role">
+                        {isOrderActive ? "🔒 Course active en cours" : "Coursier Foodi Agadir"}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={isOrderActive}
+                      onClick={() => {
+                        if (isOrderActive) return;
+                        setActiveTab("profile");
+                        setIsProfileDropdownOpen(false);
+                      }}
+                      className={`driver-dropdown-item ${isOrderActive ? "locked" : ""}`}
+                      title={isOrderActive ? "Course en cours" : undefined}
+                    >
+                      <User size={16} />
+                      <span>Mon profil</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isOrderActive}
+                      onClick={() => {
+                        if (isOrderActive) return;
+                        if (driverState === "offline") {
+                          handleGoOnline();
+                        } else {
+                          handleGoOffline();
+                        }
+                        setIsProfileDropdownOpen(false);
+                      }}
+                      className={`driver-dropdown-item ${isOrderActive ? "locked" : ""}`}
+                      title={isOrderActive ? "Impossible de passer hors ligne pendant une course" : undefined}
+                    >
+                      <Power size={16} color={driverState !== "offline" ? "#EF4444" : "#10B981"} />
+                      <span>{driverState !== "offline" ? "Passer hors ligne" : "Passer en ligne"}</span>
+                    </button>
+
+                    <div style={{ height: 1, backgroundColor: "rgba(11, 16, 32, 0.06)", margin: "4px 0" }} />
+
+                    <button
+                      type="button"
+                      disabled={isOrderActive}
+                      onClick={() => {
+                        if (isOrderActive) return;
+                        setIsProfileDropdownOpen(false);
+                        navigate("/login");
+                      }}
+                      className={`driver-dropdown-item danger ${isOrderActive ? "locked" : ""}`}
+                      title={isOrderActive ? "Déconnexion impossible pendant une livraison" : undefined}
+                    >
+                      <LogOut size={16} />
+                      <span>Se déconnecter</span>
+                    </button>
                   </div>
-                  <div>
-                    <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0B1020" }}>Vous êtes actuellement hors ligne</h2>
-                    <p style={{ fontSize: 13, color: "#7A8194", marginTop: 4 }}>
-                      Passez en ligne pour commencer à recevoir des livraisons et maximiser vos gains dans le Grand Agadir.
-                    </p>
-                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <div className="driver-mobile-status-strip">
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span className={`driver-status-dot ${isOrderActive || driverState !== "offline" ? "online" : "offline"}`} />
+            <span style={{ fontSize: 13, fontWeight: 800, color: "#0B1020" }}>
+              {isOrderActive ? "Course en cours" : driverState !== "offline" ? "En ligne" : "Hors ligne"}
+            </span>
+          </div>
+          <button
+            type="button"
+            disabled={isOrderActive}
+            onClick={() => {
+              if (isOrderActive) return;
+              if (driverState === "offline") {
+                handleGoOnline();
+              } else {
+                handleGoOffline();
+              }
+            }}
+            className={`driver-switch-toggle ${driverState !== "offline" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+            title={isOrderActive ? "Impossible de passer hors ligne pendant une course" : driverState !== "offline" ? "Passer hors ligne" : "Passer en ligne"}
+          >
+            <span className="driver-switch-handle" />
+          </button>
+        </div>
+
+        <main className="driver-main">
+          {activeTab === "home" && !isNavigating && driverState !== "delivered" && (
+            driverState === "online_searching" ? (
+              <div className="driver-hero-canvas">
+                <svg className="driver-wave-corner-bl" viewBox="0 0 240 200" fill="none">
+                  <path d="M 0 100 C 60 140, 140 180, 240 200 L 0 200 Z" fill="#FFEFE6" />
+                  <path d="M 0 140 C 40 160, 90 190, 160 200 L 0 200 Z" fill="#FFD8C2" opacity="0.6" />
+                </svg>
+                <svg className="driver-wave-corner-br" viewBox="0 0 260 220" fill="none">
+                  <path d="M 260 90 C 200 130, 100 170, 0 220 L 260 220 Z" fill="#FF5A00" opacity="0.85" />
+                  <path d="M 260 140 C 220 165, 140 195, 60 220 L 260 220 Z" fill="#FF7A1A" />
+                </svg>
+
+                <DriverHeroIllustration />
+
+                <h2 className="driver-hero-title">En attente d'une commande...</h2>
+                <p className="driver-hero-subtitle">Restez connecté, une commande arrivera bientôt !</p>
+
+                <div className="driver-hero-loader-wrap">
+                  <div className="driver-hero-loader-bar" />
+                </div>
+
+                <div className="driver-hero-pill-info">
+                  <Clock size={15} color="#FF5A00" />
+                  <span>Nous vous notifierons dès qu'une commande est disponible</span>
+                  <Bell size={15} color="#FF5A00" />
+                </div>
+
+                <div style={{ marginTop: 24, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
+                  <button
+                    type="button"
+                    onClick={() => handleTriggerSimulatedOffer(1)}
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid rgba(255, 90, 0, 0.3)",
+                      color: "#FF5A00",
+                      fontSize: 12,
+                      fontWeight: 800,
+                      padding: "8px 18px",
+                      borderRadius: 9999,
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      boxShadow: "0 2px 8px rgba(255, 90, 0, 0.12)"
+                    }}
+                  >
+                    <Sparkles size={14} />
+                    <span>Simuler 1 commande (15s)</span>
+                  </button>
 
                   <button
                     type="button"
-                    onClick={handleGoOnline}
-                    className="driver-toggle-online-btn"
+                    onClick={() => handleTriggerSimulatedOffer(3)}
+                    style={{
+                      backgroundColor: "#FFF2EB",
+                      border: "1px solid rgba(255, 90, 0, 0.4)",
+                      color: "#FF5A00",
+                      fontSize: 12,
+                      fontWeight: 800,
+                      padding: "8px 18px",
+                      borderRadius: 9999,
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      boxShadow: "0 2px 8px rgba(255, 90, 0, 0.12)"
+                    }}
                   >
-                    <Bike size={22} />
-                    <span>Passer en ligne</span>
+                    <Zap size={14} />
+                    <span>Simuler 3 commandes (cascade 3s & 5s)</span>
                   </button>
                 </div>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
-                  <div className="driver-radar-searching-stage">
-                    <div className="driver-radar-ring r1" />
-                    <div className="driver-radar-ring r2" />
-                    <div className="driver-radar-ring r3" />
-                    <div className="driver-scooter-center">
-                      <Bike size={36} />
+              </div>
+            ) : (
+              <div className="driver-home-wrapper">
+                <div className="driver-control-card">
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, maxWidth: 520 }}>
+                    <div style={{ width: 68, height: 68, borderRadius: 9999, backgroundColor: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B" }}>
+                      <Power size={32} />
                     </div>
-                  </div>
-
-                  <h3 className="driver-searching-title">Recherche de commandes à proximité...</h3>
-                  <p className="driver-searching-desc">
-                    Restez connecté, notre algorithme intelligent recherche la meilleure course adaptée à votre secteur à Agadir.
-                  </p>
-
-                  <div style={{ marginTop: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                    <button
-                      type="button"
-                      onClick={handleTriggerSimulatedOffer}
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid rgba(255, 90, 0, 0.3)",
-                        color: "#FF5A00",
-                        fontSize: 13,
-                        fontWeight: 800,
-                        padding: "10px 20px",
-                        borderRadius: 9999,
-                        cursor: "pointer",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        boxShadow: "0 2px 8px rgba(255, 90, 0, 0.15)"
-                      }}
-                    >
-                      <Sparkles size={16} />
-                      <span>Simuler une nouvelle commande</span>
-                    </button>
+                    <div>
+                      <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0B1020" }}>Vous êtes actuellement hors ligne</h2>
+                      <p style={{ fontSize: 13, color: "#7A8194", marginTop: 4 }}>
+                        Passez en ligne pour commencer à recevoir des livraisons et maximiser vos gains dans le Grand Agadir.
+                      </p>
+                    </div>
 
                     <button
                       type="button"
-                      onClick={handleGoOffline}
-                      className="driver-toggle-offline-btn"
-                      style={{ margin: 0 }}
+                      onClick={handleGoOnline}
+                      className="driver-toggle-online-btn"
                     >
-                      <Power size={16} />
-                      <span>Passer hors ligne</span>
+                      <Bike size={22} />
+                      <span>Passer en ligne</span>
                     </button>
                   </div>
                 </div>
-              )}
-            </div>
 
-            <div className="driver-stats-grid">
-              <div className="driver-stat-card">
-                <div className="driver-stat-header">
-                  <span>Gains du jour</span>
-                  <DollarSign size={16} color="#10B981" />
-                </div>
-                <div className="driver-stat-val" style={{ color: "#047857" }}>{todayEarnings}.00 MAD</div>
-                <div className="driver-stat-sub">Pourboires 100% reversés</div>
-              </div>
+                <div className="driver-stats-grid">
+                  <div className="driver-stat-card">
+                    <div className="driver-stat-header">
+                      <span>Gains du jour</span>
+                      <DollarSign size={16} color="#10B981" />
+                    </div>
+                    <div className="driver-stat-val" style={{ color: "#047857" }}>{todayEarnings}.00 MAD</div>
+                    <div className="driver-stat-sub">Pourboires 100% reversés</div>
+                  </div>
 
-              <div className="driver-stat-card">
-                <div className="driver-stat-header">
-                  <span>Courses complétées</span>
-                  <PackageCheck size={16} color="#FF5A00" />
-                </div>
-                <div className="driver-stat-val">{todayDeliveriesCount}</div>
-                <div className="driver-stat-sub">+2 par rapport à hier</div>
-              </div>
+                  <div className="driver-stat-card">
+                    <div className="driver-stat-header">
+                      <span>Courses complétées</span>
+                      <PackageCheck size={16} color="#FF5A00" />
+                    </div>
+                    <div className="driver-stat-val">{todayDeliveriesCount}</div>
+                    <div className="driver-stat-sub">+2 par rapport à hier</div>
+                  </div>
 
-              <div className="driver-stat-card">
-                <div className="driver-stat-header">
-                  <span>Temps connecté</span>
-                  <Clock size={16} color="#6366F1" />
-                </div>
-                <div className="driver-stat-val">
-                  {Math.floor(onlineMinutes / 60)}h {onlineMinutes % 60}m
-                </div>
-                <div className="driver-stat-sub">Secteur Agadir Centre</div>
-              </div>
+                  <div className="driver-stat-card">
+                    <div className="driver-stat-header">
+                      <span>Temps connecté</span>
+                      <Clock size={16} color="#6366F1" />
+                    </div>
+                    <div className="driver-stat-val">
+                      {Math.floor(onlineMinutes / 60)}h {onlineMinutes % 60}m
+                    </div>
+                    <div className="driver-stat-sub">Secteur Agadir Centre</div>
+                  </div>
 
-              <div className="driver-stat-card">
-                <div className="driver-stat-header">
-                  <span>Note satisfaction</span>
-                  <Star size={16} color="#F59E0B" fill="#F59E0B" />
+                  <div className="driver-stat-card">
+                    <div className="driver-stat-header">
+                      <span>Note satisfaction</span>
+                      <Star size={16} color="#F59E0B" fill="#F59E0B" />
+                    </div>
+                    <div className="driver-stat-val">4.95 ★</div>
+                    <div className="driver-stat-sub">Sur 142 évaluations</div>
+                  </div>
                 </div>
-                <div className="driver-stat-val">4.95 ★</div>
-                <div className="driver-stat-sub">Sur 142 évaluations</div>
               </div>
-            </div>
-          </div>
-        )}
+            )
+          )}
 
         {activeTab === "home" && isNavigating && (
           <div className="driver-nav-screen">
             <div ref={mapContainerRef} className="driver-nav-map-container" />
 
             <div className="driver-nav-top-banner">
-              <span className="driver-nav-top-step">
-                {isHeadingToRestaurant ? "Étape 1/2 : Vers le restaurant" : "Étape 2/2 : Vers le client"}
-              </span>
-              <span style={{ color: "#CBD5E1" }}>•</span>
-              <span className="driver-nav-top-dest">{targetLabel}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                <span className="driver-nav-top-step">
+                  {isHeadingToRestaurant ? "Étape 1/2 : Vers le restaurant" : "Étape 2/2 : Vers le client"}
+                </span>
+                <span style={{ color: "#CBD5E1" }}>•</span>
+                <span className="driver-nav-top-dest">{targetLabel}</span>
+              </div>
+              <div className="driver-nav-driver-loc-bar">
+                <Navigation size={12} color="#FF5A00" style={{ transform: "rotate(45deg)", flexShrink: 0 }} />
+                <span>  <strong>Boulevard Hassan II </strong></span>
+              </div>
             </div>
 
             <button
@@ -1248,6 +2026,18 @@ export const DriverDashboardPage: React.FC = () => {
             )}
 
             <div className="driver-bottom-panel">
+              <div className="driver-panel-driver-pos-badge">
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Navigation size={13} color="#FF5A00" style={{ transform: "rotate(45deg)", flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, fontWeight: 900, color: "#FF5A00", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                    Position livreur
+                  </span>
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>
+                  Boulevard Hassan II, Talborjt, Agadir
+                </span>
+              </div>
+
               <div className="driver-panel-row-top">
                 <div className="driver-panel-eta-badge">
                   <Clock size={16} />
@@ -1255,7 +2045,7 @@ export const DriverDashboardPage: React.FC = () => {
                 </div>
 
                 <div style={{ fontSize: 13, fontWeight: 900, color: "#10B981" }}>
-                  Gain course : 25.00 MAD
+                  Gain course : {activeOrder?.deliveryFee || 25}.00 MAD
                 </div>
               </div>
 
@@ -1439,51 +2229,266 @@ export const DriverDashboardPage: React.FC = () => {
         )}
 
         {activeTab === "deliveries" && (
-          <div className="driver-home-wrapper">
-            <div className="driver-control-card" style={{ textAlign: "left", alignItems: "stretch" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 16 }}>
-                <div>
-                  <h3 style={{ fontSize: 20, fontWeight: 900, color: "#0B1020" }}>Historique des livraisons</h3>
-                  <p style={{ fontSize: 12, color: "#7A8194", marginTop: 2 }}>
-                    Toutes vos courses enregistrées dans le Grand Agadir
-                  </p>
+          <div className="driver-logistics-container">
+            <div
+              className="driver-logistics-list-col"
+              style={{ display: trackingMobileView === "detail" && window.innerWidth < 1024 ? "none" : undefined }}
+            >
+              <div className="driver-logistics-header">
+                <div className="driver-logistics-title-row">
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 900, color: "#0B1020" }}>Historique des livraisons</h3>
+                    <p style={{ fontSize: 11, color: "#7A8194", marginTop: 2 }}>
+                      Suivi et historique de vos courses réalisées
+                    </p>
+                  </div>
+                  <div className="driver-earnings-pill">
+                    <span className="driver-earnings-label">Gains du jour</span>
+                    <span className="driver-earnings-val" style={{ color: "#047857" }}>{todayEarnings}.00 MAD</span>
+                  </div>
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "6px 14px", borderRadius: 12, border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-                  Total gains : {todayEarnings}.00 MAD
-                </span>
+
+                <div className="driver-logistics-search-wrap">
+                  <Search size={15} className="driver-logistics-search-icon" />
+                  <input
+                    type="text"
+                    value={trackingSearchQuery}
+                    onChange={(e) => setTrackingSearchQuery(e.target.value)}
+                    placeholder="Rechercher par n° de commande, client..."
+                    className="driver-logistics-search-input"
+                  />
+                </div>
+
+                <div className="driver-logistics-filters">
+                  <button
+                    type="button"
+                    onClick={() => setTrackingFilter("all")}
+                    className={`driver-logistics-filter-btn ${trackingFilter === "all" ? "active" : ""}`}
+                  >
+                    <span>Toutes</span>
+                    <span className="driver-logistics-filter-count">{trackingDeliveries.length}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTrackingFilter("in_transit")}
+                    className={`driver-logistics-filter-btn ${trackingFilter === "in_transit" ? "active" : ""}`}
+                  >
+                    <span>En cours</span>
+                    <span className="driver-logistics-filter-count">
+                      {trackingDeliveries.filter((d) => d.status === "in_transit").length}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTrackingFilter("delivered")}
+                    className={`driver-logistics-filter-btn ${trackingFilter === "delivered" ? "active" : ""}`}
+                  >
+                    <span>Livrées</span>
+                    <span className="driver-logistics-filter-count">
+                      {trackingDeliveries.filter((d) => d.status === "delivered").length}
+                    </span>
+                  </button>
+                </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16 }}>
-                {completedList.map((item) => (
+              <div className="driver-logistics-cards-list">
+                {filteredTrackingDeliveries.map((item) => (
                   <div
                     key={item.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "14px 16px",
-                      borderRadius: 16,
-                      backgroundColor: "#FAF8F5",
-                      border: "1px solid rgba(11, 16, 32, 0.06)"
+                    onClick={() => {
+                      setSelectedDeliveryId(item.id);
+                      if (window.innerWidth < 1024) setTrackingMobileView("detail");
                     }}
+                    className={`driver-logistics-card ${selectedDeliveryId === item.id ? "selected" : ""}`}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "#ECFDF5", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <CheckCircle2 size={20} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 14, fontWeight: 900, color: "#0B1020" }}>{item.restaurantName}</div>
-                        <div style={{ fontSize: 11, color: "#7A8194" }}>
-                          Vers {item.neighborhood} • {item.distance} • {item.time}
+                    <div className="driver-logistics-card-top">
+                      <span className="driver-logistics-card-id">#{item.loadNum}</span>
+                      <span className={`driver-logistics-badge ${item.status}`}>
+                        {item.statusLabel}
+                      </span>
+                    </div>
+
+                    <div className="driver-logistics-route-bar">
+                      <div className="driver-logistics-dot" />
+                      <div className="driver-logistics-line">
+                        <div className="driver-logistics-vehicle-icon">
+                          <Bike size={13} />
                         </div>
                       </div>
+                      <div className="driver-logistics-dot" />
                     </div>
-                    <div style={{ fontSize: 16, fontWeight: 900, color: "#10B981" }}>
-                      +{item.earned}.00 MAD
+
+                    <div className="driver-logistics-addresses">
+                      <div className="driver-logistics-addr-row">
+                        <Building2 size={13} color="#FF5A00" style={{ flexShrink: 0 }} />
+                        <span className="driver-logistics-addr-text">{item.restaurantAddress}</span>
+                      </div>
+                      <div className="driver-logistics-addr-row">
+                        <MapPin size={13} color="#10B981" style={{ flexShrink: 0 }} />
+                        <span className="driver-logistics-addr-text">{item.customerAddress}</span>
+                      </div>
+                    </div>
+
+                    <div className="driver-logistics-customer-row">
+                      <div className="driver-logistics-cust-info">
+                        <div className="driver-logistics-cust-avatar">
+                          {item.customerName.slice(0, 1)}
+                        </div>
+                        <div>
+                          <div className="driver-logistics-cust-name">{item.customerName}</div>
+                          <div style={{ fontSize: 10, color: "#64748B" }}>Client Foodi</div>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: 12, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "3px 9px", borderRadius: 9999, border: "1px solid rgba(16, 185, 129, 0.25)" }}>
+                        +{item.earned}.00 MAD
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div
+              className="driver-logistics-detail-col"
+              style={{ display: trackingMobileView === "list" && window.innerWidth < 1024 ? "none" : undefined }}
+            >
+              {selectedDelivery && (
+                <>
+                  <div className="driver-logistics-detail-header">
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                      <button
+                        type="button"
+                        onClick={() => setTrackingMobileView("list")}
+                        className="driver-logistics-back-btn"
+                        title="Retour à la liste"
+                      >
+                        <ArrowLeft size={16} />
+                        <span>Retour</span>
+                      </button>
+
+                      <span style={{ fontSize: 16, fontWeight: 900, color: "#0B1020" }}>
+                        Course #{selectedDelivery.loadNum}
+                      </span>
+                      <span className={`driver-logistics-badge ${selectedDelivery.status}`}>
+                        {selectedDelivery.statusLabel}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "3px 10px", borderRadius: 9999, border: "1px solid rgba(16, 185, 129, 0.25)" }}>
+                        +{selectedDelivery.earned}.00 MAD
+                      </span>
+                    </div>
+
+                    <div className="driver-logistics-subtabs">
+                      <button
+                        type="button"
+                        onClick={() => setTrackingSubTab("info")}
+                        className={`driver-logistics-subtab-btn ${trackingSubTab === "info" ? "active" : ""}`}
+                      >
+                        Détails & Étapes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTrackingSubTab("docs")}
+                        className={`driver-logistics-subtab-btn ${trackingSubTab === "docs" ? "active" : ""}`}
+                      >
+                        Reçu officiel
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="driver-logistics-content-no-map">
+                    {trackingSubTab === "docs" ? (
+                      <div className="driver-logistics-receipt-card">
+                        <div className="driver-receipt-badge-header">
+                          <div style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: "#ECFDF5", color: "#047857", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <CheckCircle2 size={24} />
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: "#0B1020" }}>Reçu de livraison certifié</div>
+                            <div style={{ fontSize: 12, color: "#7A8194" }}>Course #{selectedDelivery.loadNum} • Traité et validé</div>
+                          </div>
+                        </div>
+
+                        <div className="driver-receipt-breakdown">
+                          <div className="driver-receipt-line">
+                            <span>Prise en charge ({selectedDelivery.restaurantName})</span>
+                            <strong>15.00 MAD</strong>
+                          </div>
+                          <div className="driver-receipt-line">
+                            <span>Frais de distance ({selectedDelivery.distance})</span>
+                            <strong>{selectedDelivery.earned - 17}.00 MAD</strong>
+                          </div>
+                          <div className="driver-receipt-line">
+                            <span>Pourboire reversé 100%</span>
+                            <strong>2.00 MAD</strong>
+                          </div>
+                          <div className="driver-receipt-total-line">
+                            <span>Total crédité coursier</span>
+                            <strong style={{ color: "#047857", fontSize: 18 }}>+{selectedDelivery.earned}.00 MAD</strong>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="driver-logistics-details-wrapper">
+                        <div className="driver-logistics-timeline-box">
+                          <div style={{ fontSize: 14, fontWeight: 900, color: "#0B1020", marginBottom: 12 }}>
+                            Chronologie de la livraison
+                          </div>
+
+                          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                            {selectedDelivery.steps.map((step, idx) => (
+                              <div key={idx} className="driver-logistics-timeline-item">
+                                <div className="driver-logistics-timeline-indicator">
+                                  <div className={`driver-logistics-timeline-circle ${step.status}`} />
+                                  {idx < selectedDelivery.steps.length - 1 && (
+                                    <div className="driver-logistics-timeline-stem" />
+                                  )}
+                                </div>
+                                <div className="driver-logistics-timeline-content">
+                                  <div className="driver-logistics-step-title">{step.title}</div>
+                                  <div className="driver-logistics-step-loc">{step.location}</div>
+                                  <div className="driver-logistics-step-time">{step.time}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="driver-logistics-summary-card">
+                          <div style={{ fontSize: 14, fontWeight: 900, color: "#0B1020", marginBottom: 12 }}>
+                            Récapitulatif de la course
+                          </div>
+
+                          <div className="driver-summary-specs-grid">
+                            <div className="driver-summary-spec-item">
+                              <span className="driver-spec-label">Restaurant</span>
+                              <strong className="driver-spec-val">{selectedDelivery.restaurantName}</strong>
+                              <span className="driver-spec-sub">{selectedDelivery.restaurantAddress}</span>
+                            </div>
+
+                            <div className="driver-summary-spec-item">
+                              <span className="driver-spec-label">Client</span>
+                              <strong className="driver-spec-val">{selectedDelivery.customerName}</strong>
+                              <span className="driver-spec-sub">{selectedDelivery.customerAddress}</span>
+                            </div>
+
+                            <div className="driver-summary-spec-item">
+                              <span className="driver-spec-label">Distance & Durée</span>
+                              <strong className="driver-spec-val">{selectedDelivery.distance} ({selectedDelivery.duration})</strong>
+                              <span className="driver-spec-sub">Heure : {selectedDelivery.time}</span>
+                            </div>
+
+                            <div className="driver-summary-spec-item highlight">
+                              <span className="driver-spec-label">Rémunération totale</span>
+                              <strong className="driver-spec-val" style={{ color: "#047857", fontSize: 16 }}>+{selectedDelivery.earned}.00 MAD</strong>
+                              <span className="driver-spec-sub" style={{ color: "#047857" }}>Gain garanti crédité</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1505,15 +2510,15 @@ export const DriverDashboardPage: React.FC = () => {
             )}
 
             <div className="driver-control-card" style={{ textAlign: "left", alignItems: "stretch", gap: 24 }}>
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 20 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ width: 68, height: 68, borderRadius: 22, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 900, border: "2px solid #FFE0D1" }}>
+              <div className="driver-profile-header-row">
+                <div className="driver-profile-user-info">
+                  <div className="driver-profile-large-avatar">
                     {driverFirstName.slice(0, 1).toUpperCase()}{driverLastName.slice(0, 1).toUpperCase()}
                   </div>
                   <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <h3 style={{ fontSize: 22, fontWeight: 900, color: "#0B1020" }}>{driverFirstName} {driverLastName}</h3>
-                      <span style={{ fontSize: 11, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "3px 10px", borderRadius: 9999, border: "1px solid rgba(16, 185, 129, 0.3)", textTransform: "uppercase" }}>
+                    <div className="driver-profile-title-line">
+                      <h3 style={{ fontSize: 20, fontWeight: 900, color: "#0B1020" }}>{driverFirstName} {driverLastName}</h3>
+                      <span className="driver-verified-chip">
                         Coursier Vérifié Foodi
                       </span>
                     </div>
@@ -1524,7 +2529,7 @@ export const DriverDashboardPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleStartOverProfile}
-                  className="driver-simulate-btn"
+                  className="driver-simulate-btn driver-profile-startover-btn"
                   title="Recommencer le formulaire d'onboarding complet"
                 >
                   <RotateCcw size={16} />
@@ -1536,16 +2541,16 @@ export const DriverDashboardPage: React.FC = () => {
                 <h4 style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginBottom: 12 }}>
                   Coordonnées & Sécurité du compte
                 </h4>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+                <div className="driver-profile-grid-security">
                   <div style={{ backgroundColor: "#FFFFFF", padding: 18, borderRadius: 18, border: "1px solid rgba(11, 16, 32, 0.08)", display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                           <Mail size={18} />
                         </div>
-                        <div>
+                        <div style={{ minWidth: 0 }}>
                           <span style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Adresse e-mail</span>
-                          <div style={{ fontSize: 14, fontWeight: 800, color: "#0B1020", marginTop: 2 }}>{driverEmail}</div>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "#0B1020", marginTop: 2, wordBreak: "break-all" }}>{driverEmail}</div>
                         </div>
                       </div>
 
@@ -1553,9 +2558,10 @@ export const DriverDashboardPage: React.FC = () => {
                         type="button"
                         onClick={() => setIsEmailModalOpen(true)}
                         className="driver-btn-edit-sm"
+                        style={{ flexShrink: 0 }}
                       >
                         <Edit3 size={14} />
-                        <span>Modifier (OTP)</span>
+                        <span>Modifier</span>
                       </button>
                     </div>
                     <div style={{ fontSize: 11, color: "#10B981", fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
@@ -1565,9 +2571,9 @@ export const DriverDashboardPage: React.FC = () => {
                   </div>
 
                   <div style={{ backgroundColor: "#FFFFFF", padding: 18, borderRadius: 18, border: "1px solid rgba(11, 16, 32, 0.08)", display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#F1F5F9", color: "#334155", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#F1F5F9", color: "#334155", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                           <Lock size={18} />
                         </div>
                         <div>
@@ -1580,6 +2586,7 @@ export const DriverDashboardPage: React.FC = () => {
                         type="button"
                         onClick={() => { setIsPasswordModalOpen(true); setPasswordError(""); }}
                         className="driver-btn-edit-sm"
+                        style={{ flexShrink: 0 }}
                       >
                         <KeyRound size={14} />
                         <span>Changer</span>
@@ -1596,7 +2603,7 @@ export const DriverDashboardPage: React.FC = () => {
                 <h4 style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginBottom: 12 }}>
                   Véhicule & Documents réglementaires
                 </h4>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+                <div className="driver-profile-grid-docs">
                   <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
                     <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Deux-roues de service</div>
                     <div style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>{vehBrand} {vehModel} ({vehEngine})</div>
@@ -1620,128 +2627,308 @@ export const DriverDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {activeTab === "help" && (
-          <div className="driver-home-wrapper">
-            <div className="driver-control-card" style={{ textAlign: "left", alignItems: "stretch", gap: 20 }}>
-              <div style={{ borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 12 }}>
-                <h3 style={{ fontSize: 20, fontWeight: 900, color: "#0B1020" }}>Assistance & Support Coursier</h3>
-                <p style={{ fontSize: 12, color: "#7A8194", marginTop: 2 }}>
-                  Une équipe dédiée vous accompagne 7j/7 lors de vos livraisons
-                </p>
+         
+      </main>
+      </div>
+
+
+
+      {isMobileSidebarOpen && !isOrderActive && (
+        <>
+          <div
+            className="driver-mobile-drawer-overlay"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
+          <div className="driver-mobile-drawer">
+            <div>
+              <div className="driver-drawer-header">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: "#FF5A00", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontStyle: "italic" }}>F</div>
+                  <span style={{ fontSize: 22, fontWeight: 900, color: "#FFFFFF" }}>Foodi</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileSidebarOpen(false)}
+                  className="driver-drawer-close-btn"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-                <div style={{ backgroundColor: "#FFF2EB", border: "1px solid rgba(255, 90, 0, 0.2)", borderRadius: 20, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: "#FF5A00", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Phone size={22} />
+              <div style={{ backgroundColor: "#222632", borderRadius: 16, padding: 14, marginBottom: 18, display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 42, height: 42, borderRadius: 9999, backgroundColor: "#FF5A00", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 16 }}>
+                  {driverFirstName.slice(0, 1).toUpperCase()}
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#FFFFFF" }}>{driverFirstName} {driverLastName}</div>
+                  <div style={{ fontSize: 11, color: "#10B981", fontWeight: 800 }}>Coursier Vérifié • 4.95 ★</div>
+                </div>
+              </div>
+
+              <nav className="driver-sidebar-menu">
+                <button
+                  type="button"
+                  disabled={isOrderActive}
+                  onClick={() => {
+                    if (isOrderActive) return;
+                    setActiveTab("home");
+                    setIsMobileSidebarOpen(false);
+                    if (driverState === "delivered") setDriverState("online_searching");
+                  }}
+                  className={`driver-sidebar-link ${activeTab === "home" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+                >
+                  <Bike size={18} />
+                  <span>{isOrderActive ? "Course en cours" : driverState === "online_searching" ? "En attente d'une commande" : "Accueil"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isOrderActive}
+                  onClick={() => {
+                    if (isOrderActive) return;
+                    setActiveTab("deliveries");
+                    setIsMobileSidebarOpen(false);
+                  }}
+                  className={`driver-sidebar-link ${activeTab === "deliveries" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+                >
+                  <PackageCheck size={18} />
+                  <span>Mes livraisons</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isOrderActive}
+                  onClick={() => {
+                    if (isOrderActive) return;
+                    setActiveTab("profile");
+                    setIsMobileSidebarOpen(false);
+                  }}
+                  className={`driver-sidebar-link ${activeTab === "profile" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
+                >
+                  <User size={18} />
+                  <span>Mon profil</span>
+                </button>
+
+                
+
+             
+              </nav>
+            </div>
+
+            <div className="driver-sidebar-bottom">
+              <div className="driver-sidebar-online-card">
+                <div className="driver-sidebar-online-row">
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span className={`driver-status-dot ${isOrderActive || driverState !== "offline" ? "online" : "offline"}`} />
+                    <span style={{ fontSize: 13, fontWeight: 800, color: driverState !== "offline" ? "#FFFFFF" : "#94A3B8" }}>
+                      {isOrderActive ? "Course active" : driverState !== "offline" ? "En ligne" : "Hors ligne"}
+                    </span>
                   </div>
-                  <div>
-                    <h4 style={{ fontSize: 16, fontWeight: 900, color: "#0B1020" }}>Ligne d'Urgence Dispatch</h4>
-                    <p style={{ fontSize: 12, color: "#7A8194", marginTop: 2 }}>En cas de problème d'accès, d'accident ou de commande endommagée :</p>
-                  </div>
-                  <a
-                    href="tel:+212662102030"
-                    style={{ fontSize: 15, fontWeight: 900, color: "#FF5A00", textDecoration: "none" }}
+
+                  <button
+                    type="button"
+                    disabled={isOrderActive}
+                    onClick={() => {
+                      if (isOrderActive) return;
+                      if (driverState === "offline") {
+                        handleGoOnline();
+                      } else {
+                        handleGoOffline();
+                      }
+                    }}
+                    className={`driver-switch-toggle ${driverState !== "offline" ? "active" : ""} ${isOrderActive ? "locked" : ""}`}
                   >
-                    +212 6 62 10 20 30
-                  </a>
+                    <span className="driver-switch-handle" />
+                  </button>
                 </div>
-
-                <div style={{ backgroundColor: "#FAF8F5", border: "1px solid rgba(11, 16, 32, 0.08)", borderRadius: 20, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: "#0B1020", color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Building2 size={22} />
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: 16, fontWeight: 900, color: "#0B1020" }}>Hub Coursiers Agadir</h4>
-                    <p style={{ fontSize: 12, color: "#7A8194", marginTop: 2 }}>Avenue Hassan II, Centre-ville, Agadir</p>
-                  </div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: "#64748B" }}>Ouvert tous les jours de 09:00 à 02:00</span>
-                </div>
+                <span style={{ fontSize: 11, color: isOrderActive ? "#FF7A1A" : "#94A3B8" }}>
+                  {isOrderActive ? "Verrouillé : course en cours" : driverState !== "offline" ? "Vous recevez les commandes" : "Vous êtes hors ligne"}
+                </span>
               </div>
+
+              <button
+                type="button"
+                disabled={isOrderActive}
+                onClick={() => {
+                  if (isOrderActive) return;
+                  setIsMobileSidebarOpen(false);
+                  navigate("/login");
+                }}
+                className={`driver-sidebar-logout-btn ${isOrderActive ? "locked" : ""}`}
+              >
+                <LogOut size={16} />
+                <span>Se déconnecter</span>
+              </button>
             </div>
           </div>
-        )}
-      </main>
+        </>
+      )}
 
-      {driverState === "offer_received" && activeOrder && (
-        <div className="driver-modal-overlay">
-          <div className="driver-offer-card">
-            <div className="driver-offer-timer-bar">
-              <div
-                className="driver-offer-timer-fill"
-                style={{ width: `${(offerTimer / 30) * 100}%` }}
-              />
-            </div>
 
-            <div className="driver-offer-body">
-              <div className="driver-offer-earnings-badge">
-                <span className="driver-offer-earnings-text">Gain garanti course</span>
-                <span className="driver-offer-earnings-amount">25.00 MAD</span>
-              </div>
 
-              <div className="driver-offer-restaurant-row">
-                <img
-                  src={activeOrder.restaurantLogo || "/images/restaurants/McDonalds.png"}
-                  alt={activeOrder.restaurantName}
-                  className="driver-offer-restaurant-logo"
-                />
-                <div>
-                  <div className="driver-offer-restaurant-name">{activeOrder.restaurantName}</div>
-                  <div className="driver-offer-restaurant-loc">{activeOrder.street || "Avenue Hassan II, Agadir"}</div>
-                </div>
-              </div>
-
-              <div className="driver-offer-trip-breakdown">
-                <div className="driver-trip-leg">
-                  <span className="driver-trip-leg-label">Livreur → Restaurant</span>
-                  <span className="driver-trip-leg-val">1.8 km (≈ 6 min)</span>
-                </div>
-                <div className="driver-trip-leg">
-                  <span className="driver-trip-leg-label">Restaurant → Client</span>
-                  <span className="driver-trip-leg-val">3.4 km (≈ 14 min)</span>
-                </div>
-                <div className="driver-trip-leg">
-                  <span className="driver-trip-leg-label">Distance totale</span>
-                  <span className="driver-trip-leg-val">5.2 km</span>
-                </div>
-                <div className="driver-trip-leg">
-                  <span className="driver-trip-leg-label">Durée estimée</span>
-                  <span className="driver-trip-leg-val">25 minutes</span>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#7A8194" }}>
-                <span>Destination : <strong>{activeOrder.neighborhood}</strong></span>
-                <span style={{ fontWeight: 800, color: "#EF4444" }}>Temps restant : {offerTimer}s</span>
-              </div>
-
-              <div className="driver-offer-actions">
-                <button
-                  type="button"
-                  onClick={handleDeclineDelivery}
-                  className="driver-btn-decline"
-                >
-                  Refuser
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAcceptDelivery}
-                  className="driver-btn-accept"
-                >
-                  <span>Accepter la livraison</span>
-                  <ChevronRight size={18} />
-                </button>
+      {driverState === "offer_received" && incomingOffers.length > 0 && (
+        <div className="driver-alerts-overlay">
+          <div className="driver-alerts-stack">
+            <div className="driver-alerts-stack-header">
+              <div className="driver-alerts-stack-badge">
+                <span className="driver-pulse-dot" />
+                <span>
+                  {incomingOffers.length} {incomingOffers.length > 1 ? "nouvelles courses disponibles" : "nouvelle course disponible"}
+                </span>
               </div>
             </div>
+
+            {incomingOffers.map((offer) => (
+              <div key={offer.id} className="driver-alert-wide-card">
+                <div className="driver-offer-timer-bar">
+                  <div
+                    className="driver-offer-timer-fill"
+                    style={{ width: `${(offer.remainingSeconds / 15) * 100}%` }}
+                  />
+                </div>
+
+                <div className="driver-alert-wide-body">
+                  <div className="driver-alert-desktop-content">
+                    <div className="driver-offer-sparkle-bell">
+                      <Bell size={24} />
+                      <Sparkles size={14} style={{ position: "absolute", top: -4, right: -4, color: "#FF5A00" }} />
+                    </div>
+
+                    <div className="driver-alert-info-block">
+                      <div className="driver-alert-title-row">
+                        <span className="driver-offer-main-title">Nouvelle commande !</span>
+                        <span className="driver-chip-sep" style={{ color: "#94A3B8" }}>•</span>
+                        <span className="driver-offer-restaurant-sub">Restaurant : {offer.restaurantName}</span>
+                      </div>
+
+                      <div className="driver-offer-meta-chips">
+                        <span className="driver-chip-item">
+                          <MapPin size={13} color="#FF5A00" />
+                          <span>2.8 km</span>
+                        </span>
+                        <span className="driver-chip-sep">|</span>
+                        <span className="driver-chip-item">
+                          <Clock size={13} color="#FF5A00" />
+                          <span>≈ 12 min</span>
+                        </span>
+                        <span className="driver-chip-sep">|</span>
+                        <span className="driver-chip-item">
+                          <Navigation size={13} color="#64748B" />
+                          <span>Vers {offer.neighborhood}</span>
+                        </span>
+                        <span className="driver-chip-sep">|</span>
+                        <span className="driver-price-tag-green">
+                          +{offer.deliveryFee || 25}.00 MAD garantis
+                        </span>
+                      </div>
+                    </div>
+
+                    <img
+                      src={offer.mealImage || offer.restaurantLogo || "/images/meals/1791902884_mcdo2.png"}
+                      alt={offer.restaurantName}
+                      className="driver-alert-meal-thumb"
+                    />
+
+                    <div className="driver-alert-actions-block">
+                      <span className="driver-alert-countdown-chip">
+                        <Clock size={13} />
+                        <span>{offer.remainingSeconds}s</span>
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeclineSingleOffer(offer.id)}
+                        className="driver-btn-refuse-v2"
+                      >
+                        Refuser
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleAcceptSingleOffer(offer)}
+                        className="driver-btn-accept-v2"
+                      >
+                        <span>Accepter</span>
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="driver-alert-phone-content">
+                    <div className="driver-alert-phone-top">
+                      <img
+                        src={offer.restaurantLogo || "/images/restaurants/McDonalds.png"}
+                        alt={offer.restaurantName}
+                        className="driver-alert-phone-logo"
+                      />
+                      <div className="driver-alert-phone-info">
+                        <div className="driver-alert-phone-name-row">
+                          <h4 className="driver-alert-phone-name">{offer.restaurantName}</h4>
+                          <span className="driver-alert-phone-price">
+                            {offer.deliveryFee || 25} DH
+                          </span>
+                        </div>
+
+                        <div className="driver-alert-phone-meta">
+                          <span className="driver-alert-phone-meta-item">
+                            <MapPin size={12} color="#FF5A00" />
+                            <span>1.8 km</span>
+                          </span>
+                          <span className="driver-chip-sep">•</span>
+                          <span className="driver-alert-phone-meta-item">
+                            <Clock size={12} color="#FF5A00" />
+                            <span>≈ 6 min</span>
+                          </span>
+                          <span className="driver-chip-sep">•</span>
+                          <span className="driver-alert-phone-meta-item">
+                            <Building2 size={12} color="#64748B" />
+                            <span>{offer.shopNeighborhood || "Talborjt"}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="driver-alert-phone-actions">
+                      <span className="driver-alert-countdown-chip">
+                        <Clock size={12} />
+                        <span>{offer.remainingSeconds}s</span>
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeclineSingleOffer(offer.id)}
+                        className="driver-btn-refuse-v2"
+                      >
+                        Refuser
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleAcceptSingleOffer(offer)}
+                        className="driver-btn-accept-v2"
+                      >
+                        <span>Accepter</span>
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {isOrderDetailsOpen && activeOrder && (
         <div className="driver-modal-overlay">
-          <div className="driver-order-details-card">
+          <div className="driver-order-details-card" style={{ maxWidth: 480 }}>
             <div className="driver-order-details-header">
-              <span className="driver-order-id-badge">#{activeOrder.id}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span className="driver-order-id-badge">#{activeOrder.id}</span>
+                <span style={{ fontSize: 11, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "3px 8px", borderRadius: 9999 }}>
+                  En cours
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => setIsOrderDetailsOpen(false)}
@@ -1751,59 +2938,150 @@ export const DriverDashboardPage: React.FC = () => {
               </button>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <img
-                src={activeOrder.restaurantLogo || "/images/restaurants/McDonalds.png"}
-                alt={activeOrder.restaurantName}
-                style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain", border: "1px solid rgba(11, 16, 32, 0.08)" }}
-              />
-              <div>
-                <h4 style={{ fontSize: 16, fontWeight: 900, color: "#0B1020" }}>{activeOrder.restaurantName}</h4>
-                <p style={{ fontSize: 11, color: "#7A8194" }}>Statut : Prête pour le retrait au comptoir</p>
-              </div>
+            <div className="driver-modal-tabs">
+              <button
+                type="button"
+                onClick={() => setOrderDetailsTab("order")}
+                className={`driver-modal-tab-btn ${orderDetailsTab === "order" ? "active" : ""}`}
+              >
+                <FileText size={15} />
+                <span>Détails commande</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setOrderDetailsTab("customer")}
+                className={`driver-modal-tab-btn ${orderDetailsTab === "customer" ? "active" : ""}`}
+              >
+                <User size={15} />
+                <span>Détails client</span>
+              </button>
             </div>
 
-            <div className="driver-qr-container">
-              <div className="driver-qr-box">
-                <svg width="120" height="120" viewBox="0 0 100 100">
-                  <rect width="100" height="100" fill="#FFFFFF" />
-                  <rect x="10" y="10" width="25" height="25" fill="#0B1020" />
-                  <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
-                  <rect x="18" y="18" width="9" height="9" fill="#0B1020" />
-                  <rect x="65" y="10" width="25" height="25" fill="#0B1020" />
-                  <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
-                  <rect x="73" y="18" width="9" height="9" fill="#0B1020" />
-                  <rect x="10" y="65" width="25" height="25" fill="#0B1020" />
-                  <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
-                  <rect x="18" y="73" width="9" height="9" fill="#0B1020" />
-                  <rect x="45" y="12" width="10" height="10" fill="#0B1020" />
-                  <rect x="42" y="35" width="16" height="10" fill="#0B1020" />
-                  <rect x="65" y="45" width="25" height="12" fill="#0B1020" />
-                  <rect x="45" y="65" width="15" height="25" fill="#0B1020" />
-                  <rect x="70" y="70" width="20" height="20" fill="#0B1020" />
-                </svg>
-              </div>
-              <span className="driver-qr-text">
-                Token vérification : <strong>{activeOrder.id}-VERIFY</strong>
-              </span>
-            </div>
-
-            <div style={{ backgroundColor: "#FAF8F5", padding: 14, borderRadius: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", color: "#7A8194" }}>
-                Articles commandés ({activeOrder.items?.length || 2})
-              </span>
-              {activeOrder.items?.map((it, idx) => (
-                <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700, color: "#0B1020" }}>
-                  <span>{it.quantity}x {it.name}</span>
-                  <span style={{ fontWeight: 900 }}>{it.price} MAD</span>
+            {orderDetailsTab === "order" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 6 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <img
+                    src={activeOrder.restaurantLogo || "/images/restaurants/McDonalds.png"}
+                    alt={activeOrder.restaurantName}
+                    style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain", border: "1px solid rgba(11, 16, 32, 0.08)", padding: 2, backgroundColor: "#FFFFFF" }}
+                  />
+                  <div>
+                    <h4 style={{ fontSize: 15, fontWeight: 900, color: "#0B1020" }}>{activeOrder.restaurantName}</h4>
+                    <p style={{ fontSize: 11, color: "#7A8194" }}>Statut : Prête pour le retrait au comptoir</p>
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", backgroundColor: "#ECFDF5", borderRadius: 14, border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-              <span style={{ fontSize: 12, fontWeight: 800, color: "#065F46" }}>Rémunération coursier</span>
-              <span style={{ fontSize: 18, fontWeight: 900, color: "#047857" }}>25.00 MAD</span>
-            </div>
+                <div className="driver-qr-container">
+                  <div className="driver-qr-box">
+                    <svg width="110" height="110" viewBox="0 0 100 100">
+                      <rect width="100" height="100" fill="#FFFFFF" />
+                      <rect x="10" y="10" width="25" height="25" fill="#0B1020" />
+                      <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
+                      <rect x="18" y="18" width="9" height="9" fill="#0B1020" />
+                      <rect x="65" y="10" width="25" height="25" fill="#0B1020" />
+                      <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
+                      <rect x="73" y="18" width="9" height="9" fill="#0B1020" />
+                      <rect x="10" y="65" width="25" height="25" fill="#0B1020" />
+                      <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
+                      <rect x="18" y="73" width="9" height="9" fill="#0B1020" />
+                      <rect x="45" y="12" width="10" height="10" fill="#0B1020" />
+                      <rect x="42" y="35" width="16" height="10" fill="#0B1020" />
+                      <rect x="65" y="45" width="25" height="12" fill="#0B1020" />
+                      <rect x="45" y="65" width="15" height="25" fill="#0B1020" />
+                      <rect x="70" y="70" width="20" height="20" fill="#0B1020" />
+                    </svg>
+                  </div>
+                  <span className="driver-qr-text">
+                    Code de retrait : <strong>{activeOrder.id.slice(-4) || "4921"}</strong>
+                  </span>
+                </div>
+
+                <div style={{ backgroundColor: "#FAF8F5", padding: 14, borderRadius: 16, display: "flex", flexDirection: "column", gap: 8 }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", color: "#7A8194" }}>
+                    Articles commandés ({activeOrder.items?.length || 2})
+                  </span>
+                  {activeOrder.items?.map((it, idx) => (
+                    <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700, color: "#0B1020" }}>
+                      <span>{it.quantity}x {it.name}</span>
+                      <span style={{ fontWeight: 900 }}>{it.price} MAD</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", backgroundColor: "#ECFDF5", borderRadius: 14, border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "#065F46" }}>Rémunération coursier</span>
+                  <span style={{ fontSize: 18, fontWeight: 900, color: "#047857" }}>25.00 MAD</span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 6 }}>
+                <div className="driver-customer-card">
+                  <div className="driver-customer-header-row">
+                    <div className="driver-customer-info-left">
+                      <div className="driver-customer-avatar">
+                        {(activeOrder.customerName || "Youssef Bennani").slice(0, 1)}
+                      </div>
+                      <div>
+                        <div className="driver-customer-name">{activeOrder.customerName || "Youssef Bennani"}</div>
+                        <div className="driver-customer-phone">{activeOrder.customerPhone || "+212 6 71 82 93 04"}</div>
+                      </div>
+                    </div>
+
+                    <a
+                      href={`tel:${activeOrder.customerPhone || "+212671829304"}`}
+                      className="driver-btn-call"
+                    >
+                      <PhoneCall size={16} />
+                      <span>Appeler</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="driver-customer-addr-card">
+                  <span className="driver-customer-addr-title">
+                    <MapPin size={14} color="#FF5A00" />
+                    <span>Adresse de livraison client</span>
+                  </span>
+                  <div className="driver-customer-addr-text">
+                    {activeOrder.street || "Avenue Hassan II"}, {activeOrder.buildingNameNumber || "Résidence Najah, Bât B"}
+                  </div>
+                  <div className="driver-customer-addr-sub">
+                    {activeOrder.neighborhood || "Talborjt, Agadir"} • {activeOrder.floorNumber || "2ème étage"} • {activeOrder.doorNumber || "Appt 8"}
+                  </div>
+                </div>
+
+                {activeOrder.instructions && (
+                  <div className="driver-customer-instructions-box">
+                    <Info size={16} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <span>Consigne client : {activeOrder.instructions}</span>
+                  </div>
+                )}
+
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${activeOrder.lat || 30.4278},${activeOrder.lng || -9.5981}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(11, 16, 32, 0.12)",
+                    borderRadius: 14,
+                    padding: "10px 16px",
+                    color: "#0B1020",
+                    fontSize: 13,
+                    fontWeight: 800,
+                    textDecoration: "none",
+                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.04)"
+                  }}
+                >
+                  <Navigation size={16} color="#FF5A00" />
+                  <span>Itinéraire direct vers le client</span>
+                </a>
+              </div>
+            )}
 
             <button
               type="button"
@@ -1817,7 +3095,8 @@ export const DriverDashboardPage: React.FC = () => {
                 fontWeight: 800,
                 padding: 12,
                 borderRadius: 14,
-                cursor: "pointer"
+                cursor: "pointer",
+                marginTop: 8
               }}
             >
               Fermer

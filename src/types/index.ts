@@ -134,6 +134,7 @@ export interface OrderRecord {
   restaurantName: string;
   restaurantLogo: string;
   neighborhood: string;
+  shopNeighborhood?: string;
   buildingNameNumber?: string;
   floorNumber?: string;
   doorNumber?: string;
@@ -148,6 +149,8 @@ export interface OrderRecord {
   arrivalTime?: string;
   courierName?: string;
   courierPhone?: string;
+  customerName?: string;
+  customerPhone?: string;
   shopLat?: number;
   shopLng?: number;
   courierLat?: number;
@@ -169,4 +172,5 @@ export interface OrderRecord {
   deliveryFee: number;
   total: number;
   address: string;
+  mealImage?: string;
 }

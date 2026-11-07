@@ -168,7 +168,8 @@ export const OrderConfirmationPage: React.FC = () => {
       totalTime: totalTime,
       arrivalTime: arrivalTime,
       maxTime: maxTime,
-      
+      customerName: user?.name || "Client Foodi",
+      customerPhone: user?.phone || "+212 6 71 82 93 04",
       courierName: "Amine Tazi",
       courierPhone: "+212 6 62 10 20 30",
       shopLat: shopLat,
