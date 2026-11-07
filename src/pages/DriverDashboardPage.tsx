@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "../styles/driver.css";
 import {
   Bike,
+  Car,
   Power,
   Clock,
   MapPin,
@@ -35,10 +36,20 @@ import {
   Star,
   QrCode,
   LocateFixed,
-  AlertCircle
+  AlertCircle,
+  Mail,
+  Lock,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Edit3,
+  Camera,
+  RotateCcw
 } from "lucide-react";
 import { OrderRecord, OrderStatus } from "../types";
 import { fetchRoadRoute, buildRouteGeometry, LatLng } from "../utils/routing";
+import { EmailChangeModal } from "../components/EmailChangeModal";
+import { DriverHeroIllustration } from "../components/DriverHeroIllustration";
 
 type DriverState =
   | "offline"
@@ -54,13 +65,55 @@ type DriverState =
 export const DriverDashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [driverState, setDriverState] = useState<DriverState>("offline");
-  const [activeTab, setActiveTab] = useState<"home" | "deliveries" | "profile" | "help">("home");
+  const [isOnboarded, setIsOnboarded] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem("foodi_driver_onboarded");
+      return stored !== null ? stored === "true" : true;
+    } catch {
+      return true;
+    }
+  });
 
-  const [driverName, setDriverName] = useState<string>("Amine Tazi");
+  const [onboardStep, setOnboardStep] = useState<1 | 2 | 3>(1);
+  const [stepLoading, setStepLoading] = useState<boolean>(false);
+  const [stepLoadingText, setStepLoadingText] = useState<string>("");
+
+  const [vehicleType, setVehicleType] = useState<"motorcycle" | "car">("motorcycle");
+  const [vehBrand, setVehBrand] = useState<string>("Yamaha");
+  const [vehModel, setVehModel] = useState<string>("NMAX 155");
+  const [vehEngine, setVehEngine] = useState<string>("155 cc");
+  const [vehColor, setVehColor] = useState<string>("Noir Mat");
+  const [vehPlate, setVehPlate] = useState<string>("48291-A-33");
+  const [vehYear, setVehYear] = useState<string>("2023");
+  const [vehPhotoUploaded, setVehPhotoUploaded] = useState<boolean>(true);
+  const [vehBackPhotoUploaded, setVehBackPhotoUploaded] = useState<boolean>(true);
+  const [vehRegUploaded, setVehRegUploaded] = useState<boolean>(true);
+
+  const [driverFirstName, setDriverFirstName] = useState<string>("Amine");
+  const [driverLastName, setDriverLastName] = useState<string>("Tazi");
   const [driverPhone, setDriverPhone] = useState<string>("+212 6 62 10 20 30");
-  const [vehicleModel, setVehicleModel] = useState<string>("Yamaha NMAX 155");
-  const [vehiclePlate, setVehiclePlate] = useState<string>("48291-A-33");
+  const [driverEmail, setDriverEmail] = useState<string>("amine.tazi@foodi.ma");
+  const [userPhotoUploaded, setUserPhotoUploaded] = useState<boolean>(true);
+  const [permitUploaded, setPermitUploaded] = useState<boolean>(true);
+  const [cinUploaded, setCinUploaded] = useState<boolean>(true);
+  const [cinNumber, setCinNumber] = useState<string>("JC582910");
+  const [licenseNumber, setLicenseNumber] = useState<string>("33/89210");
+
+  const [driverState, setDriverState] = useState<DriverState>("offline");
+  const [activeTab, setActiveTab] = useState<"home" | "deliveries" | "profile" | "settings" | "help">("home");
+
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState<boolean>(false);
+  const [emailSuccessToast, setEmailSuccessToast] = useState<string>("");
+
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState<boolean>(false);
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [showCurrentPass, setShowCurrentPass] = useState<boolean>(false);
+  const [showNewPass, setShowNewPass] = useState<boolean>(false);
+  const [showConfirmPass, setShowConfirmPass] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<string>("");
+  const [passwordSuccessToast, setPasswordSuccessToast] = useState<string>("");
 
   const [todayEarnings, setTodayEarnings] = useState<number>(184);
   const [todayDeliveriesCount, setTodayDeliveriesCount] = useState<number>(7);
@@ -164,6 +217,45 @@ export const DriverDashboardPage: React.FC = () => {
     );
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
+
+  const handleStartOverProfile = () => {
+    setIsOnboarded(false);
+    setOnboardStep(1);
+    try {
+      localStorage.removeItem("foodi_driver_onboarded");
+    } catch {}
+    playChime();
+  };
+
+  const handleNextStep1 = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStepLoading(true);
+    setStepLoadingText("Validation technique du véhicule et de la carte grise...");
+    setTimeout(() => {
+      setStepLoading(false);
+      setOnboardStep(2);
+    }, 550);
+  };
+
+  const handleNextStep2 = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStepLoading(true);
+    setStepLoadingText("Contrôle sécurisé des pièces d'identité et du permis...");
+    setTimeout(() => {
+      setStepLoading(false);
+      setOnboardStep(3);
+    }, 700);
+  };
+
+  const handleFinishOnboarding = () => {
+    setIsOnboarded(true);
+    try {
+      localStorage.setItem("foodi_driver_onboarded", "true");
+    } catch {}
+    setDriverState("online_searching");
+    setActiveTab("home");
+    playChime();
+  };
 
   const createDriverIcon = () => {
     return L.divIcon({
@@ -334,11 +426,12 @@ export const DriverDashboardPage: React.FC = () => {
         { name: "McFlurry Oreo", quantity: 1, price: 20 }
       ],
       instructions: "Sonner à l'interphone et monter au 2ème étage.",
-      shopLat: 30.412495,
-      shopLng: -9.595213,
-      lat: 30.3991101,
-      lng: -9.5744385
-    };       
+      shopLat: 30.4167,
+      shopLng: -9.6,
+      lat: 30.4278,
+      lng: -9.5981
+    };
+
     setActiveOrder(demo);
     setDriverState("offer_received");
     setOfferTimer(30);
@@ -420,6 +513,32 @@ export const DriverDashboardPage: React.FC = () => {
     setDriverState("online_searching");
   };
 
+  const handleChangePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError("");
+
+    if (!currentPassword) {
+      setPasswordError("Veuillez saisir votre mot de passe actuel.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordError("Le nouveau mot de passe doit comporter au moins 6 caractères.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Les deux nouveaux mots de passe ne correspondent pas.");
+      return;
+    }
+
+    setPasswordSuccessToast("Mot de passe mis à jour avec succès !");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setIsPasswordModalOpen(false);
+    playChime();
+    setTimeout(() => setPasswordSuccessToast(""), 4500);
+  };
+
   const openNavigationApp = (app: "google" | "waze" | "apple") => {
     const [lat, lng] = targetCoords;
     let url = "";
@@ -432,6 +551,487 @@ export const DriverDashboardPage: React.FC = () => {
     }
     window.open(url, "_blank");
   };
+
+  if (!isOnboarded) {
+    return (
+      <div className="driver-onboard-page">
+        <header className="driver-onboard-header">
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <Link to="/">
+              <img src="/images/logohor.png" alt="Foodi" style={{ height: 32, objectFit: "contain" }} />
+            </Link>
+            <span style={{ height: 20, width: 1, backgroundColor: "rgba(11, 16, 32, 0.15)" }} />
+            <span style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5, color: "#0B1020" }}>
+              Inscription Coursier Partenaire
+            </span>
+          </div>
+
+          <div className="driver-onboard-stepper">
+            <div className="driver-onboard-step-pill">
+              <span className={`driver-onboard-step-num ${onboardStep >= 1 ? "active" : "pending"}`}>
+                1
+              </span>
+              <span>Véhicule</span>
+            </div>
+
+            <div className="driver-onboard-step-line" />
+
+            <div className="driver-onboard-step-pill">
+              <span className={`driver-onboard-step-num ${onboardStep >= 2 ? "active" : "pending"}`}>
+                2
+              </span>
+              <span>Identité & Permis</span>
+            </div>
+
+            <div className="driver-onboard-step-line" />
+
+            <div className="driver-onboard-step-pill">
+              <span className={`driver-onboard-step-num ${onboardStep === 3 ? "done" : "pending"}`}>
+                3
+              </span>
+              <span>Validation</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="driver-onboard-body">
+          <aside className="driver-onboard-sidebar">
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 9999, backgroundColor: "rgba(255, 90, 0, 0.15)", color: "#FF5A00", fontSize: 12, fontWeight: 900, border: "1px solid rgba(255, 90, 0, 0.3)", width: "fit-content" }}>
+                <Bike size={16} />
+                <span>Réseau Coursiers Agadir</span>
+              </div>
+
+              <div>
+                <h2 style={{ fontSize: 26, fontWeight: 900, lineHeight: 1.25 }}>
+                  Rejoignez la flotte de livraison Foodi
+                </h2>
+                <p style={{ fontSize: 13, color: "#A1A1AA", marginTop: 8, lineHeight: 1.6 }}>
+                  Remplissez vos informations véhicule, téléversez votre permis et commencez à livrer en toute indépendance.
+                </p>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ backgroundColor: "#27272A", padding: 14, borderRadius: 16, display: "flex", alignItems: "flex-start", gap: 12 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: "rgba(255, 90, 0, 0.2)", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Zap size={18} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: 13, fontWeight: 900, color: "#FFFFFF" }}>Rémunération par course</h4>
+                    <p style={{ fontSize: 11, color: "#A1A1AA", marginTop: 2 }}>Tarifs garantis dès la prise en charge et 100% des pourboires.</p>
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: "#27272A", padding: 14, borderRadius: 16, display: "flex", alignItems: "flex-start", gap: 12 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: "rgba(16, 185, 129, 0.2)", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: 13, fontWeight: 900, color: "#FFFFFF" }}>Assurance & Sécurité</h4>
+                    <p style={{ fontSize: 11, color: "#A1A1AA", marginTop: 2 }}>Couverture complète lors de chacun de vos trajets en service.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ borderTop: "1px solid #27272A", paddingTop: 16, fontSize: 12, color: "#71717A", display: "flex", justifyContent: "space-between" }}>
+              <span>Grand Agadir</span>
+              <strong style={{ color: "#E4E4E7" }}>Talborjt • Founty • Marina</strong>
+            </div>
+          </aside>
+
+          <div className="driver-onboard-form-card">
+            {stepLoading ? (
+              <div style={{ padding: "80px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 16 }}>
+                <div style={{ width: 56, height: 56, border: "4px solid rgba(255, 90, 0, 0.2)", borderTopColor: "#FF5A00", borderRadius: 9999, animation: "spin 1s linear infinite" }} />
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 900, color: "#0B1020" }}>{stepLoadingText}</h3>
+                  <p style={{ fontSize: 12, color: "#7A8194", marginTop: 4 }}>Traitement sécurisé de vos données Foodi...</p>
+                </div>
+              </div>
+            ) : onboardStep === 1 ? (
+              <form onSubmit={handleNextStep1} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 14 }}>
+                  <span style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", color: "#FF5A00", letterSpacing: 0.5 }}>
+                    Étape 1 sur 2
+                  </span>
+                  <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>
+                    Informations sur votre véhicule de livraison
+                  </h2>
+                  <p style={{ fontSize: 12, color: "#7A8194", marginTop: 4 }}>
+                    Sélectionnez le type d'engin utilisé pour vos livraisons et indiquez les détails de votre deux-roues.
+                  </p>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block" }}>
+                    Type de véhicule
+                  </label>
+                  <div className="driver-vehicle-selector">
+                    <div
+                      onClick={() => setVehicleType("motorcycle")}
+                      className={`driver-vehicle-option ${vehicleType === "motorcycle" ? "selected" : ""}`}
+                    >
+                      <div style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Bike size={24} />
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ fontSize: 14, fontWeight: 900, color: "#0B1020" }}>Moto / Scooter</span>
+                          <span style={{ fontSize: 10, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "2px 6px", borderRadius: 9999 }}>Actif</span>
+                        </div>
+                        <span style={{ fontSize: 11, color: "#7A8194" }}>Idéal pour la rapidité urbaine à Agadir</span>
+                      </div>
+                    </div>
+
+                    <div className="driver-vehicle-option disabled">
+                      <div style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: "#F1F5F9", color: "#64748B", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Car size={24} />
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ fontSize: 14, fontWeight: 900, color: "#64748B" }}>Voiture</span>
+                          <span style={{ fontSize: 10, fontWeight: 900, color: "#64748B", backgroundColor: "#E2E8F0", padding: "2px 6px", borderRadius: 9999 }}>Bientôt</span>
+                        </div>
+                        <span style={{ fontSize: 11, color: "#94A3B8" }}>Ouverture prochaine</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Marque du véhicule
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={vehBrand}
+                      onChange={(e) => setVehBrand(e.target.value)}
+                      placeholder="ex: Yamaha, Honda, SYM"
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Modèle précis
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={vehModel}
+                      onChange={(e) => setVehModel(e.target.value)}
+                      placeholder="ex: NMAX 155, TMAX"
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Cylindrée moteur
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={vehEngine}
+                      onChange={(e) => setVehEngine(e.target.value)}
+                      placeholder="ex: 125 cc, 155 cc"
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Couleur du deux-roues
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={vehColor}
+                      onChange={(e) => setVehColor(e.target.value)}
+                      placeholder="ex: Noir mat, Blanc"
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Immatriculation (Plaque)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={vehPlate}
+                      onChange={(e) => setVehPlate(e.target.value)}
+                      placeholder="ex: 48291-A-33"
+                      className="driver-input-box"
+                      style={{ fontFamily: "monospace" }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Année de fabrication
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={vehYear}
+                      onChange={(e) => setVehYear(e.target.value)}
+                      placeholder="ex: 2023"
+                      className="driver-input-box"
+                    />
+                  </div>
+                </div>
+
+                <div style={{ borderTop: "1px solid rgba(11, 16, 32, 0.08)", paddingTop: 16 }}>
+                  <label style={{ fontSize: 13, fontWeight: 900, color: "#0B1020", display: "block" }}>
+                    Documents & Photos du véhicule
+                  </label>
+                  <p style={{ fontSize: 11, color: "#7A8194", marginTop: 2 }}>
+                    Téléversez des photos claires et lisibles pour vérification rapide
+                  </p>
+
+                  <div className="driver-upload-grid">
+                    <div
+                      onClick={() => setVehPhotoUploaded(true)}
+                      className={`driver-upload-card ${vehPhotoUploaded ? "ready" : ""}`}
+                    >
+                      <Camera size={22} color="#FF5A00" />
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>Photo moto complète</span>
+                      <span className={`driver-upload-badge ${vehPhotoUploaded ? "ready" : "pending"}`}>
+                        {vehPhotoUploaded ? "✓ Prêt" : "+ Téléverser"}
+                      </span>
+                    </div>
+
+                    <div
+                      onClick={() => setVehBackPhotoUploaded(true)}
+                      className={`driver-upload-card ${vehBackPhotoUploaded ? "ready" : ""}`}
+                    >
+                      <Camera size={22} color="#FF5A00" />
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>Vue arrière & Plaque</span>
+                      <span className={`driver-upload-badge ${vehBackPhotoUploaded ? "ready" : "pending"}`}>
+                        {vehBackPhotoUploaded ? "✓ Prêt" : "+ Téléverser"}
+                      </span>
+                    </div>
+
+                    <div
+                      onClick={() => setVehRegUploaded(true)}
+                      className={`driver-upload-card ${vehRegUploaded ? "ready" : ""}`}
+                    >
+                      <FileText size={22} color="#FF5A00" />
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>Carte grise / Certificat</span>
+                      <span className={`driver-upload-badge ${vehRegUploaded ? "ready" : "pending"}`}>
+                        {vehRegUploaded ? "✓ Prêt" : "+ Téléverser"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 10 }}>
+                  <button
+                    type="submit"
+                    className="driver-btn-panel-primary"
+                    style={{ flex: "none", padding: "14px 28px" }}
+                  >
+                    <span>Continuer vers les informations personnelles</span>
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
+              </form>
+            ) : onboardStep === 2 ? (
+              <form onSubmit={handleNextStep2} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 14 }}>
+                  <span style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", color: "#10B981", letterSpacing: 0.5 }}>
+                    Étape 2 sur 2
+                  </span>
+                  <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>
+                    Identité du coursier & Permis de conduire
+                  </h2>
+                  <p style={{ fontSize: 12, color: "#7A8194", marginTop: 4 }}>
+                    Complétez vos coordonnées personnelles et téléversez vos justificatifs d'identité et de permis.
+                  </p>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Prénom
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={driverFirstName}
+                      onChange={(e) => setDriverFirstName(e.target.value)}
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Nom de famille
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={driverLastName}
+                      onChange={(e) => setDriverLastName(e.target.value)}
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Numéro de téléphone
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={driverPhone}
+                      onChange={(e) => setDriverPhone(e.target.value)}
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Adresse e-mail
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={driverEmail}
+                      onChange={(e) => setDriverEmail(e.target.value)}
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Numéro CNIE
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={cinNumber}
+                      onChange={(e) => setCinNumber(e.target.value)}
+                      className="driver-input-box"
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
+                      Numéro de Permis de conduire
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={licenseNumber}
+                      onChange={(e) => setLicenseNumber(e.target.value)}
+                      className="driver-input-box"
+                    />
+                  </div>
+                </div>
+
+                <div style={{ borderTop: "1px solid rgba(11, 16, 32, 0.08)", paddingTop: 16 }}>
+                  <label style={{ fontSize: 13, fontWeight: 900, color: "#0B1020", display: "block" }}>
+                    Pièces justificatives obligatoires
+                  </label>
+                  <p style={{ fontSize: 11, color: "#7A8194", marginTop: 2 }}>
+                    Vérification légale pour activer les paiements et courses
+                  </p>
+
+                  <div className="driver-upload-grid">
+                    <div
+                      onClick={() => setUserPhotoUploaded(true)}
+                      className={`driver-upload-card ${userPhotoUploaded ? "ready" : ""}`}
+                    >
+                      <User size={22} color="#FF5A00" />
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>Selfie photo de profil</span>
+                      <span className={`driver-upload-badge ${userPhotoUploaded ? "ready" : "pending"}`}>
+                        {userPhotoUploaded ? "✓ Prêt" : "+ Téléverser"}
+                      </span>
+                    </div>
+
+                    <div
+                      onClick={() => setPermitUploaded(true)}
+                      className={`driver-upload-card ${permitUploaded ? "ready" : ""}`}
+                    >
+                      <ShieldCheck size={22} color="#FF5A00" />
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>Permis de conduire Cat. A/B</span>
+                      <span className={`driver-upload-badge ${permitUploaded ? "ready" : "pending"}`}>
+                        {permitUploaded ? "✓ Prêt" : "+ Téléverser"}
+                      </span>
+                    </div>
+
+                    <div
+                      onClick={() => setCinUploaded(true)}
+                      className={`driver-upload-card ${cinUploaded ? "ready" : ""}`}
+                    >
+                      <FileText size={22} color="#FF5A00" />
+                      <span style={{ fontSize: 12, fontWeight: 800, color: "#0B1020" }}>Carte d'Identité (CIN)</span>
+                      <span className={`driver-upload-badge ${cinUploaded ? "ready" : "pending"}`}>
+                        {cinUploaded ? "✓ Prêt" : "+ Téléverser"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardStep(1)}
+                    className="driver-btn-decline"
+                    style={{ flex: "none", padding: "12px 24px" }}
+                  >
+                    Retour
+                  </button>
+                  <button
+                    type="submit"
+                    className="driver-btn-panel-primary"
+                    style={{ flex: "none", padding: "14px 28px" }}
+                  >
+                    <span>Valider et terminer mon inscription</span>
+                    <Check size={18} />
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div style={{ padding: "40px 16px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 20 }}>
+                <div style={{ width: 72, height: 72, borderRadius: 9999, backgroundColor: "#ECFDF5", color: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid #A7F3D0" }}>
+                  <Check size={38} />
+                </div>
+
+                <div style={{ maxWidth: 460 }}>
+                  <span style={{ fontSize: 11, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "3px 12px", borderRadius: 9999, border: "1px solid rgba(16, 185, 129, 0.3)", textTransform: "uppercase" }}>
+                    Dossier approuvé
+                  </span>
+                  <h2 style={{ fontSize: 28, fontWeight: 900, color: "#0B1020", marginTop: 8 }}>
+                    Bienvenue dans l'équipe, {driverFirstName} !
+                  </h2>
+                  <p style={{ fontSize: 13, color: "#7A8194", marginTop: 6, lineHeight: 1.6 }}>
+                    Votre scooter <strong>{vehBrand} {vehModel}</strong> et vos pièces réglementaires sont enregistrés. Vous êtes maintenant prêt à passer en ligne pour recevoir des courses.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleFinishOnboarding}
+                  className="driver-toggle-online-btn"
+                  style={{ marginTop: 8 }}
+                >
+                  <span>Accéder à mon tableau de bord livreur</span>
+                  <ArrowRight size={20} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="driver-app">
@@ -486,10 +1086,10 @@ export const DriverDashboardPage: React.FC = () => {
 
           <div className="driver-header-profile">
             <div className="driver-avatar-circle">
-              {driverName.slice(0, 2).toUpperCase()}
+              {driverFirstName.slice(0, 1).toUpperCase()}{driverLastName.slice(0, 1).toUpperCase()}
             </div>
             <div className="driver-profile-meta">
-              <span className="driver-profile-name">{driverName}</span>
+              <span className="driver-profile-name">{driverFirstName} {driverLastName}</span>
               <span className={`driver-status-chip ${driverState !== "offline" ? "online" : "offline"}`}>
                 <span className={`driver-status-dot ${driverState !== "offline" ? "online" : "offline"}`} />
                 <span>{driverState !== "offline" ? "En ligne" : "Hors ligne"}</span>
@@ -509,7 +1109,7 @@ export const DriverDashboardPage: React.FC = () => {
                     <Power size={32} />
                   </div>
                   <div>
-                    <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0B1020" }}>Vous êtes hors ligne</h2>
+                    <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0B1020" }}>Vous êtes actuellement hors ligne</h2>
                     <p style={{ fontSize: 13, color: "#7A8194", marginTop: 4 }}>
                       Passez en ligne pour commencer à recevoir des livraisons et maximiser vos gains dans le Grand Agadir.
                     </p>
@@ -890,42 +1490,130 @@ export const DriverDashboardPage: React.FC = () => {
 
         {activeTab === "profile" && (
           <div className="driver-home-wrapper">
-            <div className="driver-control-card" style={{ textAlign: "left", alignItems: "stretch", gap: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16, borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 16 }}>
-                <div style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 900 }}>
-                  AT
-                </div>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <h3 style={{ fontSize: 20, fontWeight: 900, color: "#0B1020" }}>{driverName}</h3>
-                    <span style={{ fontSize: 10, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "2px 8px", borderRadius: 9999, border: "1px solid rgba(16, 185, 129, 0.3)", textTransform: "uppercase" }}>
-                      Coursier Certifié
-                    </span>
+            {emailSuccessToast && (
+              <div className="driver-toast-banner">
+                <CheckCircle2 size={20} color="#10B981" />
+                <span>{emailSuccessToast}</span>
+              </div>
+            )}
+
+            {passwordSuccessToast && (
+              <div className="driver-toast-banner">
+                <CheckCircle2 size={20} color="#10B981" />
+                <span>{passwordSuccessToast}</span>
+              </div>
+            )}
+
+            <div className="driver-control-card" style={{ textAlign: "left", alignItems: "stretch", gap: 24 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, borderBottom: "1px solid rgba(11, 16, 32, 0.08)", paddingBottom: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ width: 68, height: 68, borderRadius: 22, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 900, border: "2px solid #FFE0D1" }}>
+                    {driverFirstName.slice(0, 1).toUpperCase()}{driverLastName.slice(0, 1).toUpperCase()}
                   </div>
-                  <p style={{ fontSize: 12, color: "#7A8194", marginTop: 2 }}>{driverPhone} • {vehicleModel}</p>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <h3 style={{ fontSize: 22, fontWeight: 900, color: "#0B1020" }}>{driverFirstName} {driverLastName}</h3>
+                      <span style={{ fontSize: 11, fontWeight: 900, color: "#047857", backgroundColor: "#ECFDF5", padding: "3px 10px", borderRadius: 9999, border: "1px solid rgba(16, 185, 129, 0.3)", textTransform: "uppercase" }}>
+                        Coursier Vérifié Foodi
+                      </span>
+                    </div>
+                    <p style={{ fontSize: 13, color: "#7A8194", marginTop: 2 }}>{driverPhone} • {vehBrand} {vehModel}</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleStartOverProfile}
+                  className="driver-simulate-btn"
+                  title="Recommencer le formulaire d'onboarding complet"
+                >
+                  <RotateCcw size={16} />
+                  <span>Recommencer / Compléter le profil</span>
+                </button>
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginBottom: 12 }}>
+                  Coordonnées & Sécurité du compte
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+                  <div style={{ backgroundColor: "#FFFFFF", padding: 18, borderRadius: 18, border: "1px solid rgba(11, 16, 32, 0.08)", display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#FFF2EB", color: "#FF5A00", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Mail size={18} />
+                        </div>
+                        <div>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Adresse e-mail</span>
+                          <div style={{ fontSize: 14, fontWeight: 800, color: "#0B1020", marginTop: 2 }}>{driverEmail}</div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsEmailModalOpen(true)}
+                        className="driver-btn-edit-sm"
+                      >
+                        <Edit3 size={14} />
+                        <span>Modifier (OTP)</span>
+                      </button>
+                    </div>
+                    <div style={{ fontSize: 11, color: "#10B981", fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
+                      <CheckCircle2 size={13} />
+                      <span>Protégé par vérification par code OTP</span>
+                    </div>
+                  </div>
+
+                  <div style={{ backgroundColor: "#FFFFFF", padding: 18, borderRadius: 18, border: "1px solid rgba(11, 16, 32, 0.08)", display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "#F1F5F9", color: "#334155", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Lock size={18} />
+                        </div>
+                        <div>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Mot de passe</span>
+                          <div style={{ fontSize: 14, fontWeight: 800, color: "#0B1020", marginTop: 2 }}>••••••••••••</div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => { setIsPasswordModalOpen(true); setPasswordError(""); }}
+                        className="driver-btn-edit-sm"
+                      >
+                        <KeyRound size={14} />
+                        <span>Changer</span>
+                      </button>
+                    </div>
+                    <div style={{ fontSize: 11, color: "#64748B" }}>
+                      Modifié récemment • Recommandé tous les 90 jours
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-                <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Véhicule enregistré</div>
-                  <div style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>{vehicleModel}</div>
-                  <div style={{ fontSize: 12, fontFamily: "monospace", color: "#64748B", marginTop: 2 }}>Plaque : {vehiclePlate}</div>
-                </div>
-
-                <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Zone logistique</div>
-                  <div style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>Grand Agadir</div>
-                  <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Talborjt, Marina, Founty, Dakhla</div>
-                </div>
-
-                <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Conformité permis & assurance</div>
-                  <div style={{ fontSize: 15, fontWeight: 900, color: "#10B981", marginTop: 2, display: "flex", alignItems: "center", gap: 6 }}>
-                    <ShieldCheck size={18} />
-                    <span>Dossier approuvé</span>
+              <div>
+                <h4 style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginBottom: 12 }}>
+                  Véhicule & Documents réglementaires
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+                  <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Deux-roues de service</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>{vehBrand} {vehModel} ({vehEngine})</div>
+                    <div style={{ fontSize: 12, fontFamily: "monospace", color: "#64748B", marginTop: 2 }}>Plaque : {vehPlate}</div>
                   </div>
-                  <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Valide jusqu'en déc. 2027</div>
+
+                  <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Pièces d'identité & Permis</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>CNIE : {cinNumber}</div>
+                    <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Permis Cat. A/B : {licenseNumber}</div>
+                  </div>
+
+                  <div style={{ backgroundColor: "#FAF8F5", padding: 16, borderRadius: 16, border: "1px solid rgba(11, 16, 32, 0.06)" }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: "#7A8194", textTransform: "uppercase" }}>Secteur de distribution</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: "#0B1020", marginTop: 2 }}>Grand Agadir</div>
+                    <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Talborjt • Founty • Marina • Dakhla</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1137,6 +1825,154 @@ export const DriverDashboardPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {isPasswordModalOpen && (
+        <div className="driver-modal-overlay">
+          <div className="driver-order-details-card" style={{ maxWidth: 440 }}>
+            <div className="driver-order-details-header">
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <KeyRound size={18} color="#FF5A00" />
+                <span className="driver-order-id-badge">Modifier le mot de passe</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPasswordModalOpen(false)}
+                className="driver-modal-close-btn"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleChangePassword} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 6 }}>
+                  Mot de passe actuel
+                </label>
+                <div className="driver-input-wrap">
+                  <input
+                    type={showCurrentPass ? "text" : "password"}
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Saisissez votre mot de passe actuel"
+                    className="driver-input-box"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPass(!showCurrentPass)}
+                    className="driver-input-toggle-btn"
+                  >
+                    {showCurrentPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 6 }}>
+                  Nouveau mot de passe
+                </label>
+                <div className="driver-input-wrap">
+                  <input
+                    type={showNewPass ? "text" : "password"}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Au moins 6 caractères"
+                    className="driver-input-box"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPass(!showNewPass)}
+                    className="driver-input-toggle-btn"
+                  >
+                    {showNewPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 6 }}>
+                  Confirmer le nouveau mot de passe
+                </label>
+                <div className="driver-input-wrap">
+                  <input
+                    type={showConfirmPass ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Répétez le nouveau mot de passe"
+                    className="driver-input-box"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPass(!showConfirmPass)}
+                    className="driver-input-toggle-btn"
+                  >
+                    {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {passwordError && (
+                <div style={{ color: "#DC2626", fontSize: 12, fontWeight: 700, backgroundColor: "#FEF2F2", padding: "8px 12px", borderRadius: 10, display: "flex", alignItems: "center", gap: 6 }}>
+                  <AlertCircle size={14} />
+                  <span>{passwordError}</span>
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordModalOpen(false)}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#F1F5F9",
+                    color: "#475569",
+                    border: "none",
+                    padding: 12,
+                    borderRadius: 14,
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: "pointer"
+                  }}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    flex: 2,
+                    backgroundColor: "#FF5A00",
+                    color: "#FFFFFF",
+                    border: "none",
+                    padding: 12,
+                    borderRadius: 14,
+                    fontSize: 13,
+                    fontWeight: 900,
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(255, 90, 0, 0.3)"
+                  }}
+                >
+                  Enregistrer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <EmailChangeModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        currentEmail={driverEmail}
+        onSuccess={(newEmail) => {
+          setDriverEmail(newEmail);
+          setIsEmailModalOpen(false);
+          setEmailSuccessToast(`Votre adresse e-mail a été mise à jour avec succès : ${newEmail}`);
+          playChime();
+          setTimeout(() => setEmailSuccessToast(""), 5000);
+        }}
+      />
 
       {isAccepting && (
         <div className="driver-modal-overlay">
