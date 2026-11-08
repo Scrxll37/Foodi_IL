@@ -18,6 +18,7 @@ export interface Dish {
   isPopular?: boolean;
   hasOptions?: boolean;
   options?: DishOption;
+  isAvailable?: boolean;
 }
 
 export interface MenuCategory {
@@ -60,6 +61,7 @@ export interface Restaurant {
   minOrder: number;
   neighborhood: string;
   address: string;
+  phone?: string;
   lat?: number;
   lng?: number;
   avgPrepMinutes?: number;
@@ -67,6 +69,10 @@ export interface Restaurant {
   badge?: string;
   isPromo?: boolean;
   promoLabel?: string;
+  isOpen?: boolean;
+  openingTime?: string;
+  closingTime?: string;
+  autoAcceptOrders?: boolean;
   categories: MenuCategory[];
 }
 
@@ -135,6 +141,8 @@ export interface OrderRecord {
   restaurantLogo: string;
   neighborhood: string;
   shopNeighborhood?: string;
+  shopBranchName?: string;
+  branchId?: string;
   buildingNameNumber?: string;
   floorNumber?: string;
   doorNumber?: string;

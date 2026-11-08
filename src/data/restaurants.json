@@ -400,42 +400,45 @@
       }
     ],
     "lat": 30.412495,
-  "lng": -9.595213,
-  "avgPrepMinutes": 12,
-  "branches": [
-    {
-      "id": "mcdo_agadir_drive",
-      "name": "McDonald's Agadir Drive",
-      "neighborhood": "Centre Ville",
-      "address": "Boulevard Mohammed V, Agadir",
-      "lat": 30.412495,
-      "lng": -9.595213
-    },
-    {
-      "id": "mcdo_agadir_plage",
-      "name": "McDonald's Agadir Plage",
-      "neighborhood": "Front de Mer",
-      "address": "Front de Mer, Agadir",
-      "lat": 30.416700,
-      "lng": -9.600000
-    },
-    {
-      "id": "mcdo_marjane_founty",
-      "name": "McDonald's Marjane Founty",
-      "neighborhood": "Founty",
-      "address": "Marjane Founty, Avenue Mohammed V, Agadir",
-      "lat": 30.396730,
-      "lng": -9.581390
-    },
-    {
-      "id": "mcdo_adrar_kitea",
-      "name": "McDonald's Adrar Kitea",
-      "neighborhood": "Adrar",
-      "address": "Entrée Souss, Route Nationale 1, Agadir",
-      "lat": 30.415250,
-      "lng": -9.542625
+    "lng": -9.595213,
+    "avgPrepMinutes": 12,
+    "branches": [
+      {
+        "id": "mcdo_agadir_drive",
+        "name": "McDonald's Agadir Drive",
+        "neighborhood": "Centre Ville",
+        "address": "Boulevard Mohammed V, Agadir",
+        "lat": 30.412495,
+        "lng": -9.595213
+      },
+      {
+        "id": "mcdo_agadir_plage",
+        "name": "McDonald's Agadir Plage",
+        "neighborhood": "Front de Mer",
+        "address": "Front de Mer, Agadir",
+        "lat": 30.4167,
+        "lng": -9.6
+      },
+      {
+        "id": "mcdo_marjane_founty",
+        "name": "McDonald's Marjane Founty",
+        "neighborhood": "Founty",
+        "address": "Marjane Founty, Avenue Mohammed V, Agadir",
+        "lat": 30.39673,
+        "lng": -9.58139
+      },
+      {
+        "id": "mcdo_adrar_kitea",
+        "name": "McDonald's Adrar Kitea",
+        "neighborhood": "Adrar",
+        "address": "Entrée Souss, Route Nationale 1, Agadir",
+        "lat": 30.41525,
+        "lng": -9.542625
       }
-    ]
+    ],
+    "autoAcceptOrders": true,
+    "isOpen": true,
+    "phone": "05 28 84 92 10"
   },
   {
     "id": "kfc",
@@ -2630,36 +2633,36 @@
         ]
       }
     ],
-   "lat": 30.3955,
-  "lng": -9.5525,
-  "avgPrepMinutes": 11,
-  "branches": [
-    {
-      "id": "crusty_hay_salam",
-      "name": "Crusty Hay Salam",
-      "neighborhood": "Hay Salam",
-      "address": "7 Avenue Lhajj Massaoud El Waafkaoui, Agadir",
-      "lat": 30.3955,
-      "lng": -9.5525
-    },
-    {
-      "id": "crusty_jet_sakan",
-      "name": "Crusty Jet Sakan",
-      "neighborhood": "Jet Sakan",
-      "address": "Avenue Mohamed El Fassi, Agadir",
-      "lat": 30.3935,
-      "lng": -9.5485
-    },
-    {
-      "id": "crusty_hay_mohammadi",
-      "name": "Crusty Hay Mohammadi",
-      "neighborhood": "Hay Mohammadi",
-      "address": "N° 2, Immeuble Swisra, Agadir",
-      "lat": 30.4288,
-      "lng": -9.5567
-    }
-  ]
-},
+    "lat": 30.3955,
+    "lng": -9.5525,
+    "avgPrepMinutes": 11,
+    "branches": [
+      {
+        "id": "crusty_hay_salam",
+        "name": "Crusty Hay Salam",
+        "neighborhood": "Hay Salam",
+        "address": "7 Avenue Lhajj Massaoud El Waafkaoui, Agadir",
+        "lat": 30.3955,
+        "lng": -9.5525
+      },
+      {
+        "id": "crusty_jet_sakan",
+        "name": "Crusty Jet Sakan",
+        "neighborhood": "Jet Sakan",
+        "address": "Avenue Mohamed El Fassi, Agadir",
+        "lat": 30.3935,
+        "lng": -9.5485
+      },
+      {
+        "id": "crusty_hay_mohammadi",
+        "name": "Crusty Hay Mohammadi",
+        "neighborhood": "Hay Mohammadi",
+        "address": "N° 2, Immeuble Swisra, Agadir",
+        "lat": 30.4288,
+        "lng": -9.5567
+      }
+    ]
+  },
   {
     "id": "burger-king",
     "name": "Burger King",

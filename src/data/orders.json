@@ -1,5 +1,330 @@
 [
   {
+    "id": "CMD-AGD-6361",
+    "token": "trk_97t0jezmw7sl1u2gpjj",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "neighborhood": "Al Farah",
+    "buildingNameNumber": "Résidence Fleurie, Bâtiment A",
+    "floorNumber": "3ème étage",
+    "doorNumber": "Appt 14",
+    "street": "Al Farah",
+    "date": "8 novembre 2026 à 12:11",
+    "status": "heading_to_restaurant",
+    "statusLabel": "Prête",
+    "cookingTime": 12,
+    "travelTime": 7,
+    "totalTime": 19,
+    "arrivalTime": "12:30",
+    "maxTime": "12:45",
+    "customerName": "Fayçal Agadir",
+    "customerPhone": "+212 6 12 34 56 78",
+    "courierName": "Amine Tazi",
+    "courierPhone": "+212 6 62 10 20 30",
+    "shopLat": 30.39673,
+    "shopLng": -9.58139,
+    "courierLat": 30.39123,
+    "courierLng": -9.57689,
+    "paymentMethod": "card",
+    "paymentLabel": "Mastercard •••• 4289",
+    "items": [
+      {
+        "name": "Chicken Mythic",
+        "quantity": 1,
+        "price": 70,
+        "options": "",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/999e9cfd32857f1881098644aad2af934bafe3cc4f56796700ae28a3d2645144?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 70,
+    "deliveryFee": 12,
+    "total": 82,
+    "address": "Al Farah, Al Farah, Résidence Fleurie, Bâtiment A, Étage 3ème étage, Porte Appt 14",
+    "instructions": "Laisser à la conciergerie si absent.",
+    "lat": 30.396617511353448,
+    "lng": -9.559965133667,
+    "createdAt": 1794139919498
+  },
+  {
+    "id": "CMD-AGD-5462",
+    "token": "trk_n023h82mw7skjy7pei5",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "neighborhood": "Al Farah",
+    "buildingNameNumber": "Résidence Fleurie, Bâtiment A",
+    "floorNumber": "3ème étage",
+    "doorNumber": "Appt 14",
+    "street": "Al Farah",
+    "date": "8 novembre 2026 à 12:11",
+    "status": "rejected",
+    "statusLabel": "Refusée",
+    "cookingTime": 12,
+    "travelTime": 7,
+    "totalTime": 19,
+    "arrivalTime": "12:30",
+    "maxTime": "12:45",
+    "customerName": "Fayçal Agadir",
+    "customerPhone": "+212 6 12 34 56 78",
+    "courierName": "Amine Tazi",
+    "courierPhone": "+212 6 62 10 20 30",
+    "shopLat": 30.39673,
+    "shopLng": -9.58139,
+    "courierLat": 30.39123,
+    "courierLng": -9.57689,
+    "paymentMethod": "card",
+    "paymentLabel": "Mastercard •••• 4289",
+    "items": [
+      {
+        "name": "Best Of Big Tasty Chicken",
+        "quantity": 1,
+        "price": 81,
+        "options": "",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/7be5d46de2576f54991a587f53e0aea71464630f55609d56edda864fefee8827?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 81,
+    "deliveryFee": 12,
+    "total": 93,
+    "address": "Al Farah, Al Farah, Résidence Fleurie, Bâtiment A, Étage 3ème étage, Porte Appt 14",
+    "instructions": "Laisser à la conciergerie si absent.",
+    "lat": 30.396617511353448,
+    "lng": -9.559965133667,
+    "createdAt": 1794139896319
+  },
+  {
+    "id": "CMD-AGD-8923",
+    "token": "trk_oi8z2ypmw7sk4kwxja6",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "neighborhood": "Al Farah",
+    "buildingNameNumber": "Résidence Fleurie, Bâtiment A",
+    "floorNumber": "3ème étage",
+    "doorNumber": "Appt 14",
+    "street": "Al Farah",
+    "date": "8 novembre 2026 à 12:11",
+    "status": "heading_to_restaurant",
+    "statusLabel": "Prête",
+    "cookingTime": 12,
+    "travelTime": 7,
+    "totalTime": 19,
+    "arrivalTime": "12:30",
+    "maxTime": "12:45",
+    "customerName": "Fayçal Agadir",
+    "customerPhone": "+212 6 12 34 56 78",
+    "courierName": "Amine Tazi",
+    "courierPhone": "+212 6 62 10 20 30",
+    "shopLat": 30.39673,
+    "shopLng": -9.58139,
+    "courierLat": 30.39123,
+    "courierLng": -9.57689,
+    "paymentMethod": "card",
+    "paymentLabel": "Mastercard •••• 4289",
+    "items": [
+      {
+        "name": "Chicken Mythic",
+        "quantity": 1,
+        "price": 70,
+        "options": "",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/999e9cfd32857f1881098644aad2af934bafe3cc4f56796700ae28a3d2645144?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 70,
+    "deliveryFee": 12,
+    "total": 82,
+    "address": "Al Farah, Al Farah, Résidence Fleurie, Bâtiment A, Étage 3ème étage, Porte Appt 14",
+    "instructions": "Laisser à la conciergerie si absent.",
+    "lat": 30.396617511353448,
+    "lng": -9.559965133667,
+    "createdAt": 1794139876403
+  },
+  {
+    "id": "CMD-AGD-8821",
+    "token": "trk_mc_pending_8821",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "shopNeighborhood": "Adrar",
+    "shopBranchName": "McDonald's Adrar Kitea",
+    "neighborhood": "Dakhla",
+    "buildingNameNumber": "Résidence Al Houda",
+    "floorNumber": "2ème étage",
+    "doorNumber": "Appt 8",
+    "street": "Avenue Hassan I",
+    "date": "Aujourd'hui à 13:10",
+    "status": "in_delivery",
+    "statusLabel": "En livraison",
+    "cookingTime": 15,
+    "travelTime": 8,
+    "totalTime": 23,
+    "arrivalTime": "13:33",
+    "maxTime": "13:45",
+    "customerName": "Youssef Bennani",
+    "customerPhone": "+212 6 70 88 99 00",
+    "courierName": "Amine Tazi",
+    "courierPhone": "+212 6 62 10 20 30",
+    "shopLat": 30.41525,
+    "shopLng": -9.542625,
+    "paymentMethod": "card",
+    "paymentLabel": "Visa •••• 1092",
+    "items": [
+      {
+        "name": "McCrispy",
+        "quantity": 2,
+        "price": 60,
+        "options": "Menu maxi, Frites classiques, Coca-Cola sans sucre",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/e34f11087cff74c970f6ec30eb50f2dfa0501e449613dc0915a8fd1527a93bb3?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      },
+      {
+        "name": "Grand McWrap Boeuf - Sauce Tasty",
+        "quantity": 1,
+        "price": 59,
+        "options": "Sans oignons",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/999e9cfd32857f1881098644aad2af934bafe3cc4f56796700ae28a3d2645144?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 179,
+    "deliveryFee": 12,
+    "total": 191,
+    "address": "Dakhla, Avenue Hassan I, Résidence Al Houda",
+    "instructions": "Sonner à l'interphone 8.",
+    "createdAt": 1794139210645
+  },
+  {
+    "id": "CMD-AGD-4921",
+    "token": "trk_mc_kitchen_4921",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "shopNeighborhood": "Adrar",
+    "shopBranchName": "McDonald's Adrar Kitea",
+    "neighborhood": "Salam",
+    "buildingNameNumber": "Immeuble Tamraght",
+    "floorNumber": "1er étage",
+    "doorNumber": "Appt 3",
+    "street": "Boulevard 29 Février",
+    "date": "Aujourd'hui à 13:02",
+    "status": "heading_to_restaurant",
+    "statusLabel": "Prête",
+    "cookingTime": 12,
+    "travelTime": 10,
+    "totalTime": 22,
+    "arrivalTime": "13:24",
+    "maxTime": "13:40",
+    "customerName": "Salma El Amrani",
+    "customerPhone": "+212 6 61 44 55 66",
+    "courierName": "Amine Tazi",
+    "courierPhone": "+212 6 62 10 20 30",
+    "shopLat": 30.41525,
+    "shopLng": -9.542625,
+    "paymentMethod": "cash",
+    "paymentLabel": "Paiement en espèces",
+    "items": [
+      {
+        "name": "Big Tasty",
+        "quantity": 2,
+        "price": 71,
+        "options": "Sauce Tasty supplémentaire, Frites",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/197cd69fb55836ce19e5853fa98f24e1415877fcdc45b49b437d8476605b8966?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 142,
+    "deliveryFee": 12,
+    "total": 154,
+    "address": "Salam, Boulevard 29 Février, Immeuble Tamraght",
+    "instructions": "Appeler en arrivant.",
+    "createdAt": 1794138850645
+  },
+  {
+    "id": "CMD-AGD-6310",
+    "token": "trk_mc_ready_6310",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "shopNeighborhood": "Centre Ville",
+    "shopBranchName": "McDonald's Agadir Drive",
+    "neighborhood": "Talborjt",
+    "buildingNameNumber": "Résidence Atlas",
+    "floorNumber": "4ème étage",
+    "doorNumber": "Appt 19",
+    "street": "Rue de Fès",
+    "date": "Aujourd'hui à 12:55",
+    "status": "heading_to_restaurant",
+    "statusLabel": "Prête",
+    "cookingTime": 10,
+    "travelTime": 6,
+    "totalTime": 16,
+    "arrivalTime": "13:11",
+    "maxTime": "13:30",
+    "customerName": "Mehdi Alaoui",
+    "customerPhone": "+212 6 50 12 34 56",
+    "courierName": "Rachid Idrissi",
+    "courierPhone": "+212 6 63 99 88 77",
+    "shopLat": 30.412495,
+    "shopLng": -9.595213,
+    "paymentMethod": "card",
+    "paymentLabel": "Mastercard •••• 8812",
+    "items": [
+      {
+        "name": "Best Of Chicken Mythic",
+        "quantity": 1,
+        "price": 81,
+        "options": "Frites, Sprite",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/c50ca71e357f90f13c419e3815cd44a718121312f993e2f53f7eee45c6441857?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 81,
+    "deliveryFee": 12,
+    "total": 93,
+    "address": "Talborjt, Rue de Fès, Résidence Atlas",
+    "instructions": "Concierge présent au rez-de-chaussée.",
+    "createdAt": 1794138470645
+  },
+  {
+    "id": "CMD-AGD-2771",
+    "token": "trk_j29gc30mw6ximylr8ye",
+    "restaurantName": "McDonald's",
+    "restaurantLogo": "/images/restaurants/McDonalds.png",
+    "neighborhood": "Salam",
+    "buildingNameNumber": "Marina Agadir",
+    "floorNumber": "3ème étage",
+    "doorNumber": "Appt 14",
+    "street": "Salam",
+    "date": "7 novembre 2026 à 21:42",
+    "status": "delivered",
+    "statusLabel": "Commande livrée avec succès",
+    "cookingTime": 12,
+    "travelTime": 7,
+    "totalTime": 19,
+    "arrivalTime": "22:01",
+    "maxTime": "22:16",
+    "customerName": "Fayçal Agadir",
+    "customerPhone": "+212 6 12 34 56 78",
+    "courierName": "Amine Tazi",
+    "courierPhone": "+212 6 62 10 20 30",
+    "shopLat": 30.41525,
+    "shopLng": -9.542625,
+    "courierLat": 30.40975,
+    "courierLng": -9.538124999999999,
+    "paymentMethod": "card",
+    "paymentLabel": "Mastercard •••• 4289",
+    "items": [
+      {
+        "name": "Best Of Big Tasty",
+        "quantity": 1,
+        "price": 83,
+        "options": "",
+        "image": "https://glovo.dhmedia.io/image/menus-glovo/products/fc8000ef0f1f967292953dc033c06399d48d688b6f1983a8420f9a34901da1ab?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ=="
+      }
+    ],
+    "subtotal": 83,
+    "deliveryFee": 12,
+    "total": 95,
+    "address": "Salam, Salam, Marina Agadir, Étage 3ème étage, Porte Appt 14",
+    "instructions": "Laisser à la conciergerie si absent.",
+    "lat": 30.399418757591466,
+    "lng": -9.554543495178224,
+    "createdAt": 1794087738815,
+    "shopNeighborhood": "Adrar",
+    "shopBranchName": "McDonald's Adrar Kitea"
+  },
+  {
     "id": "CMD-AGD-4037",
     "token": "trk_hdmdqrfmw6jbann15fs",
     "restaurantName": "Mister Cook",
@@ -10,8 +335,8 @@
     "doorNumber": "Appt 14",
     "street": "Salam",
     "date": "7 novembre 2026 à 15:04",
-    "status": "delivered",
-    "statusLabel": "Commande livrée avec succès",
+    "status": "heading_to_restaurant",
+    "statusLabel": "Coursier assigné, en route vers le restaurant",
     "cookingTime": 12,
     "travelTime": 7,
     "totalTime": 19,
@@ -43,7 +368,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.399418757591466,
     "lng": -9.554543495178224,
-    "createdAt": 1794063881651
+    "createdAt": 1794063881651,
+    "shopNeighborhood": "Hassan II",
+    "shopBranchName": "Mister Cook Hassan II"
   },
   {
     "id": "CMD-AGD-7014",
@@ -89,7 +416,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.399418757591466,
     "lng": -9.554543495178224,
-    "createdAt": 1794063850316
+    "createdAt": 1794063850316,
+    "shopNeighborhood": "Centre Ville",
+    "shopBranchName": "McDonald's Agadir Drive"
   },
   {
     "id": "CMD-AGD-2492",
@@ -135,7 +464,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.399418757591466,
     "lng": -9.554543495178224,
-    "createdAt": 1794063825661
+    "createdAt": 1794063825661,
+    "shopNeighborhood": "Hay Salam",
+    "shopBranchName": "Crusty Hay Salam"
   },
   {
     "id": "CMD-AGD-3081",
@@ -179,7 +510,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.399418757591466,
     "lng": -9.554543495178224,
-    "createdAt": 1793915485294
+    "createdAt": 1793915485294,
+    "shopNeighborhood": "Front de Mer",
+    "shopBranchName": "McDonald's Agadir Plage"
   },
   {
     "id": "CMD-AGD-5587",
@@ -223,7 +556,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.4278,
     "lng": -9.5981,
-    "createdAt": 1793901526692
+    "createdAt": 1793901526692,
+    "shopNeighborhood": "Founty",
+    "shopBranchName": "McDonald's Marjane Founty"
   },
   {
     "id": "CMD-AGD-2781",
@@ -267,7 +602,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.423882799774034,
     "lng": -9.616641998291017,
-    "createdAt": 1793816268670
+    "createdAt": 1793816268670,
+    "shopNeighborhood": "Hay Salam",
+    "shopBranchName": "Crusty Hay Salam"
   },
   {
     "id": "CMD-AGD-9998",
@@ -311,7 +648,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.396617511353448,
     "lng": -9.559965133667,
-    "createdAt": 1793816193921
+    "createdAt": 1793816193921,
+    "shopNeighborhood": "Hay Salam",
+    "shopBranchName": "Crusty Hay Salam"
   },
   {
     "id": "CMD-AGD-2295",
@@ -355,7 +694,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.396617511353448,
     "lng": -9.559965133667,
-    "createdAt": 1793814922335
+    "createdAt": 1793814922335,
+    "shopNeighborhood": "Adrar",
+    "shopBranchName": "McDonald's Adrar Kitea"
   },
   {
     "id": "CMD-AGD-2725",
@@ -399,7 +740,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.423882799774034,
     "lng": -9.616641998291017,
-    "createdAt": 1793813119644
+    "createdAt": 1793813119644,
+    "shopNeighborhood": "Centre Ville",
+    "shopBranchName": "McDonald's Agadir Drive"
   },
   {
     "id": "CMD-AGD-6575",
@@ -443,7 +786,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.423882799774034,
     "lng": -9.616641998291017,
-    "createdAt": 1793812608721
+    "createdAt": 1793812608721,
+    "shopNeighborhood": "Front de Mer",
+    "shopBranchName": "McDonald's Agadir Plage"
   },
   {
     "id": "CMD-AGD-9310",
@@ -487,7 +832,9 @@
     "instructions": "Laisser à la conciergerie si absent.",
     "lat": 30.423882799774034,
     "lng": -9.616641998291017,
-    "createdAt": 1793788790433
+    "createdAt": 1793788790433,
+    "shopNeighborhood": "Founty",
+    "shopBranchName": "McDonald's Marjane Founty"
   },
   {
     "id": "CMD-AGD-8420",
@@ -533,7 +880,9 @@
     "instructions": "Appeler à l'arrivée.",
     "lat": 30.4055,
     "lng": -9.5822,
-    "createdAt": 1793650500000
+    "createdAt": 1793650500000,
+    "shopNeighborhood": "Centre Ville",
+    "shopBranchName": "KFC Centre Ville"
   },
   {
     "id": "CMD-AGD-7195",
@@ -579,6 +928,8 @@
     "instructions": "Sonner à l'interphone.",
     "lat": 30.428,
     "lng": -9.598,
-    "createdAt": 1793448600000
+    "createdAt": 1793448600000,
+    "shopNeighborhood": "Corniche",
+    "shopBranchName": "Pizza Hut Corniche"
   }
 ]

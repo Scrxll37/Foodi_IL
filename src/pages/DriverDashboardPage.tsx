@@ -1400,12 +1400,12 @@ export const DriverDashboardPage: React.FC = () => {
                     <label style={{ fontSize: 12, fontWeight: 800, color: "#0B1020", display: "block", marginBottom: 4 }}>
                       Prénom
                     </label>
-                    <input
-                      type="text"
+                      <input
+                         type="text"
                       required
-                      value={driverFirstName}
+                         value={driverFirstName}
                       onChange={(e) => setDriverFirstName(e.target.value)}
-                      className="driver-input-box"
+                         className="driver-input-box"
                     />
                   </div>
 

@@ -13,6 +13,7 @@ import { OrderConfirmationPage } from "./pages/OrderConfirmationPage";
 import { OrderTrackingPage } from "./pages/OrderTrackingPage";
 import { TestBoardPage } from "./pages/TestBoardPage";
 import { DriverDashboardPage } from "./pages/DriverDashboardPage";
+import { RestaurantDashboardPage } from "./pages/RestaurantDashboardPage";
 import { ConflictModal } from "./components/ConflictModal";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -106,6 +107,10 @@ export const App: React.FC = () => {
           <Route path="/test-board" element={<TestBoardPage />} />
           <Route path="/driver" element={<DriverDashboardPage />} />
           <Route path="/courier" element={<DriverDashboardPage />} />
+          <Route path="/restaurant" element={<RestaurantDashboardPage />} />
+          <Route path="/restaurant/dashboard" element={<RestaurantDashboardPage />} />
+          <Route path="/restaurant-dashboard" element={<RestaurantDashboardPage />} />
+          <Route path="/partner" element={<RestaurantDashboardPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

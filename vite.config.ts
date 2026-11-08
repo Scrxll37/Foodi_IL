@@ -69,7 +69,8 @@ function ordersApiPlugin() {
           req.on('data', (chunk: any) => { body += chunk; });
           req.on('end', () => {
             try {
-              const { token, id, status, statusLabel, courierLat, courierLng } = JSON.parse(body);
+              const updateData = JSON.parse(body);
+              const { token, id } = updateData;
               const filePath = path.resolve(__dirname, './src/data/orders.json');
               let current: any[] = [];
               if (fs.existsSync(filePath)) {
@@ -83,14 +84,64 @@ function ordersApiPlugin() {
                 (o: any) => (token && o.token === token) || (id && o.id === id)
               );
               if (idx >= 0) {
-                if (status) current[idx].status = status;
-                if (statusLabel) current[idx].statusLabel = statusLabel;
-                if (courierLat !== undefined) current[idx].courierLat = courierLat;
-                if (courierLng !== undefined) current[idx].courierLng = courierLng;
+                current[idx] = { ...current[idx], ...updateData };
                 fs.writeFileSync(filePath, JSON.stringify(current, null, 2), 'utf-8');
               }
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ success: true }));
+              res.end(JSON.stringify({ success: true, order: idx >= 0 ? current[idx] : null }));
+              return;
+            } catch (e: any) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+              return;
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/restaurants' && req.method === 'GET') {
+          try {
+            const filePath = path.resolve(__dirname, './src/data/restaurants.json');
+            if (!fs.existsSync(filePath)) {
+              fs.writeFileSync(filePath, '[]', 'utf-8');
+            }
+            const data = fs.readFileSync(filePath, 'utf-8');
+            res.setHeader('Content-Type', 'application/json');
+            res.end(data);
+            return;
+          } catch (e: any) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: e.message }));
+            return;
+          }
+        }
+
+        if (url === '/api/restaurants/update' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk: any) => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const updatedRestaurant = JSON.parse(body);
+              const filePath = path.resolve(__dirname, './src/data/restaurants.json');
+              let current: any[] = [];
+              if (fs.existsSync(filePath)) {
+                try {
+                  current = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+                } catch {
+                  current = [];
+                }
+              }
+              const idx = current.findIndex(
+                (r: any) => r.id === updatedRestaurant.id || (updatedRestaurant.slug && r.slug === updatedRestaurant.slug)
+              );
+              if (idx >= 0) {
+                current[idx] = { ...current[idx], ...updatedRestaurant };
+              } else {
+                current.push(updatedRestaurant);
+              }
+              fs.writeFileSync(filePath, JSON.stringify(current, null, 2), 'utf-8');
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, restaurant: current[idx >= 0 ? idx : current.length - 1] }));
               return;
             } catch (e: any) {
               res.statusCode = 500;
