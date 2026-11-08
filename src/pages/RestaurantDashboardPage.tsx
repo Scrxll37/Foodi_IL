@@ -2,9 +2,22 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { Link } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import {
+  Bell,
+  X,
+  Mail,
+  Edit3,
+  CheckCircle2,
+  Store,
+  User,
+  KeyRound,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
 import { Restaurant, OrderRecord, Dish, MenuCategory, RestaurantBranch } from "../types";
 import defaultRestaurants from "../data/restaurants.json";
 import defaultOrders from "../data/orders.json";
+import { EmailChangeModal } from "../components/EmailChangeModal";
 import "../styles/restaurant.css";
 
 interface ManagerSession {
@@ -68,11 +81,20 @@ export const RestaurantDashboardPage: React.FC = () => {
     return found || restaurants[0] || (defaultRestaurants[0] as Restaurant);
   }, [restaurants, activeRestaurantId]);
 
-  const [activeTab, setActiveTab] = useState<"orders" | "menu" | "hours" | "profile">("orders");
-  const [orderFilter, setOrderFilter] = useState<"pending" | "kitchen" | "ready" | "completed" | "cancelled">("pending");
+  const [activeTab, setActiveTab] = useState<
+    "orders" | "menu" | "hours" | "restaurant" | "profile"
+  >("orders");
+  const [orderFilter, setOrderFilter] = useState<
+    "pending" | "kitchen" | "ready" | "completed" | "cancelled"
+  >("pending");
   const [selectedBranch, setSelectedBranch] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [orders, setOrders] = useState<OrderRecord[]>([]);
+
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState<boolean>(false);
+  const [currentBranchSlide, setCurrentBranchSlide] = useState<number>(0);
+  const [incomingOrderAlert, setIncomingOrderAlert] = useState<OrderRecord | null>(null);
+  const [alertRemainingSeconds, setAlertRemainingSeconds] = useState<number>(5);
 
   const [headerProfileOpen, setHeaderProfileOpen] = useState<boolean>(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
@@ -228,7 +250,21 @@ export const RestaurantDashboardPage: React.FC = () => {
   }, [currentRestaurant.logo]);
 
   useEffect(() => {
-    if (activeTab !== "profile") {
+    if (!incomingOrderAlert) return;
+    const interval = setInterval(() => {
+      setAlertRemainingSeconds((prev) => {
+        if (prev <= 1) {
+          setIncomingOrderAlert(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [incomingOrderAlert]);
+
+  useEffect(() => {
+    if (activeTab !== "restaurant") {
       if (profileBranchesMapInstanceRef.current) {
         profileBranchesMapInstanceRef.current.remove();
         profileBranchesMapInstanceRef.current = null;
@@ -305,12 +341,71 @@ export const RestaurantDashboardPage: React.FC = () => {
     };
   }, [activeTab, currentRestaurant.branches, currentRestaurant.logo, createBranchIcon]);
 
+  const handleNextBranchSlide = useCallback(() => {
+    const branches = currentRestaurant.branches || [];
+    if (branches.length === 0) return;
+    const nextIdx = (currentBranchSlide + 1) % branches.length;
+    setCurrentBranchSlide(nextIdx);
+    const target = branches[nextIdx];
+    if (target && profileBranchesMapInstanceRef.current) {
+      profileBranchesMapInstanceRef.current.flyTo(
+        [target.lat || 30.41525, target.lng || -9.542625],
+        15,
+        { duration: 0.8 }
+      );
+      if (profileBranchesMarkersRef.current[nextIdx]) {
+        profileBranchesMarkersRef.current[nextIdx].openPopup();
+      }
+    }
+  }, [currentBranchSlide, currentRestaurant.branches]);
+
+  const handlePrevBranchSlide = useCallback(() => {
+    const branches = currentRestaurant.branches || [];
+    if (branches.length === 0) return;
+    const prevIdx = (currentBranchSlide - 1 + branches.length) % branches.length;
+    setCurrentBranchSlide(prevIdx);
+    const target = branches[prevIdx];
+    if (target && profileBranchesMapInstanceRef.current) {
+      profileBranchesMapInstanceRef.current.flyTo(
+        [target.lat || 30.41525, target.lng || -9.542625],
+        15,
+        { duration: 0.8 }
+      );
+      if (profileBranchesMarkersRef.current[prevIdx]) {
+        profileBranchesMarkersRef.current[prevIdx].openPopup();
+      }
+    }
+  }, [currentBranchSlide, currentRestaurant.branches]);
+
+  const handleSelectBranchSlide = useCallback(
+    (index: number) => {
+      const branches = currentRestaurant.branches || [];
+      if (index < 0 || index >= branches.length) return;
+      setCurrentBranchSlide(index);
+      const target = branches[index];
+      if (target && profileBranchesMapInstanceRef.current) {
+        profileBranchesMapInstanceRef.current.flyTo(
+          [target.lat || 30.41525, target.lng || -9.542625],
+          15,
+          { duration: 0.8 }
+        );
+        if (profileBranchesMarkersRef.current[index]) {
+          profileBranchesMarkersRef.current[index].openPopup();
+        }
+      }
+    },
+    [currentRestaurant.branches]
+  );
+
   const handleFocusBranchOnMap = useCallback((branch: RestaurantBranch) => {
+    const idx = currentRestaurant.branches?.findIndex((b) => b.id === branch.id) ?? -1;
+    if (idx !== -1) {
+      setCurrentBranchSlide(idx);
+    }
     if (profileBranchesMapInstanceRef.current) {
       profileBranchesMapInstanceRef.current.flyTo([branch.lat, branch.lng], 16, {
         duration: 1.2
       });
-      const idx = currentRestaurant.branches?.findIndex((b) => b.id === branch.id) ?? -1;
       if (idx !== -1 && profileBranchesMarkersRef.current[idx]) {
         profileBranchesMarkersRef.current[idx].openPopup();
       }
@@ -436,7 +531,7 @@ export const RestaurantDashboardPage: React.FC = () => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3500);
+    }, 5000);
   }, []);
 
   const playChime = useCallback(() => {
@@ -463,7 +558,7 @@ export const RestaurantDashboardPage: React.FC = () => {
       const gain2 = ctx.createGain();
       osc2.type = "sine";
       osc2.frequency.setValueAtTime(880, now + 0.16);
-      gain2.gain.setValueAtTime(0.25, now + 0.16);
+      gain2.gain.setValueAtTime(0.25, now + 0.56);
       gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
       osc2.connect(gain2);
       gain2.connect(ctx.destination);
@@ -522,8 +617,10 @@ export const RestaurantDashboardPage: React.FC = () => {
         if (pendingForResto.length > 0) {
           for (const ord of pendingForResto) {
             playChime();
+            setIncomingOrderAlert(ord);
+            setAlertRemainingSeconds(5);
             showToast(
-              `Commande #${ord.id.slice(-4)} acceptée automatiquement (${ord.total} DH)`
+              `Commande #${ord.id.slice(-4)} acceptée (${ord.total} DH)`
             );
 
             try {
@@ -1189,6 +1286,7 @@ export const RestaurantDashboardPage: React.FC = () => {
         isOpen: branchForm.isOpen ?? true
       };
       nextBranches = [...currentBranches, newBranch];
+      setCurrentBranchSlide(nextBranches.length - 1);
       showToast(`Succursale "${newBranch.name}" ajoutée.`);
     } else if (branchModalMode === "edit" && editingBranch) {
       nextBranches = currentBranches.map((b) =>
@@ -1227,6 +1325,7 @@ export const RestaurantDashboardPage: React.FC = () => {
       );
       const updated: Restaurant = { ...currentRestaurant, branches: nextBranches };
       persistRestaurantUpdate(updated);
+      setCurrentBranchSlide((prev) => Math.max(0, Math.min(prev, nextBranches.length - 1)));
       showToast(`Succursale supprimée.`);
     },
     [currentRestaurant, persistRestaurantUpdate, showToast]
@@ -1301,7 +1400,7 @@ export const RestaurantDashboardPage: React.FC = () => {
         <div className="foodi-login-panel">
           <div className="foodi-login-head">
             <img
-              src="/images/banners/foodi.png"
+              src="/images/logohor.png"
               alt="Foodi"
               className="foodi-login-brand-logo"
             />
@@ -1427,14 +1526,14 @@ export const RestaurantDashboardPage: React.FC = () => {
             onClick={() => setSidebarOpen(false)}
           >
             <img
-              src="/images/banners/foodi.png"
+              src="/images/logohor.png"
               alt="Foodi"
               className="foodi-sidebar-logo"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = "none";
               }}
             />
-            <span className="foodi-sidebar-partner-pill">Partner</span>
+            <span className="foodi-sidebar-partner-pill">Foodi Partner</span>
           </Link>
 
           <div className="foodi-sidebar-restaurant-card">
@@ -1520,6 +1619,24 @@ export const RestaurantDashboardPage: React.FC = () => {
 
             <button
               className={`foodi-sidebar-item-btn ${
+                activeTab === "restaurant" ? "active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab("restaurant");
+                setSidebarOpen(false);
+              }}
+            >
+              <div className="foodi-sidebar-item-left">
+                <Store size={18} />
+                <span>Établissement</span>
+              </div>
+              <span className="foodi-sidebar-badge-count">
+                {(currentRestaurant.branches || []).length}
+              </span>
+            </button>
+
+            <button
+              className={`foodi-sidebar-item-btn ${
                 activeTab === "profile" ? "active" : ""
               }`}
               onClick={() => {
@@ -1528,10 +1645,8 @@ export const RestaurantDashboardPage: React.FC = () => {
               }}
             >
               <div className="foodi-sidebar-item-left">
-                <svg className="foodi-sidebar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <span>Profil</span>
+                <User size={18} />
+                <span>Profil Gérant</span>
               </div>
             </button>
           </nav>
@@ -1583,7 +1698,8 @@ export const RestaurantDashboardPage: React.FC = () => {
               {activeTab === "orders" && "Commandes"}
               {activeTab === "menu" && "Menu"}
               {activeTab === "hours" && "Horaires"}
-              {activeTab === "profile" && "Profil"}
+              {activeTab === "restaurant" && "Établissement"}
+              {activeTab === "profile" && "Profil Gérant"}
             </h1>
             <div className="foodi-top-bar-live-tag">
               <span className="foodi-top-bar-live-dot" />
@@ -1624,13 +1740,11 @@ export const RestaurantDashboardPage: React.FC = () => {
                     className="foodi-dropdown-item"
                     onClick={() => {
                       setHeaderProfileOpen(false);
-                      setActiveTab("profile");
+                      setActiveTab("restaurant");
                     }}
                   >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>Mon profil</span>
+                    <Store size={15} />
+                    <span>Mon établissement</span>
                   </button>
 
                   <button
@@ -1640,9 +1754,18 @@ export const RestaurantDashboardPage: React.FC = () => {
                       setActiveTab("profile");
                     }}
                   >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
+                    <User size={15} />
+                    <span>Profil gérant</span>
+                  </button>
+
+                  <button
+                    className="foodi-dropdown-item"
+                    onClick={() => {
+                      setHeaderProfileOpen(false);
+                      setActiveTab("profile");
+                    }}
+                  >
+                    <KeyRound size={15} />
                     <span>Mot de passe</span>
                   </button>
 
@@ -1861,12 +1984,10 @@ export const RestaurantDashboardPage: React.FC = () => {
 
                         <div className="foodi-order-row-actions-bar">
                           <div className="foodi-order-payment-total-group">
-                            <span className="foodi-order-payment-pill">
-                              {order.paymentMethod === "card" ? "Carte bancaire" : "Espèces"}
-                            </span>
+                            
                             <div className="foodi-order-total-sum">
                               À encaisser : <span>{order.subtotal || Math.max(0, order.total - (order.deliveryFee || 0))} DH</span>
-                              <span className="foodi-order-subtotal-sublabel"> (hors livraison)</span>
+                              <span className="foodi-order-subtotal-sublabel"> </span>
                             </div>
                             <button
                               type="button"
@@ -2268,237 +2389,145 @@ export const RestaurantDashboardPage: React.FC = () => {
             </div>
           )}
 
-          {activeTab === "profile" && (
+          {activeTab === "restaurant" && (
             <div>
-              <div className="foodi-surface-card">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                    <div
-                      style={{
-                        width: 52,
-                        height: 52,
-                        borderRadius: 14,
-                        backgroundColor: "#FF7A00",
-                        color: "#FFFFFF",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 18,
-                        fontWeight: 900
-                      }}
+                 
+
+                 
+
+                {(!currentRestaurant.branches || currentRestaurant.branches.length === 0) ? (
+                  <div className="foodi-empty-placeholder" style={{ padding: 24 }}>
+                    <div className="foodi-empty-title">Aucune succursale configurée</div>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-primary"
+                      style={{ marginTop: 12 }}
+                      onClick={handleOpenAddBranch}
                     >
-                      {(managerForm.name || "GM").slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <h2 className="foodi-surface-title" style={{ margin: 0 }}>
-                        {managerForm.name || "Gérant"}
-                      </h2>
-                      <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
-                        {managerForm.email || "mcdo@foodi.ma"}
+                      + Ajouter votre premier point de vente
+                    </button>
+                  </div>
+                ) : (
+                  <div className="foodi-branch-slider-wrapper">
+                    <div className="foodi-branch-slider-header">
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <h3 className="foodi-surface-title" style={{ fontSize: 15, margin: 0 }}>
+                          Point de vente sélectionné
+                        </h3>
+                        <span className="foodi-branch-slider-counter">
+                          {currentBranchSlide + 1} / {currentRestaurant.branches.length}
+                        </span>
                       </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="foodi-form-columns">
-                  <div className="foodi-form-field">
-                    <label className="foodi-form-label">Nom du gérant :</label>
-                    <input
-                      type="text"
-                      className="foodi-form-input"
-                      value={managerForm.name}
-                      onChange={(e) =>
-                        setManagerForm((prev) => ({ ...prev, name: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div className="foodi-form-field">
-                    <label className="foodi-form-label">Email de connexion :</label>
-                    <input
-                      type="email"
-                      className="foodi-form-input"
-                      value={managerForm.email}
-                      onChange={(e) =>
-                        setManagerForm((prev) => ({ ...prev, email: e.target.value }))
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #F1F5F9" }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 8, color: "#0D0D0F" }}>
-                    Sécurité & Mot de passe
-                  </div>
-                  <div className="foodi-form-columns">
-                    <div className="foodi-form-field">
-                      <label className="foodi-form-label">Nouveau mot de passe :</label>
-                      <input
-                        type="password"
-                        placeholder="••••••••"
-                        className="foodi-form-input"
-                        value={managerForm.newPassword}
-                        onChange={(e) =>
-                          setManagerForm((prev) => ({ ...prev, newPassword: e.target.value }))
-                        }
-                      />
-                    </div>
-
-                    <div className="foodi-form-field">
-                      <label className="foodi-form-label">Confirmer le mot de passe :</label>
-                      <input
-                        type="password"
-                        placeholder="••••••••"
-                        className="foodi-form-input"
-                        value={managerForm.confirmPassword}
-                        onChange={(e) =>
-                          setManagerForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: 14 }}>
-                  <button
-                    type="button"
-                    className="foodi-btn foodi-btn-primary"
-                    onClick={handleSaveManagerProfile}
-                  >
-                    Enregistrer le compte
-                  </button>
-                </div>
-              </div>
-
-              <div className="foodi-surface-card">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 12 }}>
-                  <h2 className="foodi-surface-title">Points de vente</h2>
-                  <button
+                      <div className="foodi-branch-slider-controls">
+                        <button
+                          type="button"
+                          className="foodi-branch-slider-btn"
+                          onClick={handlePrevBranchSlide}
+                          title="Succursale précédente"
+                          aria-label="Succursale précédente"
+                        >
+                          ‹
+                        </button>
+                        <button
+                          type="button"
+                          className="foodi-branch-slider-btn"
+                          onClick={handleNextBranchSlide}
+                          title="Succursale suivante"
+                          aria-label="Succursale suivante"
+                        >
+                          ›
+                        </button>
+                        <button
                     className="foodi-btn foodi-btn-primary"
                     onClick={handleOpenAddBranch}
                   >
                     + Ajouter une succursale
                   </button>
-                </div>
-
-                <div className="foodi-profile-map-card">
-                  <div className="foodi-profile-map-header">
-                    <div className="foodi-profile-map-title-row">
-                      <h3 className="foodi-profile-map-title">Réseau Agadir</h3>
-                      <span className="foodi-profile-map-count-pill">
-                        {(currentRestaurant.branches || []).length} établissements
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                      <button
-                        type="button"
-                        className="foodi-btn foodi-btn-outline"
-                        style={{ padding: "5px 10px", fontSize: 12 }}
-                        onClick={handleRecenterBranchesMap}
-                      >
-                        🎯 Recentrer la carte
-                      </button>
-                      <button
-                        type="button"
-                        className="foodi-btn foodi-btn-primary"
-                        style={{ padding: "5px 12px", fontSize: 12 }}
-                        onClick={handleOpenAddBranch}
-                      >
-                        + Nouvelle succursale
-                      </button>
-                    </div>
-                  </div>
-
-                  <div
-                    ref={profileBranchesMapContainerRef}
-                    className="foodi-profile-map-instance"
-                  />
-                </div>
-
-                {(!currentRestaurant.branches || currentRestaurant.branches.length === 0) ? (
-                  <div className="foodi-empty-placeholder" style={{ padding: 24 }}>
-                    <div className="foodi-empty-title">Aucune succursale configurée</div>
-                  </div>
-                ) : (
-                  <div className="foodi-branches-grid-modern">
-                    {currentRestaurant.branches.map((branch) => (
-                      <div key={branch.id} className="foodi-branch-card-modern">
-                        <div className="foodi-branch-card-top">
-                          <div className="foodi-branch-avatar-box">
-                            <img
-                              src={branch.logo || currentRestaurant.logo || "/images/restaurants/McDonalds.png"}
-                              alt={branch.name}
-                              className="foodi-branch-avatar-img"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
-                              }}
-                            />
-                            <span className="foodi-branch-live-dot" title="Ouvert" />
-                          </div>
-
-                          <div className="foodi-branch-info-col">
-                            <div className="foodi-branch-name-row">
-                              <h4 className="foodi-branch-name-title">{branch.name}</h4>
-                              <span className="foodi-branch-tag-pill">{branch.neighborhood}</span>
-                            </div>
-
-                            <div className="foodi-branch-address-txt">
-                              📍 {branch.address}
-                            </div>
-
-                            <div className="foodi-branch-details-row">
-                              {branch.phone && (
-                                <span className="foodi-branch-phone-link">
-                                  📞 {branch.phone}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="foodi-branch-actions-row">
-                          <button
-                            type="button"
-                            className="foodi-btn foodi-btn-outline"
-                            style={{ padding: "6px 10px", fontSize: 11, flex: 1 }}
-                            onClick={() => handleFocusBranchOnMap(branch)}
-                          >
-                            📍 Localiser
-                          </button>
-                          <a
-                            href={`https://www.google.com/maps?q=${branch.lat || 30.4152},${branch.lng || -9.5426}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="foodi-btn foodi-btn-outline"
-                            style={{ padding: "6px 10px", fontSize: 11, textDecoration: "none", textAlign: "center" }}
-                          >
-                            ↗ Maps
-                          </a>
-                          <button
-                            type="button"
-                            className="foodi-btn foodi-btn-outline"
-                            style={{ padding: "6px 10px", fontSize: 11 }}
-                            onClick={() => handleOpenEditBranch(branch)}
-                            title="Modifier"
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            type="button"
-                            className="foodi-btn foodi-btn-danger"
-                            style={{ padding: "6px 10px", fontSize: 11 }}
-                            onClick={() => handleDeleteBranch(branch.id)}
-                            title="Supprimer"
-                          >
-                            🗑️
-                          </button>
-                        </div>
                       </div>
-                    ))}
+                    </div>
+
+                    {currentRestaurant.branches[currentBranchSlide] && (() => {
+                      const branch = currentRestaurant.branches[currentBranchSlide];
+                      return (
+                        <div className="foodi-branch-slide-card">
+                          <div className="foodi-branch-slide-body">
+                            <div className="foodi-branch-slide-avatar">
+                              <img
+                                src={branch.logo || currentRestaurant.logo || "/images/restaurants/McDonalds.png"}
+                                alt={branch.name}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
+                                }}
+                              />
+                              <span className="foodi-branch-live-dot" title="Ouvert" />
+                            </div>
+
+                            <div className="foodi-branch-slide-content">
+                              <div className="foodi-branch-slide-name-row">
+                                <h4 className="foodi-branch-slide-title">{branch.name}</h4>
+                                <span className="foodi-branch-slide-pill">{branch.neighborhood}</span>
+                              </div>
+
+                              <div className="foodi-branch-slide-meta">
+                                <div>📍 {branch.address}</div>
+                                {branch.phone && (
+                                  <div style={{ color: "var(--foodi-orange)", fontWeight: 700 }}>
+                                    📞 {branch.phone}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="foodi-branch-slide-actions">
+                            
+                            <a
+                              href={`https://www.google.com/maps?q=${branch.lat || 30.4152},${branch.lng || -9.5426}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="foodi-btn foodi-btn-outline"
+                              style={{ padding: "8px 14px", fontSize: 12, textDecoration: "none", textAlign: "center" }}
+                            >
+                               Google Maps
+                            </a>
+                            <button
+                              type="button"
+                              className="foodi-btn foodi-btn-outline"
+                              style={{ padding: "8px 14px", fontSize: 12 }}
+                              onClick={() => handleOpenEditBranch(branch)}
+                            >
+                                Modifier
+                            </button>
+                            <button
+                              type="button"
+                              className="foodi-btn foodi-btn-danger"
+                              style={{ padding: "8px 14px", fontSize: 12 }}
+                              onClick={() => handleDeleteBranch(branch.id)}
+                            >
+                                Supprimer
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {currentRestaurant.branches.length > 1 && (
+                      <div className="foodi-branch-slider-dots">
+                        {currentRestaurant.branches.map((b, idx) => (
+                          <button
+                            key={b.id || idx}
+                            type="button"
+                            className={`foodi-branch-slider-dot ${idx === currentBranchSlide ? "active" : ""}`}
+                            onClick={() => handleSelectBranchSlide(idx)}
+                            aria-label={`Aller au point de vente ${idx + 1}`}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-
+ 
               <div className="foodi-surface-card">
                 <h2 className="foodi-surface-title">Bannière et logo</h2>
 
@@ -2577,27 +2606,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #F1F5F9" }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
-                    Ou coller le lien web d'une image :
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <input
-                      type="url"
-                      placeholder="https://..."
-                      className="foodi-form-input"
-                      value={customBannerUrl}
-                      onChange={(e) => setCustomBannerUrl(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="foodi-btn foodi-btn-primary"
-                      onClick={handleApplyCustomBannerUrl}
-                    >
-                      Appliquer
-                    </button>
-                  </div>
-                </div>
+                 
               </div>
 
               <div className="foodi-surface-card">
@@ -2683,6 +2692,117 @@ export const RestaurantDashboardPage: React.FC = () => {
                 <div style={{ marginTop: 16 }}>
                   <button className="foodi-btn foodi-btn-primary" onClick={handleSaveProfile}>
                     Enregistrer les informations
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "profile" && (
+            <div>
+              <div className="foodi-surface-card">
+                <div className="foodi-profile-gerant-header">
+                  <div className="foodi-profile-gerant-avatar">
+                    {(managerForm.name || "GM").slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="foodi-surface-title" style={{ margin: 0 }}>
+                      {managerForm.name || "Gérant"}
+                    </h2>
+                    <div style={{ fontSize: 13, color: "#64748B", marginTop: 2 }}>
+                      Compte gestionnaire • {currentRestaurant.name}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="foodi-form-columns" style={{ marginBottom: 16 }}>
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Nom complet du gérant :</label>
+                    <input
+                      type="text"
+                      className="foodi-form-input"
+                      value={managerForm.name}
+                      onChange={(e) =>
+                        setManagerForm((prev) => ({ ...prev, name: e.target.value }))
+                      }
+                    />
+                  </div>
+
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Adresse e-mail :</label>
+                    <div className="foodi-profile-email-card">
+                      <div className="foodi-profile-email-top">
+                        <div className="foodi-profile-email-info">
+                          <div className="foodi-profile-email-icon">
+                            <Mail size={18} />
+                          </div>
+                          <div>
+                            <span className="foodi-profile-field-label">Email de connexion</span>
+                            <div className="foodi-profile-email-value">
+                              {managerForm.email || "mcdo@foodi.ma"}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setIsEmailModalOpen(true)}
+                          className="foodi-btn foodi-btn-outline"
+                          style={{ padding: "6px 14px", fontSize: 12, display: "flex", alignItems: "center", gap: 6 }}
+                        >
+                          <Edit3 size={14} />
+                          <span>Modifier</span>
+                        </button>
+                      </div>
+
+                      <div className="foodi-profile-email-badge">
+                        <CheckCircle2 size={13} />
+                        <span>Protégé par vérification par code OTP</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #F1F5F9" }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 8, color: "#0D0D0F" }}>
+                    Sécurité & Mot de passe
+                  </div>
+                  <div className="foodi-form-columns">
+                    <div className="foodi-form-field">
+                      <label className="foodi-form-label">Nouveau mot de passe :</label>
+                      <input
+                        type="password"
+                        placeholder="••••••••"
+                        className="foodi-form-input"
+                        value={managerForm.newPassword}
+                        onChange={(e) =>
+                          setManagerForm((prev) => ({ ...prev, newPassword: e.target.value }))
+                        }
+                      />
+                    </div>
+
+                    <div className="foodi-form-field">
+                      <label className="foodi-form-label">Confirmer le mot de passe :</label>
+                      <input
+                        type="password"
+                        placeholder="••••••••"
+                        className="foodi-form-input"
+                        value={managerForm.confirmPassword}
+                        onChange={(e) =>
+                          setManagerForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 18 }}>
+                  <button
+                    type="button"
+                    className="foodi-btn foodi-btn-primary"
+                    onClick={handleSaveManagerProfile}
+                  >
+                    Enregistrer les modifications
                   </button>
                 </div>
               </div>
@@ -3344,7 +3464,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                 onClick={() => setBranchWizardStep(1)}
               >
                 <div className="foodi-wizard-step-circle">{branchWizardStep > 1 ? "✓" : "1"}</div>
-                <span className="foodi-wizard-step-label">1. Infos & Logo</span>
+                <span className="foodi-wizard-step-label">1. Infos </span>
               </div>
 
               <div className={`foodi-wizard-step-connector ${branchWizardStep > 1 ? "completed" : ""}`} />
@@ -3356,7 +3476,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                 }}
               >
                 <div className="foodi-wizard-step-circle">{branchWizardStep > 2 ? "✓" : "2"}</div>
-                <span className="foodi-wizard-step-label">2. Localisation carte</span>
+                <span className="foodi-wizard-step-label">2. Localisation </span>
               </div>
 
               <div className={`foodi-wizard-step-connector ${branchWizardStep > 2 ? "completed" : ""}`} />
@@ -3368,7 +3488,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                 }}
               >
                 <div className="foodi-wizard-step-circle">3</div>
-                <span className="foodi-wizard-step-label">3. Aperçu & Fiche</span>
+                <span className="foodi-wizard-step-label">3. Aperçu </span>
               </div>
             </div>
 
@@ -3459,16 +3579,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                         >
                           📷 Choisir une photo / logo
                         </button>
-                        <input
-                          type="url"
-                          placeholder="Ou coller une URL d'image..."
-                          className="foodi-form-input"
-                          style={{ fontSize: 11, padding: "4px 8px" }}
-                          value={branchForm.logo}
-                          onChange={(e) =>
-                            setBranchForm((prev) => ({ ...prev, logo: e.target.value }))
-                          }
-                        />
+                        
                       </div>
                     </div>
                   </div>
@@ -3494,7 +3605,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                         setBranchWizardStep(2);
                       }}
                     >
-                      Étape suivante : Carte →
+                     Suivante  →
                     </button>
                   </div>
                 </div>
@@ -3541,7 +3652,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                       style={{ flex: 2 }}
                       onClick={() => setBranchWizardStep(3)}
                     >
-                      Étape 3 : Aperçu →
+                      Suivante  →
                     </button>
                   </div>
                 </div>
@@ -3591,7 +3702,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                       style={{ flex: 1 }}
                       onClick={() => setBranchWizardStep(2)}
                     >
-                      ← Modifier la carte
+                       Modifier  
                     </button>
                     <button
                       type="button"
@@ -3599,7 +3710,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                       style={{ flex: 2 }}
                       onClick={handleSaveBranch}
                     >
-                      ✅ Enregistrer le point de vente
+                        Enregistrer 
                     </button>
                   </div>
                 </div>
@@ -3608,6 +3719,87 @@ export const RestaurantDashboardPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {incomingOrderAlert && (
+        <aside
+          className="foodi-new-order-alert-banner"
+          role="alert"
+          aria-live="assertive"
+        >
+          <div className="foodi-new-order-alert-card">
+            <div className="foodi-new-order-alert-progress">
+              <div className="foodi-new-order-alert-progress-bar" />
+            </div>
+
+            <div className="foodi-new-order-alert-content">
+              <div className="foodi-new-order-alert-icon-wrap">
+                <span className="foodi-new-order-alert-pulse" />
+                <Bell size={20} />
+              </div>
+
+              <div className="foodi-new-order-alert-info">
+                <div className="foodi-new-order-alert-top">
+                  <span className="foodi-new-order-alert-badge">Nouvelle commande</span>
+                  <span className="foodi-new-order-alert-countdown">{alertRemainingSeconds}s</span>
+                </div>
+
+                <div className="foodi-new-order-alert-title">
+                  Commande #{incomingOrderAlert.id.slice(-4)} • {incomingOrderAlert.total - (incomingOrderAlert.deliveryFee ?? 0)} DH
+                </div>
+
+                <div className="foodi-new-order-alert-meta">
+                  {incomingOrderAlert.shopBranchName || incomingOrderAlert.restaurantName || "Restaurant"} • {incomingOrderAlert.items?.length || 0} article{(incomingOrderAlert.items?.length || 0) > 1 ? "s" : ""}
+                </div>
+              </div>
+
+              <div className="foodi-new-order-alert-actions">
+                <button
+                  type="button"
+                  className="foodi-btn foodi-btn-primary"
+                  style={{ padding: "6px 12px", fontSize: 12, whiteSpace: "nowrap" }}
+                  onClick={() => {
+                    setActiveTab("orders");
+                    setOrderFilter("pending");
+                    setIncomingOrderAlert(null);
+                  }}
+                >
+                  Voir
+                </button>
+                <button
+                  type="button"
+                  className="foodi-new-order-alert-close"
+                  onClick={() => setIncomingOrderAlert(null)}
+                  aria-label="Fermer l'alerte"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      )}
+
+      <EmailChangeModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        currentEmail={managerForm.email || "mcdo@foodi.ma"}
+        onSuccess={(newEmail) => {
+          setManagerForm((prev) => ({ ...prev, email: newEmail }));
+          if (session) {
+            const updatedSession: ManagerSession = {
+              ...session,
+              email: newEmail
+            };
+            setSession(updatedSession);
+            try {
+              localStorage.setItem("foodi_restaurant_session", JSON.stringify(updatedSession));
+            } catch {}
+          }
+          setIsEmailModalOpen(false);
+          playChime();
+          showToast(`Adresse e-mail mise à jour avec succès : ${newEmail}`);
+        }}
+      />
     </div>
   );
 };

@@ -416,8 +416,8 @@
         "name": "McDonald's Agadir Plage",
         "neighborhood": "Front de Mer",
         "address": "Front de Mer, Agadir",
-        "lat": 30.4167,
-        "lng": -9.6,
+        "lat": 30.417643,
+        "lng": -9.60557,
         "phone": "05 28 84 92 10",
         "logo": "/images/restaurants/McDonalds.png",
         "isOpen": true
@@ -435,13 +435,18 @@
         "name": "McDonald's Adrar Kitea",
         "neighborhood": "Adrar",
         "address": "Entrée Souss, Route Nationale 1, Agadir",
-        "lat": 30.41525,
-        "lng": -9.542625
+        "lat": 30.4139,
+        "lng": -9.543847,
+        "phone": "05 28 84 92 10",
+        "logo": "/images/restaurants/McDonalds.png",
+        "isOpen": true
       }
     ],
     "autoAcceptOrders": true,
     "isOpen": true,
-    "phone": "05 28 84 92 10"
+    "phone": "05 28 84 92 10",
+    "openingTime": "11:00",
+    "closingTime": "23:30"
   },
   {
     "id": "kfc",
