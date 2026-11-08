@@ -44,6 +44,9 @@ export interface RestaurantBranch {
   address: string;
   lat: number;
   lng: number;
+  phone?: string;
+  logo?: string;
+  isOpen?: boolean;
 }
 
 export interface Restaurant {

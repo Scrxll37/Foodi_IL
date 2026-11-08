@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { Restaurant, OrderRecord, Dish, MenuCategory, RestaurantBranch } from "../types";
 import defaultRestaurants from "../data/restaurants.json";
 import defaultOrders from "../data/orders.json";
@@ -20,13 +22,14 @@ const DEMO_ACCOUNTS = [
   { email: "mistercook@foodi.ma", password: "123", restaurantId: "mister-cook", name: "Gérant Mister Cook" }
 ];
 
-const BANNER_PRESETS = [
-  { name: "McDonalds", path: "/images/banners/1791903178_mpd.jpg" },
-  { name: "KFC", path: "/images/banners/kfc1.png" },
-  { name: "Pizza Hut", path: "/images/banners/pizzahut.jpg" },
-  { name: "Crusty", path: "/images/banners/crusty.jpg" },
-  { name: "Mister Cook", path: "/images/banners/mistercook.jpg" },
-  { name: "Kyoto", path: "/images/banners/kyoto.png" }
+const AGADIR_POPULAR_ZONES = [
+  { name: "Adrar Kitea", neighborhood: "Adrar", lat: 30.41525, lng: -9.542625 },
+  { name: "Drive Hassan II", neighborhood: "Centre Ville", lat: 30.412495, lng: -9.595213 },
+  { name: "Agadir Plage", neighborhood: "Front de Mer", lat: 30.4167, lng: -9.6000 },
+  { name: "Marjane Founty", neighborhood: "Founty", lat: 30.39673, lng: -9.58139 },
+  { name: "Dakhla", neighborhood: "Dakhla", lat: 30.4048, lng: -9.5632 },
+  { name: "Talborjt", neighborhood: "Talborjt", lat: 30.4241, lng: -9.5982 },
+  { name: "Hay Salam", neighborhood: "Hay Salam", lat: 30.4025, lng: -9.5512 }
 ];
 
 export const RestaurantDashboardPage: React.FC = () => {
@@ -73,8 +76,6 @@ export const RestaurantDashboardPage: React.FC = () => {
 
   const [headerProfileOpen, setHeaderProfileOpen] = useState<boolean>(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
-  const [profileModalOpen, setProfileModalOpen] = useState<boolean>(false);
-  const [managerModalMode, setManagerModalMode] = useState<"profile" | "password">("profile");
   const [managerForm, setManagerForm] = useState({
     name: session ? session.managerName : "Gérant McDonald's",
     email: session ? session.email : "mcdo@foodi.ma",
@@ -117,12 +118,29 @@ export const RestaurantDashboardPage: React.FC = () => {
   const [editCategoryName, setEditCategoryName] = useState<string>("");
 
   const [branchModalMode, setBranchModalMode] = useState<"add" | "edit" | null>(null);
+  const [branchWizardStep, setBranchWizardStep] = useState<1 | 2 | 3>(1);
   const [editingBranch, setEditingBranch] = useState<RestaurantBranch | null>(null);
   const [branchForm, setBranchForm] = useState({
     name: "",
-    neighborhood: "",
-    address: ""
+    neighborhood: "Adrar",
+    address: "Agadir, Maroc",
+    phone: "05 28 22 33 44",
+    logo: "",
+    lat: 30.41525,
+    lng: -9.542625,
+    isOpen: true
   });
+
+  const branchMapContainerRef = useRef<HTMLDivElement | null>(null);
+  const branchMapInstanceRef = useRef<L.Map | null>(null);
+  const branchMarkerRef = useRef<L.Marker | null>(null);
+  const branchLogoInputRef = useRef<HTMLInputElement>(null);
+
+  const profileBranchesMapContainerRef = useRef<HTMLDivElement | null>(null);
+  const profileBranchesMapInstanceRef = useRef<L.Map | null>(null);
+  const profileBranchesMarkersRef = useRef<L.Marker[]>([]);
+
+  const [customBannerUrl, setCustomBannerUrl] = useState<string>("");
 
   const dishFileInputRef = useRef<HTMLInputElement>(null);
   const bannerFileInputRef = useRef<HTMLInputElement>(null);
@@ -193,6 +211,226 @@ export const RestaurantDashboardPage: React.FC = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const createBranchIcon = useCallback((name: string, logoUrl?: string) => {
+    const finalLogo = logoUrl || currentRestaurant.logo || "/images/restaurants/McDonalds.png";
+    return L.divIcon({
+      className: "foodi-map-marker-pin",
+      html: `
+        <div class="foodi-marker-bubble restaurant">${name}</div>
+        <div class="foodi-marker-icon-box restaurant" style="background-color: #FF7A00; overflow: hidden; width: 36px; height: 36px; border-radius: 50%; border: 3px solid #FFFFFF; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+          <img src="${finalLogo}" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='/images/restaurants/McDonalds.png'" />
+        </div>
+      `,
+      iconSize: [120, 56],
+      iconAnchor: [60, 56]
+    });
+  }, [currentRestaurant.logo]);
+
+  useEffect(() => {
+    if (activeTab !== "profile") {
+      if (profileBranchesMapInstanceRef.current) {
+        profileBranchesMapInstanceRef.current.remove();
+        profileBranchesMapInstanceRef.current = null;
+        profileBranchesMarkersRef.current = [];
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (!profileBranchesMapContainerRef.current) return;
+
+      if (profileBranchesMapInstanceRef.current) {
+        profileBranchesMapInstanceRef.current.remove();
+        profileBranchesMapInstanceRef.current = null;
+        profileBranchesMarkersRef.current = [];
+      }
+
+      const branches = currentRestaurant.branches || [];
+      const defaultCenter: [number, number] = branches.length > 0 && branches[0].lat && branches[0].lng
+        ? [branches[0].lat, branches[0].lng]
+        : [30.41525, -9.542625];
+
+      const map = L.map(profileBranchesMapContainerRef.current, {
+        zoomControl: true,
+        attributionControl: false
+      }).setView(defaultCenter, 13);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19
+      }).addTo(map);
+
+      const markers: L.Marker[] = [];
+      const latLngs: [number, number][] = [];
+
+      branches.forEach((b) => {
+        if (!b.lat || !b.lng) return;
+        latLngs.push([b.lat, b.lng]);
+
+        const marker = L.marker([b.lat, b.lng], {
+          icon: createBranchIcon(b.name, b.logo || currentRestaurant.logo)
+        }).addTo(map);
+
+        const popupDiv = document.createElement("div");
+        popupDiv.style.padding = "4px";
+        popupDiv.innerHTML = `
+          <div style="font-weight: 800; font-size: 13px; color: #0D0D0F; margin-bottom: 2px;">${b.name}</div>
+          <div style="font-size: 11px; color: #64748B; margin-bottom: 4px;">📍 ${b.neighborhood} — ${b.address}</div>
+          ${b.phone ? `<div style="font-size: 11px; color: #FF7A00; font-weight: 700;">📞 ${b.phone}</div>` : ""}
+        `;
+        marker.bindPopup(popupDiv);
+        markers.push(marker);
+      });
+
+      profileBranchesMapInstanceRef.current = map;
+      profileBranchesMarkersRef.current = markers;
+
+      if (latLngs.length > 1) {
+        const bounds = L.latLngBounds(latLngs);
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+      }
+
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 120);
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      if (profileBranchesMapInstanceRef.current) {
+        profileBranchesMapInstanceRef.current.remove();
+        profileBranchesMapInstanceRef.current = null;
+        profileBranchesMarkersRef.current = [];
+      }
+    };
+  }, [activeTab, currentRestaurant.branches, currentRestaurant.logo, createBranchIcon]);
+
+  const handleFocusBranchOnMap = useCallback((branch: RestaurantBranch) => {
+    if (profileBranchesMapInstanceRef.current) {
+      profileBranchesMapInstanceRef.current.flyTo([branch.lat, branch.lng], 16, {
+        duration: 1.2
+      });
+      const idx = currentRestaurant.branches?.findIndex((b) => b.id === branch.id) ?? -1;
+      if (idx !== -1 && profileBranchesMarkersRef.current[idx]) {
+        profileBranchesMarkersRef.current[idx].openPopup();
+      }
+      profileBranchesMapContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [currentRestaurant.branches]);
+
+  const handleRecenterBranchesMap = useCallback(() => {
+    if (!profileBranchesMapInstanceRef.current) return;
+    const branches = currentRestaurant.branches || [];
+    const latLngs = branches.filter((b) => b.lat && b.lng).map((b) => [b.lat, b.lng] as [number, number]);
+    if (latLngs.length > 1) {
+      profileBranchesMapInstanceRef.current.fitBounds(L.latLngBounds(latLngs), { padding: [40, 40], maxZoom: 15 });
+    } else if (latLngs.length === 1) {
+      profileBranchesMapInstanceRef.current.flyTo(latLngs[0], 14);
+    } else {
+      profileBranchesMapInstanceRef.current.flyTo([30.41525, -9.542625], 13);
+    }
+  }, [currentRestaurant.branches]);
+
+  useEffect(() => {
+    if (!branchModalMode || branchWizardStep !== 2) {
+      if (branchMapInstanceRef.current) {
+        branchMapInstanceRef.current.remove();
+        branchMapInstanceRef.current = null;
+        branchMarkerRef.current = null;
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (!branchMapContainerRef.current) return;
+
+      if (branchMapInstanceRef.current) {
+        branchMapInstanceRef.current.remove();
+        branchMapInstanceRef.current = null;
+        branchMarkerRef.current = null;
+      }
+
+      const initLat = Number(branchForm.lat) || 30.41525;
+      const initLng = Number(branchForm.lng) || -9.542625;
+
+      const map = L.map(branchMapContainerRef.current, {
+        zoomControl: true,
+        attributionControl: false
+      }).setView([initLat, initLng], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19
+      }).addTo(map);
+
+      const marker = L.marker([initLat, initLng], {
+        icon: createBranchIcon(branchForm.name || "Nouveau point", branchForm.logo || currentRestaurant.logo),
+        draggable: true
+      }).addTo(map);
+
+      marker.on("dragend", () => {
+        const pos = marker.getLatLng();
+        setBranchForm((prev) => ({
+          ...prev,
+          lat: Number(pos.lat.toFixed(6)),
+          lng: Number(pos.lng.toFixed(6))
+        }));
+      });
+
+      map.on("click", (e) => {
+        marker.setLatLng(e.latlng);
+        setBranchForm((prev) => ({
+          ...prev,
+          lat: Number(e.latlng.lat.toFixed(6)),
+          lng: Number(e.latlng.lng.toFixed(6))
+        }));
+      });
+
+      branchMapInstanceRef.current = map;
+      branchMarkerRef.current = marker;
+
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      if (branchMapInstanceRef.current) {
+        branchMapInstanceRef.current.remove();
+        branchMapInstanceRef.current = null;
+        branchMarkerRef.current = null;
+      }
+    };
+  }, [branchModalMode, branchWizardStep, createBranchIcon, currentRestaurant.logo]);
+
+  const handleBranchLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        setBranchForm((prev) => ({ ...prev, logo: result }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSetQuickZone = useCallback(
+    (zone: { name: string; neighborhood: string; lat: number; lng: number }) => {
+      setBranchForm((prev) => ({
+        ...prev,
+        neighborhood: zone.neighborhood,
+        lat: zone.lat,
+        lng: zone.lng
+      }));
+      if (branchMapInstanceRef.current && branchMarkerRef.current) {
+        branchMapInstanceRef.current.setView([zone.lat, zone.lng], 15);
+        branchMarkerRef.current.setLatLng([zone.lat, zone.lng]);
+      }
+    },
+    []
+  );
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -413,11 +651,7 @@ export const RestaurantDashboardPage: React.FC = () => {
       alert("Veuillez renseigner le nom et l'adresse email.");
       return;
     }
-    if (managerModalMode === "password") {
-      if (!managerForm.newPassword) {
-        alert("Veuillez saisir un nouveau mot de passe.");
-        return;
-      }
+    if (managerForm.newPassword) {
       if (managerForm.newPassword !== managerForm.confirmPassword) {
         alert("Les deux mots de passe ne correspondent pas.");
         return;
@@ -434,7 +668,7 @@ export const RestaurantDashboardPage: React.FC = () => {
     try {
       localStorage.setItem("foodi_restaurant_session", JSON.stringify(updatedSession));
     } catch {}
-    setProfileModalOpen(false);
+    setManagerForm((prev) => ({ ...prev, newPassword: "", confirmPassword: "" }));
     showToast("Profil gérant mis à jour avec succès.");
   };
 
@@ -744,10 +978,28 @@ export const RestaurantDashboardPage: React.FC = () => {
       reader.onload = (event) => {
         const result = event.target?.result as string;
         setProfileForm((prev) => ({ ...prev, cover: result }));
-        showToast("Bannière mise à jour.");
+        const updated: Restaurant = {
+          ...currentRestaurant,
+          cover: result
+        };
+        persistRestaurantUpdate(updated);
+        showToast("Bannière mise à jour et enregistrée.");
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleApplyCustomBannerUrl = () => {
+    if (!customBannerUrl.trim()) return;
+    const url = customBannerUrl.trim();
+    setProfileForm((prev) => ({ ...prev, cover: url }));
+    const updated: Restaurant = {
+      ...currentRestaurant,
+      cover: url
+    };
+    persistRestaurantUpdate(updated);
+    showToast("Bannière mise à jour.");
+    setCustomBannerUrl("");
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -757,7 +1009,12 @@ export const RestaurantDashboardPage: React.FC = () => {
       reader.onload = (event) => {
         const result = event.target?.result as string;
         setProfileForm((prev) => ({ ...prev, logo: result }));
-        showToast("Logo mis à jour.");
+        const updated: Restaurant = {
+          ...currentRestaurant,
+          logo: result
+        };
+        persistRestaurantUpdate(updated);
+        showToast("Logo mis à jour et enregistré.");
       };
       reader.readAsDataURL(file);
     }
@@ -879,11 +1136,18 @@ export const RestaurantDashboardPage: React.FC = () => {
   }, [selectedMenuCategory, currentRestaurant, persistRestaurantUpdate, showToast]);
 
   const handleOpenAddBranch = useCallback(() => {
+    const nextNum = (currentRestaurant.branches?.length || 0) + 1;
     setBranchForm({
-      name: `${currentRestaurant.name} `,
+      name: `${currentRestaurant.name} Succursale ${nextNum}`,
       neighborhood: "Adrar",
-      address: "Agadir, Maroc"
+      address: "Agadir, Maroc",
+      phone: currentRestaurant.phone || "05 28 22 33 44",
+      logo: currentRestaurant.logo || "/images/restaurants/McDonalds.png",
+      lat: 30.41525,
+      lng: -9.542625,
+      isOpen: true
     });
+    setBranchWizardStep(1);
     setEditingBranch(null);
     setBranchModalMode("add");
   }, [currentRestaurant]);
@@ -893,10 +1157,16 @@ export const RestaurantDashboardPage: React.FC = () => {
     setBranchForm({
       name: b.name,
       neighborhood: b.neighborhood,
-      address: b.address
+      address: b.address,
+      phone: b.phone || currentRestaurant.phone || "05 28 22 33 44",
+      logo: b.logo || currentRestaurant.logo || "/images/restaurants/McDonalds.png",
+      lat: b.lat || 30.41525,
+      lng: b.lng || -9.542625,
+      isOpen: b.isOpen ?? true
     });
+    setBranchWizardStep(1);
     setBranchModalMode("edit");
-  }, []);
+  }, [currentRestaurant]);
 
   const handleSaveBranch = useCallback(() => {
     if (!branchForm.name.trim()) {
@@ -912,8 +1182,11 @@ export const RestaurantDashboardPage: React.FC = () => {
         name: branchForm.name.trim(),
         neighborhood: branchForm.neighborhood.trim() || "Agadir",
         address: branchForm.address.trim() || "Agadir, Maroc",
-        lat: 30.415,
-        lng: -9.56
+        phone: branchForm.phone.trim() || currentRestaurant.phone || "",
+        logo: branchForm.logo.trim() || currentRestaurant.logo || "",
+        lat: Number(branchForm.lat) || 30.41525,
+        lng: Number(branchForm.lng) || -9.542625,
+        isOpen: branchForm.isOpen ?? true
       };
       nextBranches = [...currentBranches, newBranch];
       showToast(`Succursale "${newBranch.name}" ajoutée.`);
@@ -924,7 +1197,12 @@ export const RestaurantDashboardPage: React.FC = () => {
               ...b,
               name: branchForm.name.trim(),
               neighborhood: branchForm.neighborhood.trim() || b.neighborhood,
-              address: branchForm.address.trim() || b.address
+              address: branchForm.address.trim() || b.address,
+              phone: branchForm.phone.trim() || b.phone || "",
+              logo: branchForm.logo.trim() || b.logo || "",
+              lat: Number(branchForm.lat) || b.lat || 30.41525,
+              lng: Number(branchForm.lng) || b.lng || -9.542625,
+              isOpen: branchForm.isOpen ?? true
             }
           : b
       );
@@ -1346,8 +1624,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                     className="foodi-dropdown-item"
                     onClick={() => {
                       setHeaderProfileOpen(false);
-                      setManagerModalMode("profile");
-                      setProfileModalOpen(true);
+                      setActiveTab("profile");
                     }}
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1360,14 +1637,13 @@ export const RestaurantDashboardPage: React.FC = () => {
                     className="foodi-dropdown-item"
                     onClick={() => {
                       setHeaderProfileOpen(false);
-                      setManagerModalMode("password");
-                      setProfileModalOpen(true);
+                      setActiveTab("profile");
                     }}
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                     </svg>
-                    <span>Changer mot de passe</span>
+                    <span>Mot de passe</span>
                   </button>
 
                   <div className="foodi-dropdown-divider" />
@@ -1589,7 +1865,8 @@ export const RestaurantDashboardPage: React.FC = () => {
                               {order.paymentMethod === "card" ? "Carte bancaire" : "Espèces"}
                             </span>
                             <div className="foodi-order-total-sum">
-                              Total : <span>{order.total} DH</span>
+                              À encaisser : <span>{order.subtotal || Math.max(0, order.total - (order.deliveryFee || 0))} DH</span>
+                              <span className="foodi-order-subtotal-sublabel"> (hors livraison)</span>
                             </div>
                             <button
                               type="button"
@@ -1685,7 +1962,6 @@ export const RestaurantDashboardPage: React.FC = () => {
               >
                 <div>
                   <h2 className="foodi-surface-title">{currentRestaurant.name} — Menu</h2>
-                  <p className="foodi-surface-desc">Gérez vos catégories, vos plats et leurs disponibilités.</p>
                 </div>
 
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -1917,7 +2193,6 @@ export const RestaurantDashboardPage: React.FC = () => {
 
               <div className="foodi-surface-card">
                 <h2 className="foodi-surface-title">Horaires habituels</h2>
-                <p className="foodi-surface-desc">Plages de service quotidiennes et délais de préparation.</p>
 
                 <div className="foodi-form-columns">
                   <div className="foodi-form-field">
@@ -1996,13 +2271,108 @@ export const RestaurantDashboardPage: React.FC = () => {
           {activeTab === "profile" && (
             <div>
               <div className="foodi-surface-card">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 8 }}>
-                  <div>
-                    <h2 className="foodi-surface-title">Succursales & Points de vente</h2>
-                    <p className="foodi-surface-desc">
-                      Gérez les différents établissements de la marque à Agadir (ex: Hassan II, Adrar, Plage, Founty).
-                    </p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                    <div
+                      style={{
+                        width: 52,
+                        height: 52,
+                        borderRadius: 14,
+                        backgroundColor: "#FF7A00",
+                        color: "#FFFFFF",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 18,
+                        fontWeight: 900
+                      }}
+                    >
+                      {(managerForm.name || "GM").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <h2 className="foodi-surface-title" style={{ margin: 0 }}>
+                        {managerForm.name || "Gérant"}
+                      </h2>
+                      <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+                        {managerForm.email || "mcdo@foodi.ma"}
+                      </div>
+                    </div>
                   </div>
+                </div>
+
+                <div className="foodi-form-columns">
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Nom du gérant :</label>
+                    <input
+                      type="text"
+                      className="foodi-form-input"
+                      value={managerForm.name}
+                      onChange={(e) =>
+                        setManagerForm((prev) => ({ ...prev, name: e.target.value }))
+                      }
+                    />
+                  </div>
+
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Email de connexion :</label>
+                    <input
+                      type="email"
+                      className="foodi-form-input"
+                      value={managerForm.email}
+                      onChange={(e) =>
+                        setManagerForm((prev) => ({ ...prev, email: e.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #F1F5F9" }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 8, color: "#0D0D0F" }}>
+                    Sécurité & Mot de passe
+                  </div>
+                  <div className="foodi-form-columns">
+                    <div className="foodi-form-field">
+                      <label className="foodi-form-label">Nouveau mot de passe :</label>
+                      <input
+                        type="password"
+                        placeholder="••••••••"
+                        className="foodi-form-input"
+                        value={managerForm.newPassword}
+                        onChange={(e) =>
+                          setManagerForm((prev) => ({ ...prev, newPassword: e.target.value }))
+                        }
+                      />
+                    </div>
+
+                    <div className="foodi-form-field">
+                      <label className="foodi-form-label">Confirmer le mot de passe :</label>
+                      <input
+                        type="password"
+                        placeholder="••••••••"
+                        className="foodi-form-input"
+                        value={managerForm.confirmPassword}
+                        onChange={(e) =>
+                          setManagerForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 14 }}>
+                  <button
+                    type="button"
+                    className="foodi-btn foodi-btn-primary"
+                    onClick={handleSaveManagerProfile}
+                  >
+                    Enregistrer le compte
+                  </button>
+                </div>
+              </div>
+
+              <div className="foodi-surface-card">
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 12 }}>
+                  <h2 className="foodi-surface-title">Points de vente</h2>
                   <button
                     className="foodi-btn foodi-btn-primary"
                     onClick={handleOpenAddBranch}
@@ -2011,38 +2381,117 @@ export const RestaurantDashboardPage: React.FC = () => {
                   </button>
                 </div>
 
+                <div className="foodi-profile-map-card">
+                  <div className="foodi-profile-map-header">
+                    <div className="foodi-profile-map-title-row">
+                      <h3 className="foodi-profile-map-title">Réseau Agadir</h3>
+                      <span className="foodi-profile-map-count-pill">
+                        {(currentRestaurant.branches || []).length} établissements
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                      <button
+                        type="button"
+                        className="foodi-btn foodi-btn-outline"
+                        style={{ padding: "5px 10px", fontSize: 12 }}
+                        onClick={handleRecenterBranchesMap}
+                      >
+                        🎯 Recentrer la carte
+                      </button>
+                      <button
+                        type="button"
+                        className="foodi-btn foodi-btn-primary"
+                        style={{ padding: "5px 12px", fontSize: 12 }}
+                        onClick={handleOpenAddBranch}
+                      >
+                        + Nouvelle succursale
+                      </button>
+                    </div>
+                  </div>
+
+                  <div
+                    ref={profileBranchesMapContainerRef}
+                    className="foodi-profile-map-instance"
+                  />
+                </div>
+
                 {(!currentRestaurant.branches || currentRestaurant.branches.length === 0) ? (
                   <div className="foodi-empty-placeholder" style={{ padding: 24 }}>
                     <div className="foodi-empty-title">Aucune succursale configurée</div>
-                    <div className="foodi-empty-desc">
-                      Ajoutez un premier point de vente pour organiser vos commandes par établissement.
-                    </div>
                   </div>
                 ) : (
-                  <div className="foodi-branches-grid">
+                  <div className="foodi-branches-grid-modern">
                     {currentRestaurant.branches.map((branch) => (
-                      <div key={branch.id} className="foodi-branch-card-item">
-                        <div className="foodi-branch-card-header">
-                          <span className="foodi-branch-name">{branch.name}</span>
-                          <div style={{ display: "flex", gap: 6 }}>
-                            <button
-                              className="foodi-btn foodi-btn-outline"
-                              style={{ padding: "4px 8px", fontSize: 11 }}
-                              onClick={() => handleOpenEditBranch(branch)}
-                            >
-                              Modifier
-                            </button>
-                            <button
-                              className="foodi-btn foodi-btn-danger"
-                              style={{ padding: "4px 8px", fontSize: 11 }}
-                              onClick={() => handleDeleteBranch(branch.id)}
-                            >
-                              Supprimer
-                            </button>
+                      <div key={branch.id} className="foodi-branch-card-modern">
+                        <div className="foodi-branch-card-top">
+                          <div className="foodi-branch-avatar-box">
+                            <img
+                              src={branch.logo || currentRestaurant.logo || "/images/restaurants/McDonalds.png"}
+                              alt={branch.name}
+                              className="foodi-branch-avatar-img"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
+                              }}
+                            />
+                            <span className="foodi-branch-live-dot" title="Ouvert" />
+                          </div>
+
+                          <div className="foodi-branch-info-col">
+                            <div className="foodi-branch-name-row">
+                              <h4 className="foodi-branch-name-title">{branch.name}</h4>
+                              <span className="foodi-branch-tag-pill">{branch.neighborhood}</span>
+                            </div>
+
+                            <div className="foodi-branch-address-txt">
+                              📍 {branch.address}
+                            </div>
+
+                            <div className="foodi-branch-details-row">
+                              {branch.phone && (
+                                <span className="foodi-branch-phone-link">
+                                  📞 {branch.phone}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <div className="foodi-branch-addr">
-                          📍 {branch.neighborhood} — {branch.address}
+
+                        <div className="foodi-branch-actions-row">
+                          <button
+                            type="button"
+                            className="foodi-btn foodi-btn-outline"
+                            style={{ padding: "6px 10px", fontSize: 11, flex: 1 }}
+                            onClick={() => handleFocusBranchOnMap(branch)}
+                          >
+                            📍 Localiser
+                          </button>
+                          <a
+                            href={`https://www.google.com/maps?q=${branch.lat || 30.4152},${branch.lng || -9.5426}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="foodi-btn foodi-btn-outline"
+                            style={{ padding: "6px 10px", fontSize: 11, textDecoration: "none", textAlign: "center" }}
+                          >
+                            ↗ Maps
+                          </a>
+                          <button
+                            type="button"
+                            className="foodi-btn foodi-btn-outline"
+                            style={{ padding: "6px 10px", fontSize: 11 }}
+                            onClick={() => handleOpenEditBranch(branch)}
+                            title="Modifier"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            type="button"
+                            className="foodi-btn foodi-btn-danger"
+                            style={{ padding: "6px 10px", fontSize: 11 }}
+                            onClick={() => handleDeleteBranch(branch.id)}
+                            title="Supprimer"
+                          >
+                            🗑️
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -2052,7 +2501,6 @@ export const RestaurantDashboardPage: React.FC = () => {
 
               <div className="foodi-surface-card">
                 <h2 className="foodi-surface-title">Bannière et logo</h2>
-                <p className="foodi-surface-desc">Identité visuelle affichée aux clients.</p>
 
                 <div className="foodi-banner-box">
                   <img
@@ -2091,7 +2539,12 @@ export const RestaurantDashboardPage: React.FC = () => {
                       type="button"
                       className="foodi-btn foodi-btn-outline"
                       style={{ width: "100%" }}
-                      onClick={() => bannerFileInputRef.current?.click()}
+                      onClick={() => {
+                        if (bannerFileInputRef.current) {
+                          bannerFileInputRef.current.value = "";
+                          bannerFileInputRef.current.click();
+                        }
+                      }}
                     >
                       Choisir une image
                     </button>
@@ -2112,49 +2565,43 @@ export const RestaurantDashboardPage: React.FC = () => {
                       type="button"
                       className="foodi-btn foodi-btn-outline"
                       style={{ width: "100%" }}
-                      onClick={() => logoFileInputRef.current?.click()}
+                      onClick={() => {
+                        if (logoFileInputRef.current) {
+                          logoFileInputRef.current.value = "";
+                          logoFileInputRef.current.click();
+                        }
+                      }}
                     >
                       Choisir une image
                     </button>
                   </div>
                 </div>
 
-                <div style={{ marginTop: 12 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#64748B", marginBottom: 6 }}>
-                    Modèles disponibles :
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #F1F5F9" }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
+                    Ou coller le lien web d'une image :
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))", gap: 8 }}>
-                    {BANNER_PRESETS.map((preset) => (
-                      <div
-                        key={preset.path}
-                        style={{
-                          height: 60,
-                          borderRadius: 8,
-                          overflow: "hidden",
-                          border:
-                            profileForm.cover === preset.path
-                              ? "2px solid #FF7A00"
-                              : "1px solid #E2E8F0",
-                          cursor: "pointer"
-                        }}
-                        onClick={() =>
-                          setProfileForm((prev) => ({ ...prev, cover: preset.path }))
-                        }
-                      >
-                        <img
-                          src={preset.path}
-                          alt={preset.name}
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                      </div>
-                    ))}
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <input
+                      type="url"
+                      placeholder="https://..."
+                      className="foodi-form-input"
+                      value={customBannerUrl}
+                      onChange={(e) => setCustomBannerUrl(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-primary"
+                      onClick={handleApplyCustomBannerUrl}
+                    >
+                      Appliquer
+                    </button>
                   </div>
                 </div>
               </div>
 
               <div className="foodi-surface-card">
                 <h2 className="foodi-surface-title">Informations de contact</h2>
-                <p className="foodi-surface-desc">Coordonnées de l'établissement à Agadir.</p>
 
                 <div className="foodi-form-columns">
                   <div className="foodi-form-field">
@@ -2243,104 +2690,6 @@ export const RestaurantDashboardPage: React.FC = () => {
           )}
         </div>
       </div>
-
-      {profileModalOpen && (
-        <div
-          className="foodi-modal-backdrop"
-          onClick={() => setProfileModalOpen(false)}
-        >
-          <div
-            className="foodi-modal-container"
-            style={{ maxWidth: 440 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="foodi-modal-header">
-              <h3 className="foodi-modal-title">
-                {managerModalMode === "password" ? "Changer le mot de passe" : "Profil du gérant"}
-              </h3>
-              <button
-                className="foodi-modal-close-btn"
-                onClick={() => setProfileModalOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="foodi-modal-body">
-              <div className="foodi-form-field">
-                <label className="foodi-form-label">Nom du gérant :</label>
-                <input
-                  type="text"
-                  className="foodi-form-input"
-                  value={managerForm.name}
-                  onChange={(e) =>
-                    setManagerForm((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                />
-              </div>
-
-              <div className="foodi-form-field">
-                <label className="foodi-form-label">Email de connexion :</label>
-                <input
-                  type="email"
-                  className="foodi-form-input"
-                  value={managerForm.email}
-                  onChange={(e) =>
-                    setManagerForm((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                />
-              </div>
-
-              {managerModalMode === "password" && (
-                <>
-                  <div className="foodi-form-field">
-                    <label className="foodi-form-label">Nouveau mot de passe :</label>
-                    <input
-                      type="password"
-                      placeholder="••••••••"
-                      className="foodi-form-input"
-                      value={managerForm.newPassword}
-                      onChange={(e) =>
-                        setManagerForm((prev) => ({ ...prev, newPassword: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div className="foodi-form-field">
-                    <label className="foodi-form-label">Confirmer le nouveau mot de passe :</label>
-                    <input
-                      type="password"
-                      placeholder="••••••••"
-                      className="foodi-form-input"
-                      value={managerForm.confirmPassword}
-                      onChange={(e) =>
-                        setManagerForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                <button
-                  className="foodi-btn foodi-btn-outline"
-                  style={{ flex: 1 }}
-                  onClick={() => setProfileModalOpen(false)}
-                >
-                  Annuler
-                </button>
-                <button
-                  className="foodi-btn foodi-btn-primary"
-                  style={{ flex: 2 }}
-                  onClick={handleSaveManagerProfile}
-                >
-                  Enregistrer
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {receiptModalOrder && (
         <div
@@ -2448,16 +2797,20 @@ export const RestaurantDashboardPage: React.FC = () => {
 
                 <div className="foodi-receipt-totals">
                   <div className="foodi-receipt-row">
-                    <span>Sous-total :</span>
-                    <span>{receiptModalOrder.subtotal || receiptModalOrder.total} DH</span>
+                    <span>Sous-total plats :</span>
+                    <strong>{receiptModalOrder.subtotal || receiptModalOrder.total} DH</strong>
                   </div>
                   <div className="foodi-receipt-row">
-                    <span>Livraison :</span>
+                    <span>Frais livraison (coursier) :</span>
                     <span>{receiptModalOrder.deliveryFee || 0} DH</span>
                   </div>
-                  <div className="foodi-receipt-grand-total">
-                    <span>Total à payer :</span>
+                  <div className="foodi-receipt-row" style={{ borderTop: "1px dashed #94A3B8", paddingTop: 4, marginTop: 4 }}>
+                    <span>Total payé par client :</span>
                     <span>{receiptModalOrder.total} DH</span>
+                  </div>
+                  <div className="foodi-receipt-grand-total">
+                    <span>À encaisser restaurant :</span>
+                    <span>{receiptModalOrder.subtotal || receiptModalOrder.total} DH</span>
                   </div>
                 </div>
               </div>
@@ -2488,7 +2841,6 @@ export const RestaurantDashboardPage: React.FC = () => {
         >
           <div
             className="foodi-modal-container"
-            style={{ maxWidth: 460 }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="foodi-modal-header">
@@ -2578,6 +2930,27 @@ export const RestaurantDashboardPage: React.FC = () => {
                         : "Assigné à la commande"}
                     </span>
                   </div>
+                </div>
+              </div>
+
+              <div className="foodi-driver-payment-callout">
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#065F46", textTransform: "uppercase" }}>
+                  Règlement coursier
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: 4 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#0D0D0F" }}>
+                    {driverModalOrder.paymentMethod === "cash"
+                      ? "À encaisser du coursier en espèces :"
+                      : "Payé en ligne par carte (net restaurant) :"}
+                  </span>
+                  <span style={{ fontSize: 20, fontWeight: 900, color: "#10B981" }}>
+                    {driverModalOrder.subtotal || Math.max(0, driverModalOrder.total - (driverModalOrder.deliveryFee || 0))} DH
+                  </span>
+                </div>
+                <div style={{ fontSize: 11, color: "#047857", marginTop: 2 }}>
+                  {driverModalOrder.paymentMethod === "cash"
+                    ? "Le livreur vous remet cette somme en espèces lors du retrait de la commande."
+                    : "Règlement automatique par carte, 0 DH d'espèces à réclamer."}
                 </div>
               </div>
 
@@ -2951,12 +3324,11 @@ export const RestaurantDashboardPage: React.FC = () => {
         >
           <div
             className="foodi-modal-container"
-            style={{ maxWidth: 440 }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="foodi-modal-header">
               <h3 className="foodi-modal-title">
-                {branchModalMode === "add" ? "Ajouter une succursale" : "Modifier la succursale"}
+                {branchModalMode === "add" ? "Ajouter un point de vente" : "Modifier la succursale"}
               </h3>
               <button
                 className="foodi-modal-close-btn"
@@ -2966,63 +3338,272 @@ export const RestaurantDashboardPage: React.FC = () => {
               </button>
             </div>
 
+            <div className="foodi-wizard-stepper">
+              <div
+                className={`foodi-wizard-step-node ${branchWizardStep === 1 ? "active" : branchWizardStep > 1 ? "completed" : ""}`}
+                onClick={() => setBranchWizardStep(1)}
+              >
+                <div className="foodi-wizard-step-circle">{branchWizardStep > 1 ? "✓" : "1"}</div>
+                <span className="foodi-wizard-step-label">1. Infos & Logo</span>
+              </div>
+
+              <div className={`foodi-wizard-step-connector ${branchWizardStep > 1 ? "completed" : ""}`} />
+
+              <div
+                className={`foodi-wizard-step-node ${branchWizardStep === 2 ? "active" : branchWizardStep > 2 ? "completed" : ""}`}
+                onClick={() => {
+                  if (branchForm.name.trim()) setBranchWizardStep(2);
+                }}
+              >
+                <div className="foodi-wizard-step-circle">{branchWizardStep > 2 ? "✓" : "2"}</div>
+                <span className="foodi-wizard-step-label">2. Localisation carte</span>
+              </div>
+
+              <div className={`foodi-wizard-step-connector ${branchWizardStep > 2 ? "completed" : ""}`} />
+
+              <div
+                className={`foodi-wizard-step-node ${branchWizardStep === 3 ? "active" : ""}`}
+                onClick={() => {
+                  if (branchForm.name.trim()) setBranchWizardStep(3);
+                }}
+              >
+                <div className="foodi-wizard-step-circle">3</div>
+                <span className="foodi-wizard-step-label">3. Aperçu & Fiche</span>
+              </div>
+            </div>
+
             <div className="foodi-modal-body">
-              <div className="foodi-form-field">
-                <label className="foodi-form-label">Nom de la succursale :</label>
-                <input
-                  type="text"
-                  autoFocus
-                  className="foodi-form-input"
-                  placeholder="Ex: McDonald's Adrar Kitea"
-                  value={branchForm.name}
-                  onChange={(e) =>
-                    setBranchForm((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                />
-              </div>
+              {branchWizardStep === 1 && (
+                <div>
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Nom du point de vente * :</label>
+                    <input
+                      type="text"
+                      autoFocus
+                      className="foodi-form-input"
+                      placeholder="Ex: McDonald's Adrar Kitea"
+                      value={branchForm.name}
+                      onChange={(e) =>
+                        setBranchForm((prev) => ({ ...prev, name: e.target.value }))
+                      }
+                    />
+                  </div>
 
-              <div className="foodi-form-field">
-                <label className="foodi-form-label">Quartier :</label>
-                <input
-                  type="text"
-                  className="foodi-form-input"
-                  placeholder="Ex: Adrar, Dakhla, Front de Mer..."
-                  value={branchForm.neighborhood}
-                  onChange={(e) =>
-                    setBranchForm((prev) => ({ ...prev, neighborhood: e.target.value }))
-                  }
-                />
-              </div>
+                  <div className="foodi-form-columns">
+                    <div className="foodi-form-field">
+                      <label className="foodi-form-label">Quartier d'Agadir :</label>
+                      <input
+                        type="text"
+                        className="foodi-form-input"
+                        placeholder="Ex: Adrar, Dakhla, Front de Mer..."
+                        value={branchForm.neighborhood}
+                        onChange={(e) =>
+                          setBranchForm((prev) => ({ ...prev, neighborhood: e.target.value }))
+                        }
+                      />
+                    </div>
 
-              <div className="foodi-form-field">
-                <label className="foodi-form-label">Adresse complète :</label>
-                <input
-                  type="text"
-                  className="foodi-form-input"
-                  placeholder="Ex: Entrée Souss, Route Nationale 1"
-                  value={branchForm.address}
-                  onChange={(e) =>
-                    setBranchForm((prev) => ({ ...prev, address: e.target.value }))
-                  }
-                />
-              </div>
+                    <div className="foodi-form-field">
+                      <label className="foodi-form-label">Téléphone direct :</label>
+                      <input
+                        type="text"
+                        className="foodi-form-input"
+                        placeholder="Ex: 05 28 22 33 44"
+                        value={branchForm.phone}
+                        onChange={(e) =>
+                          setBranchForm((prev) => ({ ...prev, phone: e.target.value }))
+                        }
+                      />
+                    </div>
+                  </div>
 
-              <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                <button
-                  className="foodi-btn foodi-btn-outline"
-                  style={{ flex: 1 }}
-                  onClick={() => setBranchModalMode(null)}
-                >
-                  Annuler
-                </button>
-                <button
-                  className="foodi-btn foodi-btn-primary"
-                  style={{ flex: 2 }}
-                  onClick={handleSaveBranch}
-                >
-                  Enregistrer
-                </button>
-              </div>
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Adresse :</label>
+                    <input
+                      type="text"
+                      className="foodi-form-input"
+                      placeholder="Ex: Centre Commercial Kitea Géant, Zone Adrar"
+                      value={branchForm.address}
+                      onChange={(e) =>
+                        setBranchForm((prev) => ({ ...prev, address: e.target.value }))
+                      }
+                    />
+                  </div>
+
+                  <div className="foodi-form-field">
+                    <label className="foodi-form-label">Logo / Photo de la succursale :</label>
+                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <div className="foodi-branch-avatar-box" style={{ width: 60, height: 60 }}>
+                        <img
+                          src={branchForm.logo || currentRestaurant.logo || "/images/restaurants/McDonalds.png"}
+                          alt="Logo succursale"
+                          className="foodi-branch-avatar-img"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
+                          }}
+                        />
+                      </div>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+                        <input
+                          type="file"
+                          ref={branchLogoInputRef}
+                          accept="image/png,image/jpeg,image/webp"
+                          style={{ display: "none" }}
+                          onChange={handleBranchLogoUpload}
+                        />
+                        <button
+                          type="button"
+                          className="foodi-btn foodi-btn-outline"
+                          style={{ fontSize: 12, padding: "5px 10px" }}
+                          onClick={() => branchLogoInputRef.current?.click()}
+                        >
+                          📷 Choisir une photo / logo
+                        </button>
+                        <input
+                          type="url"
+                          placeholder="Ou coller une URL d'image..."
+                          className="foodi-form-input"
+                          style={{ fontSize: 11, padding: "4px 8px" }}
+                          value={branchForm.logo}
+                          onChange={(e) =>
+                            setBranchForm((prev) => ({ ...prev, logo: e.target.value }))
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-outline"
+                      style={{ flex: 1 }}
+                      onClick={() => setBranchModalMode(null)}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-primary"
+                      style={{ flex: 2 }}
+                      onClick={() => {
+                        if (!branchForm.name.trim()) {
+                          alert("Veuillez renseigner le nom de la succursale.");
+                          return;
+                        }
+                        setBranchWizardStep(2);
+                      }}
+                    >
+                      Étape suivante : Carte →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {branchWizardStep === 2 && (
+                <div>
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: "#0D0D0F" }}>
+                      Positionnement sur la carte Agadir
+                    </div>
+                  </div>
+
+                  <div className="foodi-quick-geo-pills">
+                    {AGADIR_POPULAR_ZONES.map((zone) => (
+                      <button
+                        key={zone.name}
+                        type="button"
+                        className="foodi-quick-geo-btn"
+                        onClick={() => handleSetQuickZone(zone)}
+                      >
+                        📍 {zone.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div
+                    ref={branchMapContainerRef}
+                    className="foodi-branch-map-container"
+                  />
+
+                  <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-outline"
+                      style={{ flex: 1 }}
+                      onClick={() => setBranchWizardStep(1)}
+                    >
+                      ← Précédent
+                    </button>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-primary"
+                      style={{ flex: 2 }}
+                      onClick={() => setBranchWizardStep(3)}
+                    >
+                      Étape 3 : Aperçu →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {branchWizardStep === 3 && (
+                <div>
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: "#0D0D0F" }}>
+                      Aperçu de la fiche
+                    </div>
+                  </div>
+
+                  <div className="foodi-branch-preview-card">
+                    <img
+                      src={branchForm.logo || currentRestaurant.logo || "/images/restaurants/McDonalds.png"}
+                      alt={branchForm.name}
+                      className="foodi-branch-preview-logo"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
+                      }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                        <h4 style={{ fontSize: 15, fontWeight: 800, margin: 0, color: "#0D0D0F" }}>
+                          {branchForm.name || "Succursale"}
+                        </h4>
+                        <span className="foodi-branch-tag-pill">{branchForm.neighborhood}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: "#64748B", marginBottom: 6 }}>
+                        📍 {branchForm.address}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        {branchForm.phone && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#FF7A00" }}>
+                            📞 {branchForm.phone}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-outline"
+                      style={{ flex: 1 }}
+                      onClick={() => setBranchWizardStep(2)}
+                    >
+                      ← Modifier la carte
+                    </button>
+                    <button
+                      type="button"
+                      className="foodi-btn foodi-btn-primary"
+                      style={{ flex: 2 }}
+                      onClick={handleSaveBranch}
+                    >
+                      ✅ Enregistrer le point de vente
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

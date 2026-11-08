@@ -417,7 +417,10 @@
         "neighborhood": "Front de Mer",
         "address": "Front de Mer, Agadir",
         "lat": 30.4167,
-        "lng": -9.6
+        "lng": -9.6,
+        "phone": "05 28 84 92 10",
+        "logo": "/images/restaurants/McDonalds.png",
+        "isOpen": true
       },
       {
         "id": "mcdo_marjane_founty",
