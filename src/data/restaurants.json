@@ -2650,16 +2650,22 @@
         "name": "Crusty Hay Salam",
         "neighborhood": "Hay Salam",
         "address": "7 Avenue Lhajj Massaoud El Waafkaoui, Agadir",
-        "lat": 30.3955,
-        "lng": -9.5525
+        "lat": 30.402956,
+        "lng": -9.549874,
+        "phone": "05 28 22 33 44",
+        "logo": "/images/restaurants/crusti.jpg",
+        "isOpen": true
       },
       {
         "id": "crusty_jet_sakan",
         "name": "Crusty Jet Sakan",
         "neighborhood": "Jet Sakan",
         "address": "Avenue Mohamed El Fassi, Agadir",
-        "lat": 30.3935,
-        "lng": -9.5485
+        "lat": 30.397317,
+        "lng": -9.548299,
+        "phone": "05 28 22 33 44",
+        "logo": "/images/restaurants/crusti.jpg",
+        "isOpen": true
       },
       {
         "id": "crusty_hay_mohammadi",

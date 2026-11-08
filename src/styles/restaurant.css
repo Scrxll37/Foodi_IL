@@ -364,6 +364,33 @@
   color: var(--foodi-white);
 }
 
+.foodi-sidebar-signout-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background-color: #EF4444;
+  color: #FFFFFF;
+  border: 1px solid #DC2626;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+}
+
+.foodi-sidebar-signout-btn:hover {
+  background-color: #DC2626;
+  border-color: #B91C1C;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
 .foodi-main-canvas {
   flex: 1;
   min-width: 0;
@@ -567,11 +594,15 @@
 }
 
 .foodi-dropdown-item.danger {
-  color: var(--foodi-red);
+  color: #EF4444;
+  font-weight: 800;
+  justify-content: center;
+  text-align: center;
 }
 
 .foodi-dropdown-item.danger:hover {
-  background-color: var(--foodi-red-light);
+  background-color: #FEE2E2;
+  color: #DC2626;
 }
 
 .foodi-dropdown-divider {
@@ -644,6 +675,54 @@
 .foodi-status-pill-btn.active .foodi-status-pill-count {
   background-color: rgba(255, 255, 255, 0.2);
   color: var(--foodi-white);
+}
+
+.foodi-status-pill-btn.foodi-pill-kitchen.filled {
+  background-color: #FFF2EB;
+  color: #C2410C;
+  border-color: var(--foodi-orange);
+  box-shadow: 0 0 0 1px var(--foodi-orange), 0 2px 8px rgba(255, 122, 0, 0.18);
+}
+
+.foodi-status-pill-btn.foodi-pill-kitchen.filled .foodi-status-pill-count {
+  background-color: var(--foodi-orange);
+  color: #FFFFFF;
+}
+
+.foodi-status-pill-btn.foodi-pill-kitchen.filled.active {
+  background-color: var(--foodi-orange);
+  color: #FFFFFF;
+  border-color: #EA580C;
+  box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
+}
+
+.foodi-status-pill-btn.foodi-pill-kitchen.filled.active .foodi-status-pill-count {
+  background-color: #FFFFFF;
+  color: var(--foodi-orange);
+}
+
+.foodi-status-pill-btn.foodi-pill-ready.filled {
+  background-color: #ECFDF5;
+  color: #047857;
+  border-color: #10B981;
+  box-shadow: 0 0 0 1px #10B981, 0 2px 8px rgba(16, 185, 129, 0.18);
+}
+
+.foodi-status-pill-btn.foodi-pill-ready.filled .foodi-status-pill-count {
+  background-color: #10B981;
+  color: #FFFFFF;
+}
+
+.foodi-status-pill-btn.foodi-pill-ready.filled.active {
+  background-color: #10B981;
+  color: #FFFFFF;
+  border-color: #059669;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.foodi-status-pill-btn.foodi-pill-ready.filled.active .foodi-status-pill-count {
+  background-color: #FFFFFF;
+  color: #10B981;
 }
 
 .foodi-toolbar-filters-group {
@@ -1067,6 +1146,7 @@
 .foodi-order-actions-buttons {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -1080,6 +1160,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   gap: 6px;
   transition: all 0.15s ease;
   text-decoration: none;
@@ -1292,7 +1373,8 @@
   border-radius: 16px;
   border: 1px solid var(--foodi-border);
   padding: 24px;
-  margin-bottom: 20px;
+  max-width: 900px;
+  margin: 0 auto 20px auto;
   box-shadow: 0 2px 8px rgba(13, 13, 15, 0.03);
 }
 
@@ -1401,9 +1483,11 @@
   border-radius: 6px;
 }
 
-.foodi-branch-map-container {
+.foodi-branch-map-container,
+.foodi-branch-map-container.leaflet-container {
   width: 100%;
-  height: 380px;
+  height: 380px !important;
+  min-height: 380px !important;
   border-radius: 14px;
   border: 1px solid var(--foodi-border);
   overflow: hidden;
@@ -1478,7 +1562,8 @@
   border: 1px solid var(--foodi-border);
   border-radius: 16px;
   padding: 16px;
-  margin-bottom: 20px;
+  max-width: 900px;
+  margin: 0 auto 20px auto;
 }
 
 .foodi-profile-map-header {
@@ -1512,9 +1597,11 @@
   border-radius: 9999px;
 }
 
-.foodi-profile-map-instance {
+.foodi-profile-map-instance,
+.foodi-profile-map-instance.leaflet-container {
   width: 100%;
-  height: 320px;
+  height: 320px !important;
+  min-height: 320px !important;
   border-radius: 12px;
   border: 1px solid var(--foodi-border);
   overflow: hidden;
@@ -1863,12 +1950,18 @@
 .foodi-modal-body {
   padding: 24px 32px;
   display: flex;
+  flex-direction: column;
   min-width: 1000px;
-  
-  justify-content: center;
   gap: 16px;
   flex: 1;
   overflow-y: auto;
+}
+
+@media (max-width: 1024px) {
+  .foodi-modal-body {
+    min-width: 100%;
+    padding: 16px;
+  }
 }
 
 .foodi-receipt-voucher {
@@ -1878,6 +1971,9 @@
   padding: 20px;
   font-family: monospace;
   color: var(--foodi-charcoal);
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .foodi-receipt-header {
@@ -2157,6 +2253,8 @@
   flex-direction: column;
   gap: 16px;
   box-shadow: 0 2px 8px rgba(13, 13, 15, 0.03);
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .foodi-branch-slider-header {
@@ -2284,6 +2382,7 @@
 .foodi-branch-slide-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   flex-wrap: wrap;
   padding-top: 14px;
@@ -2449,8 +2548,10 @@
   .foodi-form-columns {
     grid-template-columns: 1fr;
   }
-  .foodi-profile-map-instance {
-    height: 240px;
+  .foodi-profile-map-instance,
+  .foodi-profile-map-instance.leaflet-container {
+    height: 240px !important;
+    min-height: 240px !important;
   }
   .foodi-branch-slide-body {
     flex-direction: column;

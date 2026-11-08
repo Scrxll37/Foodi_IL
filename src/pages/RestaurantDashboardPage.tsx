@@ -433,6 +433,9 @@ export const RestaurantDashboardPage: React.FC = () => {
         branchMapInstanceRef.current = null;
         branchMarkerRef.current = null;
       }
+      if (branchMapContainerRef.current && (branchMapContainerRef.current as any)._leaflet_id) {
+        delete (branchMapContainerRef.current as any)._leaflet_id;
+      }
       return;
     }
 
@@ -486,6 +489,10 @@ export const RestaurantDashboardPage: React.FC = () => {
       setTimeout(() => {
         map.invalidateSize();
       }, 100);
+
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 300);
     }, 150);
 
     return () => {
@@ -2984,7 +2991,8 @@ export const RestaurantDashboardPage: React.FC = () => {
             </div>
 
             <div className="foodi-modal-body">
-              <div className="foodi-driver-modal-hero">
+              <div style={{ width: "100%", maxWidth: 680, margin: "0 auto", display: "flex", flexDirection: "column", gap: 14 }}>
+                <div className="foodi-driver-modal-hero">
                 <div className="foodi-driver-modal-id-badge">
                   <span style={{ fontSize: 11, color: "#64748B", textTransform: "uppercase", fontWeight: 700 }}>
                     N° Commande
@@ -3087,8 +3095,9 @@ export const RestaurantDashboardPage: React.FC = () => {
                   className="foodi-btn foodi-btn-primary"
                   style={{ flex: 1, textDecoration: "none" }}
                 >
-                  Appeler le livreur
+                  Appeler
                 </a>
+              </div>
               </div>
             </div>
           </div>
@@ -3494,7 +3503,7 @@ export const RestaurantDashboardPage: React.FC = () => {
 
             <div className="foodi-modal-body">
               {branchWizardStep === 1 && (
-                <div>
+                <div style={{ width: "100%", maxWidth: 900, margin: "0 auto" }}>
                   <div className="foodi-form-field">
                     <label className="foodi-form-label">Nom du point de vente * :</label>
                     <input
@@ -3612,7 +3621,7 @@ export const RestaurantDashboardPage: React.FC = () => {
               )}
 
               {branchWizardStep === 2 && (
-                <div>
+                <div style={{ width: "100%", maxWidth: 900, margin: "0 auto" }}>
                   <div style={{ marginBottom: 10 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#0D0D0F" }}>
                       Positionnement sur la carte Agadir
@@ -3659,7 +3668,7 @@ export const RestaurantDashboardPage: React.FC = () => {
               )}
 
               {branchWizardStep === 3 && (
-                <div>
+                <div style={{ width: "100%", maxWidth: 900, margin: "0 auto" }}>
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#0D0D0F" }}>
                       Aperçu de la fiche
