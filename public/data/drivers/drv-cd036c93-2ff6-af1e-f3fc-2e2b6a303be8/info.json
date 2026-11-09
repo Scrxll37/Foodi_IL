@@ -1,0 +1,64 @@
+{
+  "id": "drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8",
+  "fullName": "Omar Kabbaj",
+  "phone": "+212 6 68 22 33 44",
+  "email": "omar.kabbaj@gmail.com",
+  "cin": "JA938472",
+  "lat": 30.408,
+  "lng": -9.601,
+  "isOnline": false,
+  "vehicleType": "motorcycle",
+  "vehicleBrand": "Yamaha",
+  "vehicleModel": "TMAX 530",
+  "vehiclePlate": "81029-A-33",
+  "licenseNumber": "PER-83719-A",
+  "status": "suspended",
+  "appliedDate": "05 Août 2026",
+  "rating": 4.3,
+  "totalDeliveries": 92,
+  "assignedOrdersCount": 110,
+  "photoUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/avatar.jpg",
+  "documents": {
+    "cinPhotoUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/cin_recto.png",
+    "cinBackUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/cin_verso.png",
+    "licensePhotoUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/permis.jpg",
+    "registrationCardUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/carte_grise.jpg",
+    "insuranceUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/assurance.png"
+  },
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Fayçal Agadir",
+      "role": "Client",
+      "date": "Il y a 2 jours",
+      "rating": 5,
+      "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+    },
+    {
+      "id": "rev-2",
+      "author": "Gérance Crusty",
+      "role": "Restaurant",
+      "date": "Il y a 3 jours",
+      "rating": 5,
+      "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+    },
+    {
+      "id": "rev-3",
+      "author": "Meryem K.",
+      "role": "Client",
+      "date": "La semaine dernière",
+      "rating": 5,
+      "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+    },
+    {
+      "id": "rev-4",
+      "author": "Yassine T.",
+      "role": "Client",
+      "date": "Le 28 Octobre 2026",
+      "rating": 4,
+      "comment": "Bonne livraison, temps respecté."
+    }
+  ],
+  "code": "DRV-105",
+  "folder": "drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8"
+}

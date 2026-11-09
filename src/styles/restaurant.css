@@ -32,105 +32,6 @@
   display: flex;
 }
 
-.foodi-login-wrapper {
-  min-height: 100vh;
-  width: 100%;
-  background-color: var(--foodi-cream);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.foodi-login-panel {
-  background-color: var(--foodi-white);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 440px;
-  padding: 36px 30px;
-  box-shadow: 0 4px 20px rgba(13, 13, 15, 0.06);
-  border: 1px solid var(--foodi-border);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.foodi-login-head {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.foodi-login-brand-logo {
-  height: 38px;
-  object-fit: contain;
-}
-
-.foodi-login-partner-tag {
-  background-color: var(--foodi-soft-orange);
-  color: var(--foodi-charcoal);
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.foodi-login-heading {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--foodi-charcoal);
-  margin: 0;
-}
-
-.foodi-login-desc {
-  font-size: 13px;
-  color: var(--foodi-muted);
-  margin: 0;
-}
-
-.foodi-quick-demo-box {
-  background-color: var(--foodi-cream);
-  border: 1px solid var(--foodi-border);
-  border-radius: 12px;
-  padding: 12px;
-}
-
-.foodi-quick-demo-title {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--foodi-muted);
-  margin-bottom: 8px;
-}
-
-.foodi-quick-demo-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.foodi-quick-demo-pill {
-  background-color: var(--foodi-white);
-  border: 1px solid var(--foodi-border);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--foodi-charcoal);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.foodi-quick-demo-pill:hover {
-  border-color: var(--foodi-orange);
-  background-color: var(--foodi-soft-orange);
-}
-
 .foodi-sidebar-nav {
   width: 260px;
   background-color: var(--foodi-charcoal);
@@ -1951,8 +1852,7 @@
   padding: 24px 32px;
   display: flex;
   flex-direction: column;
-  min-width: 1000px;
-  gap: 16px;
+   gap: 16px;
   flex: 1;
   overflow-y: auto;
 }

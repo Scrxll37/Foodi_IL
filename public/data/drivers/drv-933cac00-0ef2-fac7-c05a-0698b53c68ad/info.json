@@ -1,0 +1,64 @@
+{
+  "id": "drv-933cac00-0ef2-fac7-c05a-0698b53c68ad",
+  "fullName": "Amine Tazi",
+  "phone": "+212 6 62 10 20 30",
+  "email": "amine.tazi@foodi.ma",
+  "cin": "JA184920",
+  "lat": 30.421,
+  "lng": -9.598,
+  "isOnline": true,
+  "vehicleType": "motorcycle",
+  "vehicleBrand": "Yamaha",
+  "vehicleModel": "NMAX 155",
+  "vehiclePlate": "48291-A-33",
+  "licenseNumber": "PER-09281-A",
+  "status": "active",
+  "appliedDate": "15 Octobre 2026",
+  "rating": 4.9,
+  "totalDeliveries": 428,
+  "assignedOrdersCount": 435,
+  "photoUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/avatar.jpg",
+  "documents": {
+    "cinPhotoUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/cin_recto.png",
+    "cinBackUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/cin_verso.png",
+    "licensePhotoUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/permis.jpg",
+    "registrationCardUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/carte_grise.jpg",
+    "insuranceUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/assurance.png"
+  },
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Fayçal Agadir",
+      "role": "Client",
+      "date": "Il y a 2 jours",
+      "rating": 5,
+      "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+    },
+    {
+      "id": "rev-2",
+      "author": "Gérance Crusty",
+      "role": "Restaurant",
+      "date": "Il y a 3 jours",
+      "rating": 5,
+      "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+    },
+    {
+      "id": "rev-3",
+      "author": "Meryem K.",
+      "role": "Client",
+      "date": "La semaine dernière",
+      "rating": 5,
+      "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+    },
+    {
+      "id": "rev-4",
+      "author": "Yassine T.",
+      "role": "Client",
+      "date": "Le 28 Octobre 2026",
+      "rating": 4,
+      "comment": "Bonne livraison, temps respecté."
+    }
+  ],
+  "code": "DRV-101",
+  "folder": "drv-933cac00-0ef2-fac7-c05a-0698b53c68ad"
+}

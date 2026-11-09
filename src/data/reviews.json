@@ -1,0 +1,34 @@
+[
+  {
+    "id": "rev-1",
+    "author": "Fayçal Agadir",
+    "role": "Client",
+    "date": "Il y a 2 jours",
+    "rating": 5,
+    "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+  },
+  {
+    "id": "rev-2",
+    "author": "Gérance Crusty",
+    "role": "Restaurant",
+    "date": "Il y a 3 jours",
+    "rating": 5,
+    "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+  },
+  {
+    "id": "rev-3",
+    "author": "Meryem K.",
+    "role": "Client",
+    "date": "La semaine dernière",
+    "rating": 5,
+    "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+  },
+  {
+    "id": "rev-4",
+    "author": "Yassine T.",
+    "role": "Client",
+    "date": "Le 28 Octobre 2026",
+    "rating": 4,
+    "comment": "Bonne livraison, temps respecté."
+  }
+]

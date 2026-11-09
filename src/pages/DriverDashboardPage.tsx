@@ -57,6 +57,7 @@ import ordersData from "../data/orders.json";
 import { fetchRoadRoute, buildRouteGeometry, LatLng } from "../utils/routing";
 import { EmailChangeModal } from "../components/EmailChangeModal";
 import { DriverHeroIllustration } from "../components/DriverHeroIllustration";
+import { useApp } from "../context/AppContext";
 
 type DriverState =
   | "offline"
@@ -71,6 +72,14 @@ type DriverState =
 
 export const DriverDashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { logout } = useApp();
+
+  const handleLogout = () => {
+    setIsProfileDropdownOpen(false);
+    setIsMobileSidebarOpen(false);
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   const [isOnboarded, setIsOnboarded] = useState<boolean>(() => {
     try {
@@ -1670,15 +1679,11 @@ export const DriverDashboardPage: React.FC = () => {
           <button
             type="button"
             disabled={isOrderActive}
-            onClick={() => {
-              if (isOrderActive) return;
-              navigate("/login");
-            }}
+            onClick={handleLogout}
             className={`driver-sidebar-logout-btn ${isOrderActive ? "locked" : ""}`}
-            title={isOrderActive ? "Déconnexion impossible pendant une livraison" : "Se déconnecter"}
+            title={isOrderActive ? "Déconnexion impossible pendant une livraison" : "Déconnexion"}
           >
-            <LogOut size={16} />
-            <span>Se déconnecter</span>
+            Déconnexion
           </button>
         </div>
       </aside>
@@ -1806,16 +1811,11 @@ export const DriverDashboardPage: React.FC = () => {
                     <button
                       type="button"
                       disabled={isOrderActive}
-                      onClick={() => {
-                        if (isOrderActive) return;
-                        setIsProfileDropdownOpen(false);
-                        navigate("/login");
-                      }}
+                      onClick={handleLogout}
                       className={`driver-dropdown-item danger ${isOrderActive ? "locked" : ""}`}
                       title={isOrderActive ? "Déconnexion impossible pendant une livraison" : undefined}
                     >
-                      <LogOut size={16} />
-                      <span>Se déconnecter</span>
+                      Déconnexion
                     </button>
                   </div>
                 </>
@@ -2749,15 +2749,10 @@ export const DriverDashboardPage: React.FC = () => {
               <button
                 type="button"
                 disabled={isOrderActive}
-                onClick={() => {
-                  if (isOrderActive) return;
-                  setIsMobileSidebarOpen(false);
-                  navigate("/login");
-                }}
+                onClick={handleLogout}
                 className={`driver-sidebar-logout-btn ${isOrderActive ? "locked" : ""}`}
               >
-                <LogOut size={16} />
-                <span>Se déconnecter</span>
+                Déconnexion
               </button>
             </div>
           </div>

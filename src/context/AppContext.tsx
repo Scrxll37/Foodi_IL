@@ -22,7 +22,7 @@ interface AppContextType {
   isNotifOpen: boolean;
   setIsNotifOpen: (open: boolean) => void;
   user: UserProfile;
-  login: (identifier: string, details?: { name?: string; phone?: string; email?: string }) => void;
+  login: (identifier: string, details?: { name?: string; phone?: string; email?: string; role?: "client" | "driver" | "restaurant" | "admin" }) => void;
   updateProfile: (data: Partial<UserProfile>) => void;
   logout: () => void;
   address: UserAddress;
@@ -100,7 +100,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem("foodi_user", JSON.stringify(user));
+    if (user.isLoggedIn) {
+      localStorage.setItem("foodi_user", JSON.stringify(user));
+      localStorage.setItem("foodi_authenticated", "true");
+    } else {
+      localStorage.removeItem("foodi_user");
+      localStorage.removeItem("foodi_authenticated");
+    }
   }, [user]);
 
   useEffect(() => {
@@ -191,15 +197,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCart([]);
   };
 
-  const login = (identifier: string, details?: { name?: string; phone?: string; email?: string }) => {
+  const login = (
+    identifier: string,
+    details?: { name?: string; phone?: string; email?: string; role?: "client" | "driver" | "restaurant" | "admin" }
+  ) => {
+    localStorage.removeItem("foodi_restaurant_session");
+    sessionStorage.clear();
     const isPhone = identifier.includes("+") || /^\d+$/.test(identifier.replace(/\s+/g, ""));
     const updated: UserProfile = {
       name: details?.name || "Fayçal Agadir",
       email: details?.email || (isPhone ? "faycal@foodi.ma" : identifier),
       phone: details?.phone || (isPhone ? identifier : "+212 6 12 34 56 78"),
+      role: details?.role || "client",
       isLoggedIn: true
     };
     localStorage.setItem("foodi_authenticated", "true");
+    localStorage.setItem("foodi_user", JSON.stringify(updated));
     setUser(updated);
   };
 
@@ -214,6 +227,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const logout = () => {
     localStorage.removeItem("foodi_authenticated");
     localStorage.removeItem("foodi_user");
+    localStorage.removeItem("foodi_restaurant_session");
+    sessionStorage.clear();
     setUser(defaultGuestUser);
     setCart([]);
   };

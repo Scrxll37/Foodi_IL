@@ -62,7 +62,7 @@ export const DashboardPage: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   const handleSaveInfo = (e: React.FormEvent) => {
@@ -297,10 +297,9 @@ export const DashboardPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all cursor-pointer border border-red-100 shadow-xs"
+                  className="w-full flex items-center justify-center py-3 px-4 rounded-2xl text-xs font-bold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all cursor-pointer border border-red-100 shadow-xs"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>Déconnexion</span>
+                  Déconnexion
                 </button>
               </div>
             </div>
@@ -688,10 +687,9 @@ export const DashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all cursor-pointer border border-red-100 shadow-xs"
+                className="w-full flex items-center justify-center py-3 px-4 rounded-2xl text-xs font-bold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all cursor-pointer border border-red-100 shadow-xs"
               >
-                <LogOut className="w-4 h-4" />
-                <span>Déconnexion du compte</span>
+                Déconnexion
               </button>
             </div>
           </section>

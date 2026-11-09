@@ -1,0 +1,64 @@
+{
+  "id": "drv-21166ce9-5d07-1fbe-318a-462ba7f29207",
+  "fullName": "Tariq Naciri",
+  "phone": "+212 6 72 34 56 78",
+  "email": "tariq.naciri@foodi.ma",
+  "cin": "JD291029",
+  "lat": 30.421,
+  "lng": -9.591,
+  "isOnline": true,
+  "vehicleType": "motorcycle",
+  "vehicleBrand": "Sym",
+  "vehicleModel": "Fiddle III",
+  "vehiclePlate": "38192-A-33",
+  "licenseNumber": "PER-10928-A",
+  "status": "active",
+  "appliedDate": "05 Septembre 2026",
+  "rating": 4.8,
+  "totalDeliveries": 260,
+  "assignedOrdersCount": 265,
+  "photoUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/avatar.jpg",
+  "documents": {
+    "cinPhotoUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/cin_recto.png",
+    "cinBackUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/cin_verso.png",
+    "licensePhotoUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/permis.jpg",
+    "registrationCardUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/carte_grise.jpg",
+    "insuranceUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/assurance.png"
+  },
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Fayçal Agadir",
+      "role": "Client",
+      "date": "Il y a 2 jours",
+      "rating": 5,
+      "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+    },
+    {
+      "id": "rev-2",
+      "author": "Gérance Crusty",
+      "role": "Restaurant",
+      "date": "Il y a 3 jours",
+      "rating": 5,
+      "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+    },
+    {
+      "id": "rev-3",
+      "author": "Meryem K.",
+      "role": "Client",
+      "date": "La semaine dernière",
+      "rating": 5,
+      "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+    },
+    {
+      "id": "rev-4",
+      "author": "Yassine T.",
+      "role": "Client",
+      "date": "Le 28 Octobre 2026",
+      "rating": 4,
+      "comment": "Bonne livraison, temps respecté."
+    }
+  ],
+  "code": "DRV-109",
+  "folder": "drv-21166ce9-5d07-1fbe-318a-462ba7f29207"
+}

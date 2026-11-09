@@ -1341,7 +1341,8 @@
         "lat": 30.414,
         "lng": -9.562
       }
-    ]
+    ],
+    "autoAcceptOrders": false
   },
   {
     "id": "mister-cook",

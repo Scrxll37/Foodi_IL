@@ -53,9 +53,26 @@ export const LoginPage: React.FC = () => {
     const identifier = authMode === "email" ? email.trim() : phone.trim();
 
     setTimeout(() => {
-      login(identifier);
+      let role: "client" | "driver" | "restaurant" | "admin" = "client";
+      let dest = "/";
+
+      if (identifier.includes("admin")) {
+        role = "admin";
+        dest = "/admin";
+      } else if (identifier.includes("driver") || identifier.includes("tazi")) {
+        role = "driver";
+        dest = "/driver";
+      } else if (identifier.includes("mcdo") || identifier.includes("crusty") || identifier.includes("partner")) {
+        role = "restaurant";
+        dest = "/restaurant-dashboard";
+      } else {
+        const isClientTarget = redirectPath && !redirectPath.includes("admin") && !redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner");
+        dest = isClientTarget ? redirectPath : "/";
+      }
+
+      login(identifier, { role });
       setIsSubmitting(false);
-      navigate(redirectPath, { replace: true });
+      navigate(dest, { replace: true });
     }, 350);
   };
 
@@ -201,10 +218,9 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="foodi-btn-primary w-full py-3.5 sm:py-4 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/25 hover:shadow-xl hover:shadow-[#FF5A00]/35 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="foodi-btn-primary w-full py-3.5 sm:py-4 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/25 hover:shadow-xl hover:shadow-[#FF5A00]/35 cursor-pointer flex items-center justify-center active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <span>{isSubmitting ? "Connexion en cours..." : "Se connecter"}</span>
-            <ArrowRight className="w-4 h-4" />
+            {isSubmitting ? "Connexion..." : "Connexion"}
           </button>
         </form>
 
@@ -218,21 +234,53 @@ export const LoginPage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <button
-            type="button"
-            onClick={() => fillQuickAccount("youssef.foodi@gmail.com")}
-            className="text-[11px] font-bold text-[#7A8194] hover:text-[#FF5A00] bg-gray-50 hover:bg-orange-50 px-3 py-1.5 rounded-xl border border-gray-200/60 transition-colors cursor-pointer"
-          >
-            Compte démo
-          </button>
-          <Link
-            to="/driver"
-            className="text-[11px] font-bold text-[#7A8194] hover:text-[#FF5A00] bg-gray-50 hover:bg-orange-50 px-3 py-1.5 rounded-xl border border-gray-200/60 transition-colors inline-flex items-center gap-1 cursor-pointer"
-          >
-            <Bike className="w-3 h-3 text-[#FF5A00]" />
-            <span>Espace Livreur</span>
-          </Link>
+        <div className="pt-2 border-t border-gray-100">
+          <div className="text-center text-[11px] font-bold text-[#7A8194] uppercase tracking-wider mb-2.5">
+            Accès Démo Immédiat
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                login("admin@foodi.ma", { name: "Superviseur Agadir", email: "admin@foodi.ma", role: "admin" });
+                navigate("/admin", { replace: true });
+              }}
+              className="py-2.5 px-3 rounded-xl bg-[#0B1020] hover:bg-[#1E293B] text-white text-xs font-black transition-all cursor-pointer text-center"
+            >
+              Admin
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                login("karim.benjelloun@crusty.ma", { name: "Karim Benjelloun", email: "karim.benjelloun@crusty.ma", role: "restaurant" });
+                navigate("/restaurant-dashboard", { replace: true });
+              }}
+              className="py-2.5 px-3 rounded-xl bg-[#FF5A00] hover:bg-[#E04F00] text-white text-xs font-black transition-all cursor-pointer text-center"
+            >
+              Restau
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                login("amine.tazi@foodi.ma", { name: "Amine Tazi", email: "amine.tazi@foodi.ma", role: "driver" });
+                navigate("/driver", { replace: true });
+              }}
+              className="py-2.5 px-3 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white text-xs font-black transition-all cursor-pointer text-center"
+            >
+              Livreur
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                login("faycal@foodi.ma", { name: "Fayçal Agadir", email: "faycal@foodi.ma", role: "client" });
+                const isClientTarget = redirectPath && !redirectPath.includes("admin") && !redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner");
+                navigate(isClientTarget ? redirectPath : "/", { replace: true });
+              }}
+              className="py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#0B1020] text-xs font-black transition-all cursor-pointer text-center"
+            >
+              Client
+            </button>
+          </div>
         </div>
       </div>
     </AuthLayoutShell>

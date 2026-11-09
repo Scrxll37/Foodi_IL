@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "drv-933cac00-0ef2-fac7-c05a-0698b53c68ad",
+    "fullName": "Amine Tazi",
+    "phone": "+212 6 62 10 20 30",
+    "email": "amine.tazi@foodi.ma",
+    "cin": "JA184920",
+    "lat": 30.421,
+    "lng": -9.598,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Yamaha",
+    "vehicleModel": "NMAX 155",
+    "vehiclePlate": "48291-A-33",
+    "licenseNumber": "PER-09281-A",
+    "status": "active",
+    "appliedDate": "15 Octobre 2026",
+    "rating": 4.9,
+    "totalDeliveries": 428,
+    "assignedOrdersCount": 435,
+    "photoUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-933cac00-0ef2-fac7-c05a-0698b53c68ad/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-101",
+    "folder": "drv-933cac00-0ef2-fac7-c05a-0698b53c68ad"
+  },
+  {
+    "id": "drv-3f951af4-3c58-e253-ebe2-3e8434ff186d",
+    "fullName": "Youssef Berrada",
+    "phone": "+212 6 71 88 99 00",
+    "email": "youssef.berrada@gmail.com",
+    "cin": "JB291034",
+    "lat": 30.415,
+    "lng": -9.562,
+    "isOnline": false,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Honda",
+    "vehicleModel": "SH 125",
+    "vehiclePlate": "29103-B-33",
+    "licenseNumber": "PER-48192-A",
+    "status": "pending",
+    "appliedDate": "Hier à 16:40",
+    "rating": 5,
+    "totalDeliveries": 0,
+    "assignedOrdersCount": 0,
+    "photoUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-102",
+    "folder": "drv-3f951af4-3c58-e253-ebe2-3e8434ff186d"
+  },
+  {
+    "id": "drv-a20040fb-e2e2-91a4-1544-812f3de2f404",
+    "fullName": "Mehdi Mansouri",
+    "phone": "+212 6 61 45 78 90",
+    "email": "mehdi.mansouri@foodi.ma",
+    "cin": "J492019",
+    "lat": 30.384,
+    "lng": -9.531,
+    "isOnline": true,
+    "vehicleType": "car",
+    "vehicleBrand": "Dacia",
+    "vehicleModel": "Sandero Stepway",
+    "vehiclePlate": "19283-A-33",
+    "licenseNumber": "PER-99102-B",
+    "status": "active",
+    "appliedDate": "20 Septembre 2026",
+    "rating": 4.8,
+    "totalDeliveries": 189,
+    "assignedOrdersCount": 195,
+    "photoUrl": "/data/drivers/drv-a20040fb-e2e2-91a4-1544-812f3de2f404/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-a20040fb-e2e2-91a4-1544-812f3de2f404/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-a20040fb-e2e2-91a4-1544-812f3de2f404/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-a20040fb-e2e2-91a4-1544-812f3de2f404/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-a20040fb-e2e2-91a4-1544-812f3de2f404/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-a20040fb-e2e2-91a4-1544-812f3de2f404/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-103",
+    "folder": "drv-a20040fb-e2e2-91a4-1544-812f3de2f404"
+  },
+  {
+    "id": "drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3",
+    "fullName": "Salma Bennani",
+    "phone": "+212 6 54 32 10 98",
+    "email": "salma.bennani@outlook.com",
+    "cin": "JC839201",
+    "lat": 30.428,
+    "lng": -9.598,
+    "isOnline": false,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Peugeot",
+    "vehicleModel": "Tweet 125",
+    "vehiclePlate": "93821-C-33",
+    "licenseNumber": "PER-12093-A",
+    "status": "pending",
+    "appliedDate": "Aujourd'hui à 10:15",
+    "rating": 5,
+    "totalDeliveries": 0,
+    "assignedOrdersCount": 0,
+    "photoUrl": "/data/drivers/drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-104",
+    "folder": "drv-0ee4e262-8fb0-31f8-89c3-465454ab54f3"
+  },
+  {
+    "id": "drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8",
+    "fullName": "Omar Kabbaj",
+    "phone": "+212 6 68 22 33 44",
+    "email": "omar.kabbaj@gmail.com",
+    "cin": "JA938472",
+    "lat": 30.408,
+    "lng": -9.601,
+    "isOnline": false,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Yamaha",
+    "vehicleModel": "TMAX 530",
+    "vehiclePlate": "81029-A-33",
+    "licenseNumber": "PER-83719-A",
+    "status": "suspended",
+    "appliedDate": "05 Août 2026",
+    "rating": 4.3,
+    "totalDeliveries": 92,
+    "assignedOrdersCount": 110,
+    "photoUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-105",
+    "folder": "drv-cd036c93-2ff6-af1e-f3fc-2e2b6a303be8"
+  },
+  {
+    "id": "drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b",
+    "fullName": "Rachid El Idrissi",
+    "phone": "+212 6 77 11 22 33",
+    "email": "rachid.idrissi@foodi.ma",
+    "cin": "JB102938",
+    "lat": 30.418,
+    "lng": -9.558,
+    "isOnline": true,
+    "vehicleType": "bicycle",
+    "vehicleBrand": "Btwin",
+    "vehicleModel": "Elops 900 E",
+    "vehiclePlate": "VÉLO-ELEC",
+    "licenseNumber": "NON REQUIS",
+    "status": "active",
+    "appliedDate": "01 Novembre 2026",
+    "rating": 4.9,
+    "totalDeliveries": 76,
+    "assignedOrdersCount": 78,
+    "photoUrl": "/data/drivers/drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-106",
+    "folder": "drv-21a44e66-8475-9fc2-3d30-de40e2a15f7b"
+  },
+  {
+    "id": "drv-30058047-0e68-921b-090c-c0204daebfde",
+    "fullName": "Hamza Chraibi",
+    "phone": "+212 6 60 12 34 56",
+    "email": "hamza.c@foodi.ma",
+    "cin": "JC192837",
+    "lat": 30.395,
+    "lng": -9.552,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Honda",
+    "vehicleModel": "PCX 125",
+    "vehiclePlate": "12839-A-33",
+    "licenseNumber": "PER-38192-A",
+    "status": "active",
+    "appliedDate": "12 Octobre 2026",
+    "rating": 4.9,
+    "totalDeliveries": 312,
+    "assignedOrdersCount": 318,
+    "photoUrl": "/data/drivers/drv-30058047-0e68-921b-090c-c0204daebfde/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-30058047-0e68-921b-090c-c0204daebfde/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-30058047-0e68-921b-090c-c0204daebfde/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-30058047-0e68-921b-090c-c0204daebfde/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-30058047-0e68-921b-090c-c0204daebfde/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-30058047-0e68-921b-090c-c0204daebfde/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-107",
+    "folder": "drv-30058047-0e68-921b-090c-c0204daebfde"
+  },
+  {
+    "id": "drv-34004760-712b-d4c2-4d28-7a5d96abafd6",
+    "fullName": "Anas Lahlou",
+    "phone": "+212 6 65 99 88 77",
+    "email": "anas.lahlou@foodi.ma",
+    "cin": "JA837192",
+    "lat": 30.379,
+    "lng": -9.571,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Yamaha",
+    "vehicleModel": "Crypton 115",
+    "vehiclePlate": "59281-B-33",
+    "licenseNumber": "PER-59182-A",
+    "status": "active",
+    "appliedDate": "28 Septembre 2026",
+    "rating": 4.7,
+    "totalDeliveries": 145,
+    "assignedOrdersCount": 150,
+    "photoUrl": "/data/drivers/drv-34004760-712b-d4c2-4d28-7a5d96abafd6/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-34004760-712b-d4c2-4d28-7a5d96abafd6/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-34004760-712b-d4c2-4d28-7a5d96abafd6/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-34004760-712b-d4c2-4d28-7a5d96abafd6/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-34004760-712b-d4c2-4d28-7a5d96abafd6/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-34004760-712b-d4c2-4d28-7a5d96abafd6/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-108",
+    "folder": "drv-34004760-712b-d4c2-4d28-7a5d96abafd6"
+  },
+  {
+    "id": "drv-21166ce9-5d07-1fbe-318a-462ba7f29207",
+    "fullName": "Tariq Naciri",
+    "phone": "+212 6 72 34 56 78",
+    "email": "tariq.naciri@foodi.ma",
+    "cin": "JD291029",
+    "lat": 30.421,
+    "lng": -9.591,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Sym",
+    "vehicleModel": "Fiddle III",
+    "vehiclePlate": "38192-A-33",
+    "licenseNumber": "PER-10928-A",
+    "status": "active",
+    "appliedDate": "05 Septembre 2026",
+    "rating": 4.8,
+    "totalDeliveries": 260,
+    "assignedOrdersCount": 265,
+    "photoUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-21166ce9-5d07-1fbe-318a-462ba7f29207/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-109",
+    "folder": "drv-21166ce9-5d07-1fbe-318a-462ba7f29207"
+  },
+  {
+    "id": "drv-333c1af4-7dc4-23ae-5e44-3b88111187d0",
+    "fullName": "Othmane Bennis",
+    "phone": "+212 6 63 44 55 66",
+    "email": "othmane.bennis@gmail.com",
+    "cin": "J392019",
+    "lat": 30.392,
+    "lng": -9.502,
+    "isOnline": true,
+    "vehicleType": "car",
+    "vehicleBrand": "Dacia",
+    "vehicleModel": "Logan",
+    "vehiclePlate": "88291-A-33",
+    "licenseNumber": "PER-48102-B",
+    "status": "active",
+    "appliedDate": "14 Octobre 2026",
+    "rating": 4.6,
+    "totalDeliveries": 98,
+    "assignedOrdersCount": 104,
+    "photoUrl": "/data/drivers/drv-333c1af4-7dc4-23ae-5e44-3b88111187d0/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-333c1af4-7dc4-23ae-5e44-3b88111187d0/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-333c1af4-7dc4-23ae-5e44-3b88111187d0/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-333c1af4-7dc4-23ae-5e44-3b88111187d0/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-333c1af4-7dc4-23ae-5e44-3b88111187d0/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-333c1af4-7dc4-23ae-5e44-3b88111187d0/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-110",
+    "folder": "drv-333c1af4-7dc4-23ae-5e44-3b88111187d0"
+  },
+  {
+    "id": "drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff",
+    "fullName": "Khalid El Fassi",
+    "phone": "+212 6 78 12 34 00",
+    "email": "khalid.fassi@foodi.ma",
+    "cin": "JC481920",
+    "lat": 30.425,
+    "lng": -9.563,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Yamaha",
+    "vehicleModel": "Aerox 50",
+    "vehiclePlate": "47192-C-33",
+    "licenseNumber": "PER-91823-A",
+    "status": "active",
+    "appliedDate": "18 Août 2026",
+    "rating": 4.9,
+    "totalDeliveries": 210,
+    "assignedOrdersCount": 215,
+    "photoUrl": "/data/drivers/drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-111",
+    "folder": "drv-4ffcaecc-c5a0-c14c-46a6-03e6860632ff"
+  },
+  {
+    "id": "drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f",
+    "fullName": "Hicham Taoufik",
+    "phone": "+212 6 69 77 88 99",
+    "email": "hicham.t@foodi.ma",
+    "cin": "JA109283",
+    "lat": 30.429,
+    "lng": -9.61,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Kymco",
+    "vehicleModel": "Agility 125",
+    "vehiclePlate": "61029-A-33",
+    "licenseNumber": "PER-48190-A",
+    "status": "active",
+    "appliedDate": "22 Juillet 2026",
+    "rating": 4.8,
+    "totalDeliveries": 175,
+    "assignedOrdersCount": 180,
+    "photoUrl": "/data/drivers/drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-112",
+    "folder": "drv-0353c2eb-23d8-c818-9317-a9b8ac2e998f"
+  },
+  {
+    "id": "drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad",
+    "fullName": "Reda Zniber",
+    "phone": "+212 6 52 11 33 44",
+    "email": "reda.zniber@gmail.com",
+    "cin": "JB492019",
+    "lat": 30.412,
+    "lng": -9.568,
+    "isOnline": false,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Peugeot",
+    "vehicleModel": "Kisbee 50",
+    "vehiclePlate": "28192-B-33",
+    "licenseNumber": "PER-73910-A",
+    "status": "pending",
+    "appliedDate": "Hier à 19:10",
+    "rating": 5,
+    "totalDeliveries": 0,
+    "assignedOrdersCount": 0,
+    "photoUrl": "/data/drivers/drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-113",
+    "folder": "drv-6d44bd04-643f-2b1b-9e43-69e532e7e7ad"
+  },
+  {
+    "id": "drv-4d394a64-5972-ed01-c9c2-86536a7c5e66",
+    "fullName": "Soufiane Berrada",
+    "phone": "+212 6 61 90 80 70",
+    "email": "soufiane.b@foodi.ma",
+    "cin": "JA481920",
+    "lat": 30.427,
+    "lng": -9.618,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Honda",
+    "vehicleModel": "Forza 300",
+    "vehiclePlate": "73921-A-33",
+    "licenseNumber": "PER-19283-A",
+    "status": "active",
+    "appliedDate": "03 Juin 2026",
+    "rating": 5,
+    "totalDeliveries": 390,
+    "assignedOrdersCount": 395,
+    "photoUrl": "/data/drivers/drv-4d394a64-5972-ed01-c9c2-86536a7c5e66/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-4d394a64-5972-ed01-c9c2-86536a7c5e66/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-4d394a64-5972-ed01-c9c2-86536a7c5e66/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-4d394a64-5972-ed01-c9c2-86536a7c5e66/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-4d394a64-5972-ed01-c9c2-86536a7c5e66/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-4d394a64-5972-ed01-c9c2-86536a7c5e66/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-114",
+    "folder": "drv-4d394a64-5972-ed01-c9c2-86536a7c5e66"
+  },
+  {
+    "id": "drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3",
+    "fullName": "Ayoub Cherkaoui",
+    "phone": "+212 6 74 22 33 55",
+    "email": "ayoub.cherkaoui@foodi.ma",
+    "cin": "JC910293",
+    "lat": 30.416,
+    "lng": -9.585,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Yamaha",
+    "vehicleModel": "Neos 50",
+    "vehiclePlate": "84920-C-33",
+    "licenseNumber": "PER-28192-A",
+    "status": "active",
+    "appliedDate": "10 Octobre 2026",
+    "rating": 4.7,
+    "totalDeliveries": 84,
+    "assignedOrdersCount": 88,
+    "photoUrl": "/data/drivers/drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-115",
+    "folder": "drv-13210ca7-d8fd-896c-9bf1-c310e44eeab3"
+  },
+  {
+    "id": "drv-58116673-ac1d-b352-0bb3-90dda354fea9",
+    "fullName": "Walid Amrani",
+    "phone": "+212 6 66 33 22 11",
+    "email": "walid.amrani@foodi.ma",
+    "cin": "JA739102",
+    "lat": 30.406,
+    "lng": -9.545,
+    "isOnline": true,
+    "vehicleType": "car",
+    "vehicleBrand": "Renault",
+    "vehicleModel": "Clio 4",
+    "vehiclePlate": "30192-A-33",
+    "licenseNumber": "PER-83910-B",
+    "status": "active",
+    "appliedDate": "15 Septembre 2026",
+    "rating": 4.8,
+    "totalDeliveries": 120,
+    "assignedOrdersCount": 125,
+    "photoUrl": "/data/drivers/drv-58116673-ac1d-b352-0bb3-90dda354fea9/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-58116673-ac1d-b352-0bb3-90dda354fea9/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-58116673-ac1d-b352-0bb3-90dda354fea9/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-58116673-ac1d-b352-0bb3-90dda354fea9/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-58116673-ac1d-b352-0bb3-90dda354fea9/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-58116673-ac1d-b352-0bb3-90dda354fea9/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-116",
+    "folder": "drv-58116673-ac1d-b352-0bb3-90dda354fea9"
+  },
+  {
+    "id": "drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3",
+    "fullName": "Nabil Guennoun",
+    "phone": "+212 6 55 44 33 22",
+    "email": "nabil.guennoun@gmail.com",
+    "cin": "JB819203",
+    "lat": 30.401,
+    "lng": -9.578,
+    "isOnline": false,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Sym",
+    "vehicleModel": "Orbit II",
+    "vehiclePlate": "91823-B-33",
+    "licenseNumber": "PER-48192-A",
+    "status": "pending",
+    "appliedDate": "Aujourd'hui à 11:45",
+    "rating": 5,
+    "totalDeliveries": 0,
+    "assignedOrdersCount": 0,
+    "photoUrl": "/data/drivers/drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-117",
+    "folder": "drv-49c45cbe-45f4-04f9-3d9f-d8062cbd97e3"
+  },
+  {
+    "id": "drv-18607b65-8254-df9d-c4fc-8b61d8f64fef",
+    "fullName": "Mourad Belhaj",
+    "phone": "+212 6 70 80 90 10",
+    "email": "mourad.belhaj@foodi.ma",
+    "cin": "JA192837",
+    "lat": 30.386,
+    "lng": -9.529,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Yamaha",
+    "vehicleModel": "NMAX 125",
+    "vehiclePlate": "41920-A-33",
+    "licenseNumber": "PER-58192-A",
+    "status": "active",
+    "appliedDate": "08 Août 2026",
+    "rating": 4.9,
+    "totalDeliveries": 240,
+    "assignedOrdersCount": 245,
+    "photoUrl": "/data/drivers/drv-18607b65-8254-df9d-c4fc-8b61d8f64fef/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-18607b65-8254-df9d-c4fc-8b61d8f64fef/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-18607b65-8254-df9d-c4fc-8b61d8f64fef/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-18607b65-8254-df9d-c4fc-8b61d8f64fef/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-18607b65-8254-df9d-c4fc-8b61d8f64fef/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-18607b65-8254-df9d-c4fc-8b61d8f64fef/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-118",
+    "folder": "drv-18607b65-8254-df9d-c4fc-8b61d8f64fef"
+  },
+  {
+    "id": "drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c",
+    "fullName": "Adil Benmoussa",
+    "phone": "+212 6 64 55 66 77",
+    "email": "adil.b@foodi.ma",
+    "cin": "JC381920",
+    "lat": 30.405,
+    "lng": -9.595,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Honda",
+    "vehicleModel": "SH 150",
+    "vehiclePlate": "68291-A-33",
+    "licenseNumber": "PER-92819-A",
+    "status": "active",
+    "appliedDate": "17 Septembre 2026",
+    "rating": 4.8,
+    "totalDeliveries": 160,
+    "assignedOrdersCount": 165,
+    "photoUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-119",
+    "folder": "drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c"
+  },
+  {
+    "id": "drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984",
+    "fullName": "Zakaria El Ouafi",
+    "phone": "+212 6 67 89 01 23",
+    "email": "zakaria.ouafi@foodi.ma",
+    "cin": "JA992810",
+    "lat": 30.421,
+    "lng": -9.6,
+    "isOnline": true,
+    "vehicleType": "motorcycle",
+    "vehicleBrand": "Niu",
+    "vehicleModel": "NQi GTS Électrique",
+    "vehiclePlate": "ELEC-33",
+    "licenseNumber": "PER-10293-A",
+    "status": "active",
+    "appliedDate": "05 Octobre 2026",
+    "rating": 4.9,
+    "totalDeliveries": 115,
+    "assignedOrdersCount": 118,
+    "photoUrl": "/data/drivers/drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984/avatar.jpg",
+    "documents": {
+      "cinPhotoUrl": "/data/drivers/drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984/cin_recto.png",
+      "cinBackUrl": "/data/drivers/drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984/cin_verso.png",
+      "licensePhotoUrl": "/data/drivers/drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984/permis.jpg",
+      "registrationCardUrl": "/data/drivers/drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984/carte_grise.jpg",
+      "insuranceUrl": "/data/drivers/drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984/assurance.png"
+    },
+    "reviews": [
+      {
+        "id": "rev-1",
+        "author": "Fayçal Agadir",
+        "role": "Client",
+        "date": "Il y a 2 jours",
+        "rating": 5,
+        "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+      },
+      {
+        "id": "rev-2",
+        "author": "Gérance Crusty",
+        "role": "Restaurant",
+        "date": "Il y a 3 jours",
+        "rating": 5,
+        "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+      },
+      {
+        "id": "rev-3",
+        "author": "Meryem K.",
+        "role": "Client",
+        "date": "La semaine dernière",
+        "rating": 5,
+        "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+      },
+      {
+        "id": "rev-4",
+        "author": "Yassine T.",
+        "role": "Client",
+        "date": "Le 28 Octobre 2026",
+        "rating": 4,
+        "comment": "Bonne livraison, temps respecté."
+      }
+    ],
+    "code": "DRV-120",
+    "folder": "drv-14f77901-94e1-4a50-c8ed-c14bc0eb0984"
+  }
+]

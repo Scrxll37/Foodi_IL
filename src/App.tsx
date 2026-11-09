@@ -14,6 +14,7 @@ import { OrderTrackingPage } from "./pages/OrderTrackingPage";
 import { TestBoardPage } from "./pages/TestBoardPage";
 import { DriverDashboardPage } from "./pages/DriverDashboardPage";
 import { RestaurantDashboardPage } from "./pages/RestaurantDashboardPage";
+import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { ConflictModal } from "./components/ConflictModal";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -105,12 +106,94 @@ export const App: React.FC = () => {
 
           <Route path="/test" element={<TestBoardPage />} />
           <Route path="/test-board" element={<TestBoardPage />} />
-          <Route path="/driver" element={<DriverDashboardPage />} />
-          <Route path="/courier" element={<DriverDashboardPage />} />
-          <Route path="/restaurant" element={<RestaurantDashboardPage />} />
-          <Route path="/restaurant/dashboard" element={<RestaurantDashboardPage />} />
-          <Route path="/restaurant-dashboard" element={<RestaurantDashboardPage />} />
-          <Route path="/partner" element={<RestaurantDashboardPage />} />
+          <Route
+            path="/driver"
+            element={
+              <ProtectedRoute>
+                <DriverDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/courier"
+            element={
+              <ProtectedRoute>
+                <DriverDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/restaurant"
+            element={
+              <ProtectedRoute>
+                <RestaurantDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/restaurant/dashboard"
+            element={
+              <ProtectedRoute>
+                <RestaurantDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/restaurant-dashboard"
+            element={
+              <ProtectedRoute>
+                <RestaurantDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/partner"
+            element={
+              <ProtectedRoute>
+                <RestaurantDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order/:id"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-details/:id"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

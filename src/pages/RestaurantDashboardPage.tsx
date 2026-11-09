@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -18,6 +18,7 @@ import { Restaurant, OrderRecord, Dish, MenuCategory, RestaurantBranch } from ".
 import defaultRestaurants from "../data/restaurants.json";
 import defaultOrders from "../data/orders.json";
 import { EmailChangeModal } from "../components/EmailChangeModal";
+import { useApp } from "../context/AppContext";
 import "../styles/restaurant.css";
 
 interface ManagerSession {
@@ -26,14 +27,6 @@ interface ManagerSession {
   restaurantName: string;
   managerName: string;
 }
-
-const DEMO_ACCOUNTS = [
-  { email: "mcdo@foodi.ma", password: "123", restaurantId: "mcdonalds", name: "Gérant McDonald's" },
-  { email: "kfc@foodi.ma", password: "123", restaurantId: "kfc", name: "Gérant KFC" },
-  { email: "pizzahut@foodi.ma", password: "123", restaurantId: "pizza-hut", name: "Gérant Pizza Hut" },
-  { email: "crusty@foodi.ma", password: "123", restaurantId: "crusty", name: "Gérant Crusty" },
-  { email: "mistercook@foodi.ma", password: "123", restaurantId: "mister-cook", name: "Gérant Mister Cook" }
-];
 
 const AGADIR_POPULAR_ZONES = [
   { name: "Adrar Kitea", neighborhood: "Adrar", lat: 30.41525, lng: -9.542625 },
@@ -54,23 +47,34 @@ export const RestaurantDashboardPage: React.FC = () => {
     return defaultRestaurants as Restaurant[];
   });
 
-  const [session, setSession] = useState<ManagerSession | null>(() => {
+  const { user, logout } = useApp();
+  const navigate = useNavigate();
+
+  const [session, setSession] = useState<ManagerSession>(() => {
     try {
       const stored = localStorage.getItem("foodi_restaurant_session");
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed) return parsed;
+      }
     } catch {}
+    if (user?.email?.toLowerCase().includes("crusty")) {
+      return {
+        email: "karim.benjelloun@crusty.ma",
+        restaurantId: "crusty",
+        restaurantName: "Crusty",
+        managerName: "Karim Benjelloun"
+      };
+    }
     return {
-      email: "mcdo@foodi.ma",
+      email: user?.email || "mcdo@foodi.ma",
       restaurantId: "mcdonalds",
       restaurantName: "McDonald's",
-      managerName: "Gérant McDonald's"
+      managerName: user?.name || "Gérant McDonald's"
     };
   });
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [loginEmail, setLoginEmail] = useState<string>("mcdo@foodi.ma");
-  const [loginPassword, setLoginPassword] = useState<string>("123");
-  const [loginError, setLoginError] = useState<string | null>(null);
 
   const activeRestaurantId = session ? session.restaurantId : "mcdonalds";
 
@@ -698,56 +702,13 @@ export const RestaurantDashboardPage: React.FC = () => {
     };
   }, [fetchOrders]);
 
-  const handleLogin = (emailToUse?: string, passToUse?: string) => {
-    const e = (emailToUse || loginEmail).trim().toLowerCase();
-    const p = passToUse || loginPassword;
-
-    const matchedAccount = DEMO_ACCOUNTS.find((acc) => acc.email.toLowerCase() === e);
-
-    if (matchedAccount) {
-      const rest = restaurants.find((r) => r.id === matchedAccount.restaurantId) || currentRestaurant;
-      const sess: ManagerSession = {
-        email: matchedAccount.email,
-        restaurantId: rest.id,
-        restaurantName: rest.name,
-        managerName: matchedAccount.name
-      };
-      setSession(sess);
-      try {
-        localStorage.setItem("foodi_restaurant_session", JSON.stringify(sess));
-      } catch {}
-      setLoginError(null);
-      showToast(`Connexion : ${sess.restaurantName}`);
-      return;
-    }
-
-    const matchedRest = restaurants.find(
-      (r) =>
-        r.name.toLowerCase().includes(e.split("@")[0]) ||
-        r.slug.toLowerCase().includes(e.split("@")[0])
-    ) || restaurants[0];
-
-    const sess: ManagerSession = {
-      email: e,
-      restaurantId: matchedRest.id,
-      restaurantName: matchedRest.name,
-      managerName: matchedRest.name
-    };
-    setSession(sess);
-    try {
-      localStorage.setItem("foodi_restaurant_session", JSON.stringify(sess));
-    } catch {}
-    setLoginError(null);
-    showToast(`Connexion : ${sess.restaurantName}`);
-  };
-
   const handleLogout = () => {
-    setSession(null);
     setHeaderProfileOpen(false);
     try {
       localStorage.removeItem("foodi_restaurant_session");
     } catch {}
-    showToast("Déconnexion effectuée.");
+    logout();
+    navigate("/login");
   };
 
   const handleSaveManagerProfile = () => {
@@ -1401,100 +1362,7 @@ export const RestaurantDashboardPage: React.FC = () => {
     return currentRestaurant.categories?.find((c) => c.id === selectedMenuCategory) || null;
   }, [selectedMenuCategory, currentRestaurant]);
 
-  if (!session) {
-    return (
-      <div className="foodi-login-wrapper">
-        <div className="foodi-login-panel">
-          <div className="foodi-login-head">
-            <img
-              src="/images/logohor.png"
-              alt="Foodi"
-              className="foodi-login-brand-logo"
-            />
-            <span className="foodi-login-partner-tag">Partner</span>
-            <h1 className="foodi-login-heading">Connexion</h1>
-            <p className="foodi-login-desc">Espace de gestion restaurant</p>
-          </div>
-
-          <div className="foodi-quick-demo-box">
-            <div className="foodi-quick-demo-title">Comptes rapides :</div>
-            <div className="foodi-quick-demo-buttons">
-              {DEMO_ACCOUNTS.map((acc) => (
-                <button
-                  key={acc.email}
-                  className="foodi-quick-demo-pill"
-                  onClick={() => handleLogin(acc.email, acc.password)}
-                >
-                  {acc.name.replace("Gérant ", "")}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleLogin();
-            }}
-            style={{ display: "flex", flexDirection: "column", gap: 14 }}
-          >
-            <div className="foodi-form-field">
-              <label className="foodi-form-label">Email :</label>
-              <input
-                type="email"
-                required
-                className="foodi-form-input"
-                placeholder="mcdo@foodi.ma"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="foodi-form-field">
-              <label className="foodi-form-label">Mot de passe :</label>
-              <input
-                type="password"
-                required
-                className="foodi-form-input"
-                placeholder="••••••••"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-              />
-            </div>
-
-            {loginError && (
-              <div
-                style={{
-                  backgroundColor: "#FEF2F2",
-                  color: "#EF4444",
-                  padding: "8px 12px",
-                  borderRadius: 8,
-                  fontSize: 12,
-                  fontWeight: 700
-                }}
-              >
-                {loginError}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="foodi-btn foodi-btn-primary"
-              style={{ width: "100%", padding: 12, fontSize: 14 }}
-            >
-              Se connecter
-            </button>
-          </form>
-
-          <div style={{ textAlign: "center", fontSize: 12, color: "#64748B" }}>
-            <Link to="/" style={{ color: "#FF7A00", fontWeight: 700, textDecoration: "none" }}>
-              ← Retour au site Foodi
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  
 
   return (
     <div className="foodi-dashboard-app">
@@ -1785,10 +1653,7 @@ export const RestaurantDashboardPage: React.FC = () => {
                       handleLogout();
                     }}
                   >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span>Déconnexion</span>
+                    Déconnexion
                   </button>
                 </div>
               )}

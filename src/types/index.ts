@@ -111,6 +111,7 @@ export interface UserProfile {
   phone: string;
   email: string;
   isLoggedIn: boolean;
+  role?: "client" | "driver" | "restaurant" | "admin";
   notifyTracking?: boolean;
   notifyPromos?: boolean;
   notifyEmail?: boolean;

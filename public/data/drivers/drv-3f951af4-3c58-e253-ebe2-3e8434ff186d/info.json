@@ -1,0 +1,64 @@
+{
+  "id": "drv-3f951af4-3c58-e253-ebe2-3e8434ff186d",
+  "fullName": "Youssef Berrada",
+  "phone": "+212 6 71 88 99 00",
+  "email": "youssef.berrada@gmail.com",
+  "cin": "JB291034",
+  "lat": 30.415,
+  "lng": -9.562,
+  "isOnline": false,
+  "vehicleType": "motorcycle",
+  "vehicleBrand": "Honda",
+  "vehicleModel": "SH 125",
+  "vehiclePlate": "29103-B-33",
+  "licenseNumber": "PER-48192-A",
+  "status": "pending",
+  "appliedDate": "Hier à 16:40",
+  "rating": 5,
+  "totalDeliveries": 0,
+  "assignedOrdersCount": 0,
+  "photoUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/avatar.jpg",
+  "documents": {
+    "cinPhotoUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/cin_recto.png",
+    "cinBackUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/cin_verso.png",
+    "licensePhotoUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/permis.jpg",
+    "registrationCardUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/carte_grise.jpg",
+    "insuranceUrl": "/data/drivers/drv-3f951af4-3c58-e253-ebe2-3e8434ff186d/assurance.png"
+  },
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Fayçal Agadir",
+      "role": "Client",
+      "date": "Il y a 2 jours",
+      "rating": 5,
+      "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+    },
+    {
+      "id": "rev-2",
+      "author": "Gérance Crusty",
+      "role": "Restaurant",
+      "date": "Il y a 3 jours",
+      "rating": 5,
+      "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+    },
+    {
+      "id": "rev-3",
+      "author": "Meryem K.",
+      "role": "Client",
+      "date": "La semaine dernière",
+      "rating": 5,
+      "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+    },
+    {
+      "id": "rev-4",
+      "author": "Yassine T.",
+      "role": "Client",
+      "date": "Le 28 Octobre 2026",
+      "rating": 4,
+      "comment": "Bonne livraison, temps respecté."
+    }
+  ],
+  "code": "DRV-102",
+  "folder": "drv-3f951af4-3c58-e253-ebe2-3e8434ff186d"
+}

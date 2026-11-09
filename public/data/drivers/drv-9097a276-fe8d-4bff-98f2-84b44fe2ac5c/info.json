@@ -1,0 +1,64 @@
+{
+  "id": "drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c",
+  "fullName": "Adil Benmoussa",
+  "phone": "+212 6 64 55 66 77",
+  "email": "adil.b@foodi.ma",
+  "cin": "JC381920",
+  "lat": 30.405,
+  "lng": -9.595,
+  "isOnline": true,
+  "vehicleType": "motorcycle",
+  "vehicleBrand": "Honda",
+  "vehicleModel": "SH 150",
+  "vehiclePlate": "68291-A-33",
+  "licenseNumber": "PER-92819-A",
+  "status": "active",
+  "appliedDate": "17 Septembre 2026",
+  "rating": 4.8,
+  "totalDeliveries": 160,
+  "assignedOrdersCount": 165,
+  "photoUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/avatar.jpg",
+  "documents": {
+    "cinPhotoUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/cin_recto.png",
+    "cinBackUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/cin_verso.png",
+    "licensePhotoUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/permis.jpg",
+    "registrationCardUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/carte_grise.jpg",
+    "insuranceUrl": "/data/drivers/drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c/assurance.png"
+  },
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Fayçal Agadir",
+      "role": "Client",
+      "date": "Il y a 2 jours",
+      "rating": 5,
+      "comment": "Livraison ultra rapide à Hay Salam. Commande bien chaude et livreur très courtois !"
+    },
+    {
+      "id": "rev-2",
+      "author": "Gérance Crusty",
+      "role": "Restaurant",
+      "date": "Il y a 3 jours",
+      "rating": 5,
+      "comment": "Ponctuel pour le retrait au comptoir, scooter propre et sac isotherme conforme."
+    },
+    {
+      "id": "rev-3",
+      "author": "Meryem K.",
+      "role": "Client",
+      "date": "La semaine dernière",
+      "rating": 5,
+      "comment": "Très pro, m'a appelée dès son arrivée en bas de l'immeuble à Dakhla."
+    },
+    {
+      "id": "rev-4",
+      "author": "Yassine T.",
+      "role": "Client",
+      "date": "Le 28 Octobre 2026",
+      "rating": 4,
+      "comment": "Bonne livraison, temps respecté."
+    }
+  ],
+  "code": "DRV-119",
+  "folder": "drv-9097a276-fe8d-4bff-98f2-84b44fe2ac5c"
+}
