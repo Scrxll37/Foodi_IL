@@ -18,7 +18,7 @@ interface HomeHeaderProps {
 }
 
 export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false, title }) => {
-  const { cartCount, setIsCartOpen, setIsNotifOpen, user, address, notifications } = useApp();
+  const { cartCount, isCartAnimating, setIsCartOpen, setIsNotifOpen, user, address, notifications } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -224,11 +224,11 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false, 
                 setIsCartOpen(true);
               }}
               aria-label="Panier"
-              className="foodi-header-btn"
+              className={`foodi-header-btn ${isCartAnimating ? "foodi-cart-bounce" : ""}`}
             >
               <ShoppingBag size={20} color="#FF5A00" />
               {cartCount > 0 && (
-                <span className="foodi-header-btn-badge">
+                <span className={`foodi-header-btn-badge ${isCartAnimating ? "foodi-badge-pop" : ""}`}>
                   {cartCount}
                 </span>
               )}

@@ -1091,24 +1091,6 @@
 .foodi-marker-icon-box.restaurant { background-color: var(--foodi-orange); color: #FFFFFF; }
 .foodi-marker-icon-box.customer { background-color: var(--foodi-emerald); color: #FFFFFF; }
 
-.driver-demo-pill {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  z-index: 25;
-  background-color: rgba(11, 16, 32, 0.85);
-  color: #FFFFFF;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  backdrop-filter: blur(4px);
-}
-
-
 .driver-toast-banner {
   background-color: var(--foodi-emerald-light);
   border: 1px solid rgba(16, 185, 129, 0.3);
@@ -1124,25 +1106,20 @@
   animation: driverSlideUp 0.3s ease;
 }
 
-.driver-simulate-btn {
+.driver-profile-startover-btn {
   background-color: #FFF2EB;
   color: var(--foodi-orange);
-  border: 1.5px dashed rgba(255, 90, 0, 0.4);
+  border: 1px solid rgba(255, 90, 0, 0.3);
   font-size: 13px;
   font-weight: 800;
-  padding: 10px 18px;
-  border-radius: 14px;
+  padding: 8px 16px;
+  border-radius: 12px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   transition: all 0.2s ease;
 }
 
-.driver-simulate-btn:hover {
+.driver-profile-startover-btn:hover {
   background-color: #FFE6D6;
-  border-color: var(--foodi-orange);
-  transform: translateY(-1px);
 }
 
 .driver-btn-edit-sm {
@@ -1599,17 +1576,17 @@
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  color: #94A3B8;
+  color: #EF4444;
   font-size: 13px;
   font-weight: 700;
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .driver-sidebar-logout-btn:hover {
-  color: #EF4444;
+  opacity: 0.8;
 }
 
 .driver-canvas {

@@ -161,6 +161,13 @@ export interface OrderRecord {
   arrivalTime?: string;
   courierName?: string;
   courierPhone?: string;
+  courierPhoto?: string;
+  courierVehicle?: string;
+  courierId?: string;
+  targetCourierId?: string;
+  targetCourierName?: string;
+  declinedCourierIds?: string[];
+  offerCreatedAt?: number;
   customerName?: string;
   customerPhone?: string;
   shopLat?: number;

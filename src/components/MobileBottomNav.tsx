@@ -5,7 +5,7 @@ import { useApp } from "../context/AppContext";
 
 export const MobileBottomNav: React.FC = () => {
   const location = useLocation();
-  const { cartCount, setIsCartOpen, user } = useApp();
+  const { cartCount, isCartAnimating, setIsCartOpen, user } = useApp();
 
   const isHome = location.pathname === "/";
   const isRestaurants = location.pathname.startsWith("/restaurants");
@@ -39,12 +39,12 @@ export const MobileBottomNav: React.FC = () => {
           }
           setIsCartOpen(true);
         }}
-        className="bottom-nav-cart-btn"
+        className={`bottom-nav-cart-btn ${isCartAnimating ? "foodi-cart-bounce" : ""}`}
       >
         <div className="bottom-nav-cart-bubble">
           <ShoppingBag size={20} />
           {cartCount > 0 && (
-            <span className="bottom-nav-cart-badge">
+            <span className={`bottom-nav-cart-badge ${isCartAnimating ? "foodi-badge-pop" : ""}`}>
               {cartCount}
             </span>
           )}

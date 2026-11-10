@@ -53,7 +53,7 @@ import {
   Layers
 } from "lucide-react";
 import { OrderRecord, OrderStatus } from "../types";
-import ordersData from "../data/orders.json";
+import driversData from "../data/drivers.json";
 import { fetchRoadRoute, buildRouteGeometry, LatLng } from "../utils/routing";
 import { EmailChangeModal } from "../components/EmailChangeModal";
 import { DriverHeroIllustration } from "../components/DriverHeroIllustration";
@@ -72,9 +72,63 @@ type DriverState =
 
 export const DriverDashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { logout } = useApp();
+  const { user, logout } = useApp();
+
+  const getMatchedCourier = useCallback(() => {
+    try {
+      const raw = localStorage.getItem("foodi_admin_couriers_v2");
+      const list = raw ? JSON.parse(raw) : (driversData as any[]);
+      if (Array.isArray(list) && list.length > 0) {
+        if (user && user.isLoggedIn) {
+          const matched = list.find((c: any) =>
+            (user.email && c.email && c.email.toLowerCase() === user.email.toLowerCase()) ||
+            (user.name && c.fullName && c.fullName.toLowerCase() === user.name.toLowerCase()) ||
+            (user.phone && c.phone && c.phone === user.phone)
+          );
+          if (matched) return matched;
+        }
+        return list[0];
+      }
+    } catch {}
+    return (driversData as any[])[0];
+  }, [user]);
+
+  const [driverLocation, setDriverLocation] = useState<LatLng>([30.4215, -9.5982]);
+
+  const syncDriverOnlineInStorage = useCallback((online: boolean, loc?: LatLng) => {
+    try {
+      const courier = getMatchedCourier();
+      const raw = localStorage.getItem("foodi_admin_couriers_v2");
+      let list = raw ? JSON.parse(raw) : (driversData as any[]);
+      if (!Array.isArray(list)) list = [];
+      const cId = courier?.id;
+      const cName = courier?.fullName;
+      const idx = list.findIndex((c: any) => (cId && c.id === cId) || (cName && c.fullName === cName));
+      const coords = loc || driverLocation;
+      if (idx !== -1) {
+        list[idx] = {
+          ...list[idx],
+          isOnline: online,
+          status: "active",
+          lat: coords[0],
+          lng: coords[1]
+        };
+      } else if (courier) {
+        list.push({
+          ...courier,
+          isOnline: online,
+          status: "active",
+          lat: coords[0],
+          lng: coords[1]
+        });
+      }
+      localStorage.setItem("foodi_admin_couriers_v2", JSON.stringify(list));
+      window.dispatchEvent(new Event("storage"));
+    } catch {}
+  }, [getMatchedCourier, driverLocation]);
 
   const handleLogout = () => {
+    syncDriverOnlineInStorage(false);
     setIsProfileDropdownOpen(false);
     setIsMobileSidebarOpen(false);
     logout();
@@ -138,15 +192,55 @@ export const DriverDashboardPage: React.FC = () => {
   const [todayDeliveriesCount, setTodayDeliveriesCount] = useState<number>(7);
   const [onlineMinutes, setOnlineMinutes] = useState<number>(225);
 
-  const [driverLocation, setDriverLocation] = useState<LatLng>([30.4215, -9.5982]);
-  const [isDemoLocation, setIsDemoLocation] = useState<boolean>(true);
-
   const [activeOrder, setActiveOrder] = useState<OrderRecord | null>(null);
   const [incomingOffers, setIncomingOffers] = useState<Array<OrderRecord & { remainingSeconds: number }>>([]);
   const [isAccepting, setIsAccepting] = useState<boolean>(false);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState<boolean>(false);
   const [pickupCodeInput, setPickupCodeInput] = useState<string>("");
   const [pickupCodeError, setPickupCodeError] = useState<string>("");
+
+  useEffect(() => {
+    const courier = getMatchedCourier();
+    if (courier) {
+      const names = (courier.fullName || "Amine Tazi").split(" ");
+      setDriverFirstName(names[0] || "Amine");
+      setDriverLastName(names.slice(1).join(" ") || "Tazi");
+      if (courier.phone) setDriverPhone(courier.phone);
+      if (courier.email) setDriverEmail(courier.email);
+      if (courier.vehicleBrand) setVehBrand(courier.vehicleBrand);
+      if (courier.vehicleModel) setVehModel(courier.vehicleModel);
+      if (courier.vehiclePlate) setVehPlate(courier.vehiclePlate);
+      if (courier.cin) setCinNumber(courier.cin);
+      if (courier.licenseNumber) setLicenseNumber(courier.licenseNumber);
+      if (courier.lat && courier.lng) {
+        setDriverLocation([courier.lat, courier.lng]);
+      }
+      if (courier.isOnline) {
+        setDriverState("online_searching");
+      }
+    }
+  }, [getMatchedCourier]);
+
+  useEffect(() => {
+    const courier = getMatchedCourier();
+    const cId = courier?.id;
+    const cName = courier?.fullName;
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) {
+        const list: OrderRecord[] = JSON.parse(raw);
+        const ongoing = list.find((o) =>
+          ((cId && o.courierId === cId) || (cName && o.courierName === cName)) &&
+          (o.status === "heading_to_restaurant" || o.status === "in_delivery")
+        );
+        if (ongoing) {
+          setActiveOrder(ongoing);
+          if (ongoing.status === "heading_to_restaurant") setDriverState("heading_to_restaurant");
+          else if (ongoing.status === "in_delivery") setDriverState("heading_to_customer");
+        }
+      }
+    } catch {}
+  }, [getMatchedCourier]);
 
   const [routeDistance, setRouteDistance] = useState<string>("1.8 km");
   const [routeDuration, setRouteDuration] = useState<string>("6 min");
@@ -319,7 +413,6 @@ export const DriverDashboardPage: React.FC = () => {
   const driverMarkerRef = useRef<L.Marker | null>(null);
   const destMarkerRef = useRef<L.Marker | null>(null);
   const routePolylineRef = useRef<L.Polyline | null>(null);
-  const simulationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   const playChime = useCallback(() => {
     try {
@@ -356,16 +449,17 @@ export const DriverDashboardPage: React.FC = () => {
     if (!navigator.geolocation) return;
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
-        setDriverLocation([pos.coords.latitude, pos.coords.longitude]);
-        setIsDemoLocation(false);
+        const nextLoc: LatLng = [pos.coords.latitude, pos.coords.longitude];
+        setDriverLocation(nextLoc);
+        if (driverStateRef.current !== "offline") {
+          syncDriverOnlineInStorage(true, nextLoc);
+        }
       },
-      () => {
-        setIsDemoLocation(true);
-      },
+      () => {},
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
     );
     return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
+  }, [syncDriverOnlineInStorage]);
 
   const handleStartOverProfile = () => {
     setIsOnboarded(false);
@@ -568,175 +662,21 @@ export const DriverDashboardPage: React.FC = () => {
 
   const handleGoOnline = () => {
     setDriverState("online_searching");
+    syncDriverOnlineInStorage(true);
   };
 
   const handleGoOffline = () => {
     if (isOrderActive) return;
-    clearSimulationTimeouts();
     setDriverState("offline");
+    syncDriverOnlineInStorage(false);
     setIncomingOffers([]);
     setActiveOrder(null);
   };
-
-  const clearSimulationTimeouts = useCallback(() => {
-    simulationTimeoutsRef.current.forEach((t) => clearTimeout(t));
-    simulationTimeoutsRef.current = [];
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      simulationTimeoutsRef.current.forEach((t) => clearTimeout(t));
-      simulationTimeoutsRef.current = [];
-    };
-  }, []);
-
-  const mockOfferPool: Array<Omit<OrderRecord, "id" | "token">> = [
-    {
-      restaurantName: "McDonald's Agadir",
-      restaurantLogo: "/images/restaurants/McDonalds.png",
-      mealImage: "/images/meals/1791902884_mcdo2.png",
-      neighborhood: "Talborjt",
-      shopNeighborhood: "Talborjt",
-      street: "Avenue Hassan II",
-      buildingNameNumber: "Résidence Najah, Bât B",
-      floorNumber: "2ème",
-      doorNumber: "Appt 8",
-      date: "Aujourd'hui",
-      status: "searching_driver",
-      statusLabel: "Recherche d'un coursier Foodi",
-      total: 94,
-      subtotal: 94,
-      deliveryFee: 25,
-      address: "Talborjt, Avenue Hassan II, Agadir",
-      items: [
-        { name: "Menu Maxi Best Of Big Mac", quantity: 1, price: 74 },
-        { name: "McFlurry Oreo", quantity: 1, price: 20 }
-      ],
-      instructions: "Sonner à l'interphone et monter au 2ème étage.",
-      customerName: "Youssef Bennani",
-      customerPhone: "+212 6 71 82 93 04",
-      shopLat: 30.4167,
-      shopLng: -9.6,
-      lat: 30.4278,
-      lng: -9.5981
-    },
-    {
-      restaurantName: "KFC Hassan II",
-      restaurantLogo: "/images/restaurants/KFC.jpg",
-      mealImage: "/images/banners/1791902905_kfc1.png",
-      neighborhood: "Haut Founty",
-      shopNeighborhood: "Hassan II",
-      street: "Boulevard Mohammed V",
-      buildingNameNumber: "Immeuble Al Amal, Entrée 2",
-      floorNumber: "1er",
-      doorNumber: "Appt 3",
-      date: "Aujourd'hui",
-      status: "searching_driver",
-      statusLabel: "Recherche d'un coursier Foodi",
-      total: 112,
-      subtotal: 112,
-      deliveryFee: 28,
-      address: "Haut Founty, Agadir",
-      items: [
-        { name: "Bucket 12 Tenders Hot & Spicy", quantity: 1, price: 89 },
-        { name: "Grande Frite", quantity: 1, price: 23 }
-      ],
-      instructions: "Laisser au gardien de la résidence si pas de réponse.",
-      customerName: "Sara Mansouri",
-      customerPhone: "+212 6 61 44 55 66",
-      shopLat: 30.419,
-      shopLng: -9.587,
-      lat: 30.412,
-      lng: -9.579
-    },
-    {
-      restaurantName: "Pizza Hut Agadir",
-      restaurantLogo: "/images/restaurants/PIZZAHUT.png",
-      mealImage: "/images/banners/1791902911_pizzahut.jpg",
-      neighborhood: "Marina Agadir",
-      shopNeighborhood: "Marina",
-      street: "Quai des Yachts",
-      buildingNameNumber: "Résidence Marina Bay",
-      floorNumber: "3ème",
-      doorNumber: "Appt 12",
-      date: "Aujourd'hui",
-      status: "searching_driver",
-      statusLabel: "Recherche d'un coursier Foodi",
-      total: 135,
-      subtotal: 135,
-      deliveryFee: 22,
-      address: "Marina, Agadir",
-      items: [
-        { name: "Pizza Pan Super Supreme (Large)", quantity: 1, price: 110 },
-        { name: "Pain à l'ail Mozzarella", quantity: 1, price: 25 }
-      ],
-      instructions: "Code barrière d'accès : 4820.",
-      customerName: "Mehdi Alami",
-      customerPhone: "+212 6 70 99 88 77",
-      shopLat: 30.428,
-      shopLng: -9.615,
-      lat: 30.432,
-      lng: -9.621
-    },
-    {
-      restaurantName: "Tacos de Lyon",
-      restaurantLogo: "/images/restaurants/otacos.png",
-      mealImage: "/images/meals/1791902884_mcdo2.png",
-      neighborhood: "Quartier Salam",
-      shopNeighborhood: "Dakhla",
-      street: "Avenue des FAR",
-      buildingNameNumber: "Résidence Atlas, Bât C",
-      floorNumber: "1er",
-      doorNumber: "Appt 4",
-      date: "Aujourd'hui",
-      status: "searching_driver",
-      statusLabel: "Recherche d'un coursier Foodi",
-      total: 85,
-      subtotal: 85,
-      deliveryFee: 22,
-      address: "Salam, Agadir",
-      items: [
-        { name: "Maxi Tacos Viande Hachée", quantity: 1, price: 65 },
-        { name: "Boisson Tiramisu", quantity: 1, price: 20 }
-      ],
-      instructions: "Appeler dès arrivée devant la pharmacie.",
-      customerName: "Ismail M.",
-      customerPhone: "+212 6 63 77 88 99",
-      shopLat: 30.411,
-      shopLng: -9.575,
-      lat: 30.418,
-      lng: -9.562
-    }
-  ];
-
-  const appendSimulatedOrder = useCallback((indexOffset: number) => {
-    const poolLength = mockOfferPool.length;
-    setIncomingOffers((prev) => {
-      const template = mockOfferPool[(prev.length + indexOffset) % poolLength];
-      const newOrder: OrderRecord & { remainingSeconds: number } = {
-        ...template,
-        id: `CMD-AGD-${Math.floor(1000 + Math.random() * 9000)}`,
-        token: `trk_demo_${Date.now()}_${indexOffset}`,
-        remainingSeconds: 15
-      };
-      return [...prev, newOrder];
-    });
-    setDriverState("offer_received");
-    playChime();
-  }, [playChime, mockOfferPool]);
 
   const declinedOrderIdsRef = useRef<Set<string>>(new Set());
   const processedOrderIdsRef = useRef<Set<string>>(new Set());
 
   const fetchAllOrders = useCallback(async (): Promise<OrderRecord[]> => {
-    let apiOrders: OrderRecord[] = [];
-    try {
-      const res = await fetch("/api/orders");
-      if (res.ok) {
-        apiOrders = await res.json();
-      }
-    } catch {}
-
     let localOrders: OrderRecord[] = [];
     try {
       const raw = localStorage.getItem("foodi_orders");
@@ -744,16 +684,7 @@ export const DriverDashboardPage: React.FC = () => {
         localOrders = JSON.parse(raw);
       }
     } catch {}
-
-    const map = new Map<string, OrderRecord>();
-    const staticBaseline = ordersData as unknown as OrderRecord[];
-    [...staticBaseline, ...apiOrders, ...localOrders].forEach((ord) => {
-      if (ord && ord.id) {
-        map.set(ord.id, { ...map.get(ord.id), ...ord });
-      }
-    });
-
-    return Array.from(map.values());
+    return localOrders;
   }, []);
 
   const formatOrderAsOffer = useCallback((ord: OrderRecord): OrderRecord & { remainingSeconds: number } => {
@@ -772,16 +703,25 @@ export const DriverDashboardPage: React.FC = () => {
   const checkNewOrders = useCallback(async () => {
     if (driverStateRef.current === "offline" || isNavigatingRef.current) return;
 
+    const courier = getMatchedCourier();
+    const cId = courier?.id;
+    const cName = courier?.fullName;
+
     const allOrders = await fetchAllOrders();
     const candidateOrders = allOrders.filter((ord) => {
       if (!ord || !ord.id) return false;
       if (declinedOrderIdsRef.current.has(ord.id)) return false;
       if (activeOrder?.id === ord.id) return false;
-      const isPending =
-        ord.status === "searching_driver" ||
-        ord.status === "pending_confirmation" ||
-        ord.status === "preparing";
-      return isPending;
+      if (ord.courierName || ord.courierId) return false;
+      if (ord.status !== "searching_driver" && ord.status !== "preparing") return false;
+      if (ord.declinedCourierIds && cId && ord.declinedCourierIds.includes(cId)) return false;
+
+      const isTargetedToMe =
+        (cId && ord.targetCourierId === cId) ||
+        (cName && ord.targetCourierName === cName) ||
+        (!ord.targetCourierId && !ord.targetCourierName);
+
+      return isTargetedToMe;
     });
 
     if (candidateOrders.length === 0) return;
@@ -799,7 +739,7 @@ export const DriverDashboardPage: React.FC = () => {
       playChime();
       return [...newItems, ...prev];
     });
-  }, [fetchAllOrders, activeOrder, formatOrderAsOffer, playChime]);
+  }, [fetchAllOrders, activeOrder, formatOrderAsOffer, playChime, getMatchedCourier]);
 
   useEffect(() => {
     if (driverState !== "online_searching" || isNavigating) return;
@@ -807,7 +747,7 @@ export const DriverDashboardPage: React.FC = () => {
     checkNewOrders();
     const interval = setInterval(() => {
       checkNewOrders();
-    }, 2500);
+    }, 2000);
 
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "foodi_orders") {
@@ -824,22 +764,18 @@ export const DriverDashboardPage: React.FC = () => {
 
   const updateLiveOrderStatus = async (status: OrderStatus, statusLabel: string) => {
     if (!activeOrder) return;
+    const courier = getMatchedCourier();
     const patch = {
       id: activeOrder.id,
       token: activeOrder.token,
       status,
       statusLabel,
-      courierName: `${driverFirstName} ${driverLastName}`,
-      courierPhone: driverPhone
+      courierId: courier?.id,
+      courierName: courier?.fullName || `${driverFirstName} ${driverLastName}`,
+      courierPhone: courier?.phone || driverPhone,
+      courierLat: driverLocation[0],
+      courierLng: driverLocation[1]
     };
-
-    try {
-      await fetch("/api/orders/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch)
-      });
-    } catch {}
 
     try {
       const raw = localStorage.getItem("foodi_orders");
@@ -851,43 +787,62 @@ export const DriverDashboardPage: React.FC = () => {
             : o
         );
         localStorage.setItem("foodi_orders", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
       }
     } catch {}
   };
 
-  const handleTriggerSimulatedOffer = (count: number = 1) => {
-    if (isOrderActive) return;
+  const handleDeclineSingleOffer = useCallback((offerId: string) => {
+    declinedOrderIdsRef.current.add(offerId);
+    const courier = getMatchedCourier();
+    const cId = courier?.id;
 
-    clearSimulationTimeouts();
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) {
+        const list = JSON.parse(raw);
+        const updated = list.map((o: any) => {
+          if (o.id === offerId) {
+            const declined = Array.isArray(o.declinedCourierIds) ? [...o.declinedCourierIds] : [];
+            if (cId && !declined.includes(cId)) {
+              declined.push(cId);
+            }
+            return {
+              ...o,
+              declinedCourierIds: declined,
+              targetCourierId: undefined,
+              targetCourierName: undefined
+            };
+          }
+          return o;
+        });
+        localStorage.setItem("foodi_orders", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
+      }
+    } catch {}
 
-    if (count === 1) {
-      appendSimulatedOrder(0);
-      return;
-    }
-
-    appendSimulatedOrder(0);
-
-    const t1 = setTimeout(() => {
-      if (driverStateRef.current === "offline" || isNavigatingRef.current) return;
-      appendSimulatedOrder(1);
-    }, 3000);
-
-    const t2 = setTimeout(() => {
-      if (driverStateRef.current === "offline" || isNavigatingRef.current) return;
-      appendSimulatedOrder(2);
-    }, 8000);
-
-    simulationTimeoutsRef.current = [t1, t2];
-  };
+    setIncomingOffers((prevList) => {
+      const nextList = prevList.filter((item) => item.id !== offerId);
+      if (nextList.length === 0) {
+        setDriverState("online_searching");
+      }
+      return nextList;
+    });
+  }, [getMatchedCourier]);
 
   useEffect(() => {
     if (incomingOffers.length === 0 || isNavigating) return;
 
     const interval = setInterval(() => {
       setIncomingOffers((prevList) => {
+        const timedOutOffers = prevList.filter((item) => item.remainingSeconds <= 1);
+        timedOutOffers.forEach((o) => {
+          handleDeclineSingleOffer(o.id);
+        });
+
         const nextList = prevList
-          .map((item) => ({ ...item, remainingSeconds: item.remainingSeconds - 1 }))
-          .filter((item) => item.remainingSeconds > 0);
+          .filter((item) => item.remainingSeconds > 1)
+          .map((item) => ({ ...item, remainingSeconds: item.remainingSeconds - 1 }));
 
         if (nextList.length === 0) {
           setDriverState("online_searching");
@@ -897,10 +852,16 @@ export const DriverDashboardPage: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [incomingOffers.length, isNavigating]);
+  }, [incomingOffers.length, isNavigating, handleDeclineSingleOffer]);
 
   const handleAcceptSingleOffer = async (offer: OrderRecord) => {
-    clearSimulationTimeouts();
+    const courier = getMatchedCourier();
+    const cId = courier?.id || "DRV-101";
+    const cName = courier?.fullName || `${driverFirstName} ${driverLastName}`;
+    const cPhone = courier?.phone || driverPhone;
+    const cPhoto = courier?.photoUrl || "/images/ui/driver-reference.jpg";
+    const cVehicle = `${courier?.vehicleBrand || vehBrand} ${courier?.vehicleModel || vehModel}`;
+
     setIsProfileDropdownOpen(false);
     setIsMobileSidebarOpen(false);
     setActiveTab("home");
@@ -909,22 +870,21 @@ export const DriverDashboardPage: React.FC = () => {
     setIsAccepting(true);
     playChime();
 
-    const patch = {
+    const patch: Partial<OrderRecord> = {
       id: offer.id,
       token: offer.token,
-      status: "heading_to_restaurant" as OrderStatus,
-      statusLabel: "Coursier assigné, en route vers le restaurant",
-      courierName: `${driverFirstName} ${driverLastName}`,
-      courierPhone: driverPhone
+      status: "heading_to_restaurant",
+      statusLabel: "Livreur assigné, en route vers le restaurant",
+      courierId: cId,
+      courierName: cName,
+      courierPhone: cPhone,
+      courierPhoto: cPhoto,
+      courierVehicle: cVehicle,
+      courierLat: driverLocation[0],
+      courierLng: driverLocation[1],
+      targetCourierId: undefined,
+      targetCourierName: undefined
     };
-
-    try {
-      await fetch("/api/orders/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch)
-      });
-    } catch {}
 
     try {
       const raw = localStorage.getItem("foodi_orders");
@@ -936,6 +896,7 @@ export const DriverDashboardPage: React.FC = () => {
             : o
         );
         localStorage.setItem("foodi_orders", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
       }
     } catch {}
 
@@ -975,17 +936,6 @@ export const DriverDashboardPage: React.FC = () => {
     }
   }, [isNavigating]);
 
-  const handleDeclineSingleOffer = (offerId: string) => {
-    declinedOrderIdsRef.current.add(offerId);
-    setIncomingOffers((prevList) => {
-      const nextList = prevList.filter((item) => item.id !== offerId);
-      if (nextList.length === 0) {
-        setDriverState("online_searching");
-      }
-      return nextList;
-    });
-  };
-
   const handleArrivedAtRestaurant = () => {
     setDriverState("arrived_at_restaurant");
     updateLiveOrderStatus("heading_to_restaurant", "Coursier arrivé au restaurant, retrait en cours");
@@ -1006,7 +956,6 @@ export const DriverDashboardPage: React.FC = () => {
 
   const handleCompleteDelivery = () => {
     if (!activeOrder) return;
-    clearSimulationTimeouts();
     const earned = activeOrder.deliveryFee || 25;
 
     updateLiveOrderStatus("delivered", "Commande livrée avec succès");
@@ -1876,52 +1825,6 @@ export const DriverDashboardPage: React.FC = () => {
                   <span>Nous vous notifierons dès qu'une commande est disponible</span>
                   <Bell size={15} color="#FF5A00" />
                 </div>
-
-                <div style={{ marginTop: 24, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
-                  <button
-                    type="button"
-                    onClick={() => handleTriggerSimulatedOffer(1)}
-                    style={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid rgba(255, 90, 0, 0.3)",
-                      color: "#FF5A00",
-                      fontSize: 12,
-                      fontWeight: 800,
-                      padding: "8px 18px",
-                      borderRadius: 9999,
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      boxShadow: "0 2px 8px rgba(255, 90, 0, 0.12)"
-                    }}
-                  >
-                    <Sparkles size={14} />
-                    <span>Simuler 1 commande (15s)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleTriggerSimulatedOffer(3)}
-                    style={{
-                      backgroundColor: "#FFF2EB",
-                      border: "1px solid rgba(255, 90, 0, 0.4)",
-                      color: "#FF5A00",
-                      fontSize: 12,
-                      fontWeight: 800,
-                      padding: "8px 18px",
-                      borderRadius: 9999,
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      boxShadow: "0 2px 8px rgba(255, 90, 0, 0.12)"
-                    }}
-                  >
-                    <Zap size={14} />
-                    <span>Simuler 3 commandes (cascade 3s & 5s)</span>
-                  </button>
-                </div>
               </div>
             ) : (
               <div className="driver-home-wrapper">
@@ -2018,13 +1921,6 @@ export const DriverDashboardPage: React.FC = () => {
               <LocateFixed size={20} />
             </button>
 
-            {isDemoLocation && (
-              <div className="driver-demo-pill">
-                <span style={{ width: 6, height: 6, borderRadius: 9999, backgroundColor: "#F59E0B" }} />
-                <span>Position Agadir (Mode démo)</span>
-              </div>
-            )}
-
             <div className="driver-bottom-panel">
               <div className="driver-panel-driver-pos-badge">
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -2114,8 +2010,7 @@ export const DriverDashboardPage: React.FC = () => {
                   onClick={() => setIsOrderDetailsOpen(true)}
                   className="driver-btn-panel-secondary"
                 >
-                  <FileText size={16} />
-                  <span>Détails</span>
+                  Détails
                 </button>
 
                 {driverState === "heading_to_restaurant" && (
@@ -2124,8 +2019,7 @@ export const DriverDashboardPage: React.FC = () => {
                     onClick={handleArrivedAtRestaurant}
                     className="driver-btn-panel-primary"
                   >
-                    <MapPin size={18} />
-                    <span>Je suis arrivé</span>
+                    Arrivé
                   </button>
                 )}
 
@@ -2135,8 +2029,7 @@ export const DriverDashboardPage: React.FC = () => {
                     onClick={handleOrderPickedUp}
                     className="driver-btn-panel-success"
                   >
-                    <CheckCircle2 size={18} />
-                    <span>Commande récupérée</span>
+                    Récupéré
                   </button>
                 )}
 
@@ -2146,8 +2039,7 @@ export const DriverDashboardPage: React.FC = () => {
                     onClick={handleArrivedAtCustomer}
                     className="driver-btn-panel-primary"
                   >
-                    <MapPin size={18} />
-                    <span>Arrivé chez le client</span>
+                    Arrivé
                   </button>
                 )}
 
@@ -2157,8 +2049,7 @@ export const DriverDashboardPage: React.FC = () => {
                     onClick={handleCompleteDelivery}
                     className="driver-btn-panel-success"
                   >
-                    <CheckCircle2 size={18} />
-                    <span>Terminer la livraison</span>
+                    Terminer
                   </button>
                 )}
               </div>
@@ -2222,7 +2113,7 @@ export const DriverDashboardPage: React.FC = () => {
                   boxShadow: "0 8px 20px rgba(255, 90, 0, 0.3)"
                 }}
               >
-                Retour à l'accueil coursier
+                Accueil
               </button>
             </div>
           </div>
@@ -2529,11 +2420,10 @@ export const DriverDashboardPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleStartOverProfile}
-                  className="driver-simulate-btn driver-profile-startover-btn"
+                  className="driver-profile-startover-btn"
                   title="Recommencer le formulaire d'onboarding complet"
                 >
-                  <RotateCcw size={16} />
-                  <span>Recommencer / Compléter le profil</span>
+                  Éditer
                 </button>
               </div>
 
@@ -2843,8 +2733,7 @@ export const DriverDashboardPage: React.FC = () => {
                         onClick={() => handleAcceptSingleOffer(offer)}
                         className="driver-btn-accept-v2"
                       >
-                        <span>Accepter</span>
-                        <ChevronRight size={18} />
+                        Accepter
                       </button>
                     </div>
                   </div>
@@ -2902,8 +2791,7 @@ export const DriverDashboardPage: React.FC = () => {
                         onClick={() => handleAcceptSingleOffer(offer)}
                         className="driver-btn-accept-v2"
                       >
-                        <span>Accepter</span>
-                        <ChevronRight size={16} />
+                        Accepter
                       </button>
                     </div>
                   </div>

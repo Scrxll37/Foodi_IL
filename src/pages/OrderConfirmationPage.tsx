@@ -19,6 +19,7 @@ import {
 import { useApp } from "../context/AppContext";
 import restaurantsData from "../data/restaurants.json";
 import ordersData from "../data/orders.json";
+import driversData from "../data/drivers.json";
 import { Restaurant } from "../types";
 import { HomeHeader } from "../components/HomeHeader";
 
@@ -30,6 +31,7 @@ export const OrderConfirmationPage: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"card" | "cash">("card");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [searchPhase, setSearchPhase] = useState<number>(1);
+  const [dispatchStatusText, setDispatchStatusText] = useState("");
   const [confirmedOrder, setConfirmedOrder] = useState<any | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
 
@@ -150,7 +152,7 @@ export const OrderConfirmationPage: React.FC = () => {
     const startLat = shopLat - 0.0055;
     const startLng = shopLng + 0.0045;
 
-    const newOrder = {
+    const newOrder: any = {
       id: `CMD-AGD-${Math.floor(1000 + Math.random() * 9000)}`,
       token: uniqueToken,
       restaurantName: currentRestaurant?.name || closestBranch.name,
@@ -214,19 +216,157 @@ export const OrderConfirmationPage: React.FC = () => {
       localStorage.setItem("foodi_orders", JSON.stringify(updated));
     } catch {}
 
-    setTimeout(() => {
-      setSearchPhase(2);
-    }, 2400);
+    const autoAcceptRaw = localStorage.getItem(`foodi_auto_accept_${currentRestaurant?.id}`);
+    const isAutoAccept = autoAcceptRaw !== null ? JSON.parse(autoAcceptRaw) : (currentRestaurant?.autoAcceptOrders ?? true);
 
-    setTimeout(() => {
-      setSearchPhase(3);
-    }, 4800);
+    setDispatchStatusText("Transmission de la commande au restaurant...");
+
+    const checkRestaurantConfirmed = () => {
+      return new Promise<void>((resolve) => {
+        if (isAutoAccept) {
+          setTimeout(() => {
+            newOrder.status = "preparing";
+            newOrder.statusLabel = "Restaurant a validé, préparation en cours";
+            try {
+              const raw = localStorage.getItem("foodi_orders");
+              if (raw) {
+                const list = JSON.parse(raw);
+                const updated = list.map((o: any) => o.id === newOrder.id ? { ...o, status: "preparing", statusLabel: "Restaurant a validé, préparation en cours" } : o);
+                localStorage.setItem("foodi_orders", JSON.stringify(updated));
+              }
+            } catch {}
+            resolve();
+          }, 2400);
+        } else {
+          const poll = setInterval(() => {
+            try {
+              const raw = localStorage.getItem("foodi_orders");
+              if (raw) {
+                const list = JSON.parse(raw);
+                const found = list.find((o: any) => o.id === newOrder.id || o.token === uniqueToken);
+                if (found && (found.status === "preparing" || found.status === "accepted" || found.status === "searching_driver")) {
+                  clearInterval(poll);
+                  resolve();
+                }
+              }
+            } catch {}
+          }, 800);
+        }
+      });
+    };
+
+    await checkRestaurantConfirmed();
+
+    setSearchPhase(2);
+
+    const getOnlineCouriers = () => {
+      try {
+        const raw = localStorage.getItem("foodi_admin_couriers_v2");
+        const list = raw ? JSON.parse(raw) : (driversData as any[]);
+        if (Array.isArray(list)) {
+          return list.filter((d: any) => d.status === "active" && Boolean(d.isOnline));
+        }
+      } catch {}
+      return [];
+    };
+
+    let onlineCouriers = getOnlineCouriers();
+    let sortedCouriers = [...onlineCouriers].sort((a: any, b: any) => {
+      const dA = haversineDist(shopLat, shopLng, a.lat, a.lng);
+      const dB = haversineDist(shopLat, shopLng, b.lat, b.lng);
+      return dA - dB;
+    });
+
+    newOrder.status = "searching_driver";
+    newOrder.statusLabel = "Recherche d'un livreur disponible...";
+    newOrder.declinedCourierIds = [];
+
+    if (sortedCouriers.length > 0) {
+      const firstTarget = sortedCouriers[0];
+      newOrder.targetCourierId = firstTarget.id;
+      newOrder.targetCourierName = firstTarget.fullName;
+      newOrder.offerCreatedAt = Date.now();
+      const dist = haversineDist(shopLat, shopLng, firstTarget.lat, firstTarget.lng);
+      setDispatchStatusText(`Demande transmise à ${firstTarget.fullName} (${dist} km)...`);
+    } else {
+      setDispatchStatusText("Recherche d'un livreur disponible à Agadir...");
+    }
+
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) {
+        const list = JSON.parse(raw);
+        const updated = list.map((o: any) => o.id === newOrder.id ? { ...o, ...newOrder } : o);
+        localStorage.setItem("foodi_orders", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
+      }
+    } catch {}
+
+    const waitStart = Date.now();
+    let isAssigned = false;
+    let currentTargetIndex = 0;
+
+    while (Date.now() - waitStart < 7000 && !isAssigned) {
+      await new Promise((r) => setTimeout(r, 700));
+      try {
+        const raw = localStorage.getItem("foodi_orders");
+        if (raw) {
+          const list = JSON.parse(raw);
+          const found = list.find((o: any) => o.id === newOrder.id || o.token === uniqueToken);
+          if (found) {
+            if (found.courierName && found.status !== "searching_driver") {
+              isAssigned = true;
+              newOrder.courierName = found.courierName;
+              newOrder.courierId = found.courierId;
+              newOrder.courierPhone = found.courierPhone;
+              newOrder.courierPhoto = found.courierPhoto;
+              newOrder.courierVehicle = found.courierVehicle;
+              newOrder.courierLat = found.courierLat;
+              newOrder.courierLng = found.courierLng;
+              newOrder.status = found.status;
+              newOrder.statusLabel = found.statusLabel;
+              setDispatchStatusText(`${found.courierName} a accepté la livraison !`);
+              break;
+            }
+
+            if (found.declinedCourierIds && found.declinedCourierIds.length > currentTargetIndex) {
+              const freshOnline = getOnlineCouriers().filter((d: any) => !found.declinedCourierIds.includes(d.id));
+              const nextSorted = [...freshOnline].sort((a: any, b: any) => {
+                const dA = haversineDist(shopLat, shopLng, a.lat, a.lng);
+                const dB = haversineDist(shopLat, shopLng, b.lat, b.lng);
+                return dA - dB;
+              });
+
+              if (nextSorted.length > 0) {
+                currentTargetIndex = found.declinedCourierIds.length;
+                const nextTarget = nextSorted[0];
+                newOrder.targetCourierId = nextTarget.id;
+                newOrder.targetCourierName = nextTarget.fullName;
+                newOrder.offerCreatedAt = Date.now();
+                const distNext = haversineDist(shopLat, shopLng, nextTarget.lat, nextTarget.lng);
+                setDispatchStatusText(`Demande transmise à ${nextTarget.fullName} (${distNext} km)...`);
+
+                const updated = list.map((o: any) =>
+                  o.id === newOrder.id ? { ...o, targetCourierId: nextTarget.id, targetCourierName: nextTarget.fullName, offerCreatedAt: Date.now() } : o
+                );
+                localStorage.setItem("foodi_orders", JSON.stringify(updated));
+                window.dispatchEvent(new Event("storage"));
+              } else {
+                setDispatchStatusText("Recherche d'un livreur disponible à Agadir...");
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+
+    setSearchPhase(3);
 
     setTimeout(() => {
       clearCart();
       setIsPlacingOrder(false);
       setConfirmedOrder(newOrder);
-    }, 7000);
+    }, 1200);
   };
 
   const handleCopyRef = (refText: string) => {
@@ -306,15 +446,15 @@ export const OrderConfirmationPage: React.FC = () => {
               {searchPhase === 1
                 ? `Transmission à ${currentRestaurant?.name || closestBranch?.name}...`
                 : searchPhase === 2
-                ? "Recherche d'un livreur à proximité..."
+                ? (dispatchStatusText || "Recherche d'un livreur à proximité...")
                 : "Attribution et sécurisation de la commande..."}
             </h2>
 
             <p className="text-xs text-[#7A8194] leading-relaxed">
               {searchPhase === 1
-                ? "Vérification des disponibilités des plats et transmission directe en cuisine."
+                ? "Attente de confirmation du restaurant partenaire d'Agadir."
                 : searchPhase === 2
-                ? "Localisation en temps réel du coursier le plus proche pour une livraison express."
+                ? "Attribution intelligente du coursier le plus proche du restaurant."
                 : "Finalisation du paiement sécurisé et validation du créneau de livraison."}
             </p>
           </div>
@@ -442,19 +582,16 @@ export const OrderConfirmationPage: React.FC = () => {
           <div className="space-y-2.5 pt-1">
             <Link
               to={`/track/${confirmedOrder.token}`}
-              className="foodi-btn-primary w-full py-4 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/30 flex items-center justify-center gap-2 cursor-pointer transition-all animate-cta-glow"
+              className="foodi-btn-primary w-full py-4 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/30 flex items-center justify-center cursor-pointer transition-all animate-cta-glow"
             >
-              <Bike className="w-4 h-4" />
-              <span>Suivre ma commande en direct</span>
-              <ArrowRight className="w-4 h-4" />
+              Suivre
             </Link>
 
             <Link
               to="/"
-              className="w-full py-3 rounded-2xl text-xs font-bold text-[#7A8194] hover:text-[#0B1020] transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-3 rounded-2xl text-xs font-bold text-[#7A8194] hover:text-[#0B1020] transition-colors flex items-center justify-center"
             >
-              <Home className="w-3.5 h-3.5" />
-              <span>Retour à l'accueil</span>
+              Accueil
             </Link>
           </div>
         </div>
@@ -477,7 +614,7 @@ export const OrderConfirmationPage: React.FC = () => {
             to="/restaurants"
             className="foodi-btn-primary inline-flex py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer"
           >
-            Découvrir les restaurants
+            Restaurants
           </Link>
         </div>
       </div>
@@ -759,10 +896,9 @@ export const OrderConfirmationPage: React.FC = () => {
                   type="button"
                   disabled={isPlacingOrder}
                   onClick={handlePlaceOrder}
-                  className="foodi-btn-primary w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-80 disabled:cursor-not-allowed"
+                  className="foodi-btn-primary w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/25 flex items-center justify-center cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-80 disabled:cursor-not-allowed"
                 >
-                  <span>Confirmer et commander</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Commander
                 </button>
               </div>
             </div>

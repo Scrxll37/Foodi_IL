@@ -23,6 +23,8 @@ import {
   ArrowRight
 } from "lucide-react";
 import ordersData from "../data/orders.json";
+import driversData from "../data/drivers.json";
+import "../styles/restaurant.css";
 import { OrderRecord, OrderStatus } from "../types";
 import { useApp } from "../context/AppContext";
 import { HomeHeader } from "../components/HomeHeader";
@@ -65,11 +67,15 @@ export const OrderTrackingPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showReceiptDetails, setShowReceiptDetails] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [networkError, setNetworkError] = useState(false);
 
   const [courierPos, setCourierPos] = useState<LatLng | null>(null);
   const [courierBearing, setCourierBearing] = useState<number>(0);
   const [courierAssigned, setCourierAssigned] = useState<boolean>(false);
+  const [dispatchText, setDispatchText] = useState("");
+  const dispatchAttemptRef = useRef<number>(0);
+  const lastFrameTimeRef = useRef<number>(performance.now());
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -225,8 +231,8 @@ export const OrderTrackingPage: React.FC = () => {
     const shopLat = order.shopLat || 30.4215;
     const shopLng = order.shopLng || -9.5890;
 
-    const startLat = shopLat - 0.0055;
-    const startLng = shopLng + 0.0045;
+    const startLat = order.courierLat || (shopLat - 0.0055);
+    const startLng = order.courierLng || (shopLng + 0.0045);
 
     return {
       start: [startLat, startLng] as LatLng,
@@ -291,81 +297,173 @@ export const OrderTrackingPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!order) return;
-    if (order.status !== "heading_to_restaurant" && order.status !== "in_delivery") return;
-
-    const interval = setInterval(() => {
-      const now = Date.now();
-
-      if (order.status === "heading_to_restaurant") {
-        const r1 = routeToShopRef.current;
-        if (!r1) return;
-
-        const nextDist = Math.min(r1.totalDistance, currentDistanceRef.current + METERS_PER_TICK);
-        animStartDistRef.current = currentDistanceRef.current;
-        targetDistanceRef.current = nextDist;
-        animStartTimeRef.current = now;
-
-        if (nextDist >= r1.totalDistance - 5) {
-          handleUpdateStatus("in_delivery", "Commande récupérée, en route vers votre adresse");
-          currentDistanceRef.current = 0;
-          targetDistanceRef.current = 0;
-        }
-      } else if (order.status === "in_delivery") {
-        const r2 = routeToUserRef.current;
-        if (!r2) return;
-
-        const nextDist = Math.min(r2.totalDistance, currentDistanceRef.current + METERS_PER_TICK);
-        animStartDistRef.current = currentDistanceRef.current;
-        targetDistanceRef.current = nextDist;
-        animStartTimeRef.current = now;
-
-        if (nextDist >= r2.totalDistance - 10) {
-          handleUpdateStatus("delivered", "Commande livrée à votre porte. Bon appétit !");
-        }
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "foodi_orders") {
+        try {
+          const raw = localStorage.getItem("foodi_orders");
+          if (raw) {
+            const list = JSON.parse(raw);
+            const found = list.find((o: any) => o.id === order?.id || (token && o.token === token));
+            if (found) {
+              setOrder(found);
+              if (found.courierName && found.status !== "searching_driver") {
+                setCourierAssigned(true);
+              }
+            }
+          }
+        } catch {}
       }
-    }, 7000);
-
-    return () => clearInterval(interval);
-  }, [order]);
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [order?.id, token]);
 
   useEffect(() => {
     if (!order) return;
+    if (courierAssigned || (order.courierName && order.status !== "searching_driver")) return;
+    if (order.status === "delivered" || order.status === "cancelled" || order.status === "rejected") return;
 
-    function animateMovement() {
+    const interval = setInterval(() => {
+      try {
+        const raw = localStorage.getItem("foodi_orders");
+        if (!raw) return;
+        const list = JSON.parse(raw);
+        const currentInStorage = list.find((o: any) => o.id === order.id || o.token === order.token);
+        if (!currentInStorage) return;
+
+        if (currentInStorage.courierName && currentInStorage.status !== "searching_driver") {
+          setOrder((prev) => (prev ? ({ ...prev, ...currentInStorage } as OrderRecord) : null));
+          setCourierAssigned(true);
+          setDispatchText(`${currentInStorage.courierName} a accepté la livraison !`);
+          clearInterval(interval);
+          return;
+        }
+
+        const rawCouriers = localStorage.getItem("foodi_admin_couriers_v2");
+        const allCouriers = rawCouriers ? JSON.parse(rawCouriers) : (driversData as any[]);
+        const onlineCouriers = Array.isArray(allCouriers)
+          ? allCouriers.filter((d: any) => d.status === "active" && Boolean(d.isOnline))
+          : [];
+
+        const declinedIds: string[] = Array.isArray(currentInStorage.declinedCourierIds)
+          ? currentInStorage.declinedCourierIds
+          : [];
+
+        const availableOnline = onlineCouriers.filter((d: any) => !declinedIds.includes(d.id));
+
+        if (availableOnline.length === 0) {
+          setDispatchText("Recherche radar active à Agadir...");
+          return;
+        }
+
+        const shopLat = coords?.shop[0] || order.shopLat || 30.4215;
+        const shopLng = coords?.shop[1] || order.shopLng || -9.589;
+
+        const sorted = [...availableOnline].sort((a: any, b: any) => {
+          const dA = (a.lat - shopLat) ** 2 + (a.lng - shopLng) ** 2;
+          const dB = (b.lat - shopLat) ** 2 + (b.lng - shopLng) ** 2;
+          return dA - dB;
+        });
+
+        const targetId = currentInStorage.targetCourierId;
+        const offerAge = currentInStorage.offerCreatedAt ? Date.now() - currentInStorage.offerCreatedAt : 0;
+
+        if (targetId && offerAge > 25000) {
+          const updatedDeclined = [...declinedIds, targetId];
+          const remaining = sorted.filter((d: any) => d.id !== targetId);
+          const nextTarget = remaining[0];
+
+          const patch = {
+            declinedCourierIds: updatedDeclined,
+            targetCourierId: nextTarget ? nextTarget.id : undefined,
+            targetCourierName: nextTarget ? nextTarget.fullName : undefined,
+            offerCreatedAt: nextTarget ? Date.now() : undefined
+          };
+
+          const updatedList = list.map((o: any) =>
+            o.id === order.id || o.token === order.token ? { ...o, ...patch } : o
+          );
+          localStorage.setItem("foodi_orders", JSON.stringify(updatedList));
+          window.dispatchEvent(new Event("storage"));
+
+          if (nextTarget) {
+            setDispatchText(`Demande transmise à ${nextTarget.fullName}...`);
+          } else {
+            setDispatchText("Recherche radar active à Agadir...");
+          }
+          return;
+        }
+
+        if (!targetId && sorted.length > 0) {
+          const firstTarget = sorted[0];
+          const patch = {
+            targetCourierId: firstTarget.id,
+            targetCourierName: firstTarget.fullName,
+            offerCreatedAt: Date.now()
+          };
+
+          const updatedList = list.map((o: any) =>
+            o.id === order.id || o.token === order.token ? { ...o, ...patch } : o
+          );
+          localStorage.setItem("foodi_orders", JSON.stringify(updatedList));
+          window.dispatchEvent(new Event("storage"));
+          setDispatchText(`Demande transmise à ${firstTarget.fullName}...`);
+        } else if (targetId) {
+          setDispatchText(`Demande transmise à ${currentInStorage.targetCourierName || "un coursier"}...`);
+        }
+      } catch {}
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [order, coords, courierAssigned]);
+
+  useEffect(() => {
+    if (!order) return;
+    if (order.status !== "heading_to_restaurant" && order.status !== "in_delivery") return;
+
+    lastFrameTimeRef.current = performance.now();
+
+    function animateMovement(now: number) {
       if (!order) return;
-      const now = Date.now();
-      const elapsed = now - animStartTimeRef.current;
-      const progress = Math.min(1, elapsed / animDurationRef.current);
 
-      const interpolatedDist =
-        animStartDistRef.current +
-        (targetDistanceRef.current - animStartDistRef.current) * progress;
+      const deltaSeconds = Math.min(0.1, (now - lastFrameTimeRef.current) / 1000);
+      lastFrameTimeRef.current = now;
 
-      currentDistanceRef.current = interpolatedDist;
+      if (order.status === "heading_to_restaurant") {
+        const r1 = routeToShopRef.current;
+        if (r1 && r1.totalDistance > 0) {
+          currentDistanceRef.current += 32 * deltaSeconds;
 
-      if (order.status === "heading_to_restaurant" && routeToShopRef.current) {
-        const sample = getPositionAtDistance(routeToShopRef.current, interpolatedDist);
-        setCourierPos(sample.position);
-        setCourierBearing(sample.bearing);
-        if (courierMarkerRef.current) {
-          courierMarkerRef.current.setLatLng(sample.position);
+          if (currentDistanceRef.current >= r1.totalDistance - 5) {
+            currentDistanceRef.current = 0;
+            handleUpdateStatus("in_delivery", "Commande récupérée, en route vers votre adresse");
+          } else {
+            const sample = getPositionAtDistance(r1, currentDistanceRef.current);
+            setCourierPos(sample.position);
+            setCourierBearing(sample.bearing);
+            if (courierMarkerRef.current) {
+              courierMarkerRef.current.setLatLng(sample.position);
+            }
+            updateMapRouteView("heading_to_restaurant", currentDistanceRef.current);
+          }
         }
-        updateMapRouteView("heading_to_restaurant", interpolatedDist);
-      } else if (order.status === "in_delivery" && routeToUserRef.current) {
-        const sample = getPositionAtDistance(routeToUserRef.current, interpolatedDist);
-        setCourierPos(sample.position);
-        setCourierBearing(sample.bearing);
-        if (courierMarkerRef.current) {
-          courierMarkerRef.current.setLatLng(sample.position);
+      } else if (order.status === "in_delivery") {
+        const r2 = routeToUserRef.current;
+        if (r2 && r2.totalDistance > 0) {
+          currentDistanceRef.current += 30 * deltaSeconds;
+
+          if (currentDistanceRef.current >= r2.totalDistance - 10) {
+            handleUpdateStatus("delivered", "Commande livrée à votre porte. Bon appétit !");
+          } else {
+            const sample = getPositionAtDistance(r2, currentDistanceRef.current);
+            setCourierPos(sample.position);
+            setCourierBearing(sample.bearing);
+            if (courierMarkerRef.current) {
+              courierMarkerRef.current.setLatLng(sample.position);
+            }
+            updateMapRouteView("in_delivery", currentDistanceRef.current);
+          }
         }
-        updateMapRouteView("in_delivery", interpolatedDist);
-      } else if (order.status === "delivered" && coords) {
-        setCourierPos(coords.dest);
-        if (courierMarkerRef.current) {
-          courierMarkerRef.current.setLatLng(coords.dest);
-        }
-        updateMapRouteView("delivered", 0);
       }
 
       animationFrameRef.current = requestAnimationFrame(animateMovement);
@@ -378,7 +476,7 @@ export const OrderTrackingPage: React.FC = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [order, coords, updateMapRouteView]);
+  }, [order, updateMapRouteView, handleUpdateStatus]);
 
   useEffect(() => {
     if (!coords || !mapContainerRef.current) return;
@@ -540,21 +638,168 @@ export const OrderTrackingPage: React.FC = () => {
           <div className="pt-2 flex flex-col gap-2.5">
             <Link
               to="/orders"
-              className="foodi-btn-primary w-full py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer"
+              className="foodi-btn-primary w-full py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer flex items-center justify-center"
             >
-              Consulter mes commandes
+              Commandes
             </Link>
             <Link
               to="/restaurants"
-              className="w-full py-3 px-6 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors"
+              className="w-full py-3 px-6 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors flex items-center justify-center"
             >
-              Commander chez nos restaurants
+              Restaurants
             </Link>
           </div>
         </div>
       </div>
     );
   }
+
+  const renderReceiptModal = () => {
+    if (!showReceiptModal || !order) return null;
+    return (
+      <div
+        className="foodi-modal-backdrop"
+        onClick={() => setShowReceiptModal(false)}
+      >
+        <div
+          className="foodi-modal-container"
+          onClick={(e) => e.stopPropagation()}
+          style={{ maxWidth: 540 }}
+        >
+          <div className="foodi-modal-header">
+            <h3 className="foodi-modal-title">Ticket de caisse</h3>
+            <button
+              className="foodi-modal-close-btn"
+              onClick={() => setShowReceiptModal(false)}
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="foodi-modal-body">
+            <div className="foodi-receipt-voucher">
+              <div className="foodi-receipt-header">
+                <div className="foodi-receipt-name">{order.restaurantName}</div>
+                <div className="foodi-receipt-sub">
+                  {order.neighborhood || "Agadir, Maroc"}
+                  <br />
+                  Tél : +212 5 28 84 92 10
+                </div>
+              </div>
+
+              <div className="foodi-receipt-pickup-box">
+                <div style={{ fontSize: 10, color: "#64748B" }}>CODE COURSIER :</div>
+                <div className="foodi-receipt-pickup-val">
+                  #{order.id.slice(-4)}
+                </div>
+              </div>
+
+              <div className="foodi-receipt-row" style={{ paddingBottom: 6, borderBottom: "1px dashed #CBD5E1", marginBottom: 6 }}>
+                <span>N° COMMANDE :</span>
+                <strong style={{ fontSize: 13, color: "#0D0D0F", letterSpacing: 0.5 }}>
+                  {order.id}
+                </strong>
+              </div>
+
+              <div className="foodi-receipt-row">
+                <span>Point de vente :</span>
+                <strong>{order.neighborhood || "Agadir"}</strong>
+              </div>
+
+              <div className="foodi-receipt-row">
+                <span>Date :</span>
+                <span>{order.date || "Aujourd'hui"}</span>
+              </div>
+
+              <div className="foodi-receipt-row">
+                <span>Client :</span>
+                <strong>{order.customerName || "Client Foodi"}</strong>
+              </div>
+
+              <div className="foodi-receipt-row">
+                <span>Téléphone :</span>
+                <span>{order.customerPhone || "+212 6 71 82 93 04"}</span>
+              </div>
+
+              <div className="foodi-receipt-row">
+                <span>Adresse livraison :</span>
+                <span style={{ textAlign: "right", maxWidth: "60%" }}>
+                  {order.address || order.neighborhood || "Agadir"}
+                </span>
+              </div>
+
+              {order.instructions && (
+                <div className="foodi-receipt-row" style={{ marginTop: 4, fontStyle: "italic", color: "#64748B" }}>
+                  <span>Note client :</span>
+                  <span style={{ textAlign: "right", maxWidth: "65%" }}>
+                    {order.instructions}
+                  </span>
+                </div>
+              )}
+
+              <table className="foodi-receipt-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: 30 }}>Qté</th>
+                    <th>Article</th>
+                    <th style={{ textAlign: "right", width: 60 }}>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items?.map((item, i) => (
+                    <tr key={i}>
+                      <td style={{ fontWeight: "bold" }}>{item.quantity}</td>
+                      <td>
+                        <div>{item.name}</div>
+                        {item.options && (
+                          <div style={{ fontSize: 9, color: "#64748B" }}>{item.options}</div>
+                        )}
+                      </td>
+                      <td style={{ textAlign: "right" }}>{item.price * item.quantity} DH</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="foodi-receipt-totals">
+                <div className="foodi-receipt-row">
+                  <span>Sous-total plats :</span>
+                  <strong>{order.subtotal || order.total} DH</strong>
+                </div>
+                <div className="foodi-receipt-row">
+                  <span>Frais livraison (coursier) :</span>
+                  <span>{order.deliveryFee || 0} DH</span>
+                </div>
+                <div className="foodi-receipt-row" style={{ borderTop: "1px dashed #94A3B8", paddingTop: 4, marginTop: 4 }}>
+                  <span>Total payé par client :</span>
+                  <span>{order.total} DH</span>
+                </div>
+                <div className="foodi-receipt-grand-total">
+                  <span>Total :</span>
+                  <span>{order.total} DH</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button
+                className="foodi-btn foodi-btn-outline"
+                onClick={() => setShowReceiptModal(false)}
+              >
+                Fermer
+              </button>
+              <button
+                className="foodi-btn foodi-btn-primary"
+                onClick={() => window.print()}
+              >
+                Imprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (order.status === "delivered") {
     return (
@@ -577,10 +822,9 @@ export const OrderTrackingPage: React.FC = () => {
           </Link>
           <Link
             to="/"
-            className="h-9 px-3.5 rounded-full bg-white hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] text-xs font-bold flex items-center gap-1.5 transition-colors border border-[#0B1020]/10"
+            className="h-9 px-3.5 rounded-full bg-white hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] text-xs font-bold flex items-center justify-center transition-colors border border-[#0B1020]/10"
           >
-            <Home className="w-3.5 h-3.5 text-[#FF5A00]" />
-            <span>Accueil</span>
+            Accueil
           </Link>
         </header>
 
@@ -644,21 +888,28 @@ export const OrderTrackingPage: React.FC = () => {
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-            <Link
-              to="/"
-              className="foodi-btn-primary flex-1 py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer flex items-center justify-center gap-2"
+            <button
+              type="button"
+              onClick={() => setShowReceiptModal(true)}
+              className="foodi-btn-primary flex-1 py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer flex items-center justify-center"
             >
-              <Home className="w-4 h-4" />
-              <span>Retour à l'accueil</span>
-            </Link>
+              Reçu
+            </button>
             <Link
               to="/orders"
-              className="w-full sm:w-auto py-3 px-5 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors text-center"
+              className="w-full sm:w-auto py-3 px-5 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors text-center flex items-center justify-center"
             >
-              Mes commandes
+              Commandes
+            </Link>
+            <Link
+              to="/"
+              className="w-full sm:w-auto py-3 px-5 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors text-center flex items-center justify-center"
+            >
+              Accueil
             </Link>
           </div>
         </div>
+        {renderReceiptModal()}
       </div>
     );
   }
@@ -684,10 +935,9 @@ export const OrderTrackingPage: React.FC = () => {
           </Link>
           <Link
             to="/"
-            className="h-9 px-3.5 rounded-full bg-white hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] text-xs font-bold flex items-center gap-1.5 transition-colors border border-[#0B1020]/10"
+            className="h-9 px-3.5 rounded-full bg-white hover:bg-[#FFF3EA] text-[#0B1020] hover:text-[#FF5A00] text-xs font-bold flex items-center justify-center transition-colors border border-[#0B1020]/10"
           >
-            <Home className="w-3.5 h-3.5 text-[#FF5A00]" />
-            <span>Accueil</span>
+            Accueil
           </Link>
         </header>
 
@@ -724,20 +974,19 @@ export const OrderTrackingPage: React.FC = () => {
           <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
             <Link
               to="/restaurants"
-              className="foodi-btn-primary flex-1 py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer flex items-center justify-center gap-2"
+              className="foodi-btn-primary flex-1 py-3 px-6 rounded-2xl text-xs font-black shadow-md cursor-pointer flex items-center justify-center"
             >
-              <span>Commander ailleurs</span>
-              <ArrowRight className="w-4 h-4" />
+              Restaurants
             </Link>
             <Link
               to="/"
-              className="w-full sm:w-auto py-3 px-5 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors text-center flex items-center justify-center gap-1.5"
+              className="w-full sm:w-auto py-3 px-5 rounded-2xl bg-[#FAF8F5] text-[#0B1020] text-xs font-bold hover:bg-[#eaeaea] transition-colors text-center flex items-center justify-center"
             >
-              <Home className="w-3.5 h-3.5" />
-              <span>Accueil</span>
+              Accueil
             </Link>
           </div>
         </div>
+        {renderReceiptModal()}
       </div>
     );
   }
@@ -768,10 +1017,15 @@ export const OrderTrackingPage: React.FC = () => {
             <button
               onClick={handleRecenter}
               title="Centrer la carte"
-              className="bg-white/95 hover:bg-white text-[#0B1020] px-3 py-1.5 rounded-xl shadow-sm border border-[#0B1020]/8 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              className="bg-white/95 hover:bg-white text-[#0B1020] px-3.5 py-1.5 rounded-xl shadow-sm border border-[#0B1020]/8 text-xs font-bold transition-all cursor-pointer"
             >
-              <Navigation className="w-3.5 h-3.5 text-[#FF5A00]" />
-              <span>Centrer</span>
+              Centrer
+            </button>
+            <button
+              onClick={() => setShowReceiptModal(true)}
+              className="foodi-btn-primary px-3.5 py-1.5 rounded-xl text-xs font-black shadow-md cursor-pointer"
+            >
+              Reçu
             </button>
           </div>
         </div>
@@ -780,9 +1034,18 @@ export const OrderTrackingPage: React.FC = () => {
           <div className="bg-[#18181B] text-white rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-1.5 text-[#FF5A00] bg-white/10 border border-white/10">
-                  Arrivée estimée
-                </span>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full inline-block text-[#FF5A00] bg-white/10 border border-white/10">
+                    Arrivée estimée
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowReceiptModal(true)}
+                    className="px-3 py-1 rounded-full bg-[#FF5A00] hover:bg-[#E64F00] text-white text-[11px] font-black shadow-sm transition-all cursor-pointer"
+                  >
+                    Reçu
+                  </button>
+                </div>
 
                 <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   {order.arrivalTime ? `~${order.arrivalTime}` : `~${order.totalTime || 25} min`}
@@ -870,7 +1133,7 @@ export const OrderTrackingPage: React.FC = () => {
                 <div className="text-xs">
                   <span className="font-black text-white block">Recherche radar active</span>
                   <span className="text-white/60 text-[11px]">
-                    Détection des coursiers disponibles à proximité
+                    {dispatchText || "Détection des coursiers disponibles à proximité"}
                   </span>
                 </div>
               </div>
@@ -1040,6 +1303,8 @@ export const OrderTrackingPage: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {renderReceiptModal()}
     </div>
   );
 };

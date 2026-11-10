@@ -19,6 +19,7 @@ interface AppContextType {
   cartCount: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  isCartAnimating: boolean;
   isNotifOpen: boolean;
   setIsNotifOpen: (open: boolean) => void;
   user: UserProfile;
@@ -92,6 +93,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCartAnimating, setIsCartAnimating] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [conflictData, setConflictData] = useState<CartConflictData | null>(null);
 
@@ -137,7 +139,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setCart((prev) => [...prev, newItem]);
     }
-    setIsCartOpen(true);
+    setIsCartAnimating(true);
+    setTimeout(() => {
+      setIsCartAnimating(false);
+    }, 700);
   };
 
   const addToCart = (item: Omit<CartItem, "id">) => {
@@ -168,7 +173,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setCart([newItem]);
     setConflictData(null);
-    setIsCartOpen(true);
+    setIsCartAnimating(true);
+    setTimeout(() => {
+      setIsCartAnimating(false);
+    }, 700);
   };
 
   const cancelConflict = () => {
@@ -258,6 +266,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cartCount,
         isCartOpen,
         setIsCartOpen,
+        isCartAnimating,
         isNotifOpen,
         setIsNotifOpen,
         user,
