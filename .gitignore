@@ -1,24 +1,33 @@
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+**/node_modules/
+**/vendor/
 
-.notes/
-*.notes
-.agents/
-
-
+# Environment files
 .env
 .env.*
 !.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
 
-.vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Builds & Outputs
+**/dist/
+**/dist-ssr/
+backend/public/build/
+backend/public/hot
+backend/public/storage
 
+# Logs & caches
+*.log
+backend/storage/logs/*.log
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/pail/*
+
+# OS generated
 .DS_Store
 Thumbs.db
