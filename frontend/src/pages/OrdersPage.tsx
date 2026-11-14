@@ -23,9 +23,11 @@ import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Loader } from "../components/Loader";
 import { OrderRecord, Restaurant } from "../types";
 import { fetchOrders as loadOrdersFromApi, fetchRestaurants, getStoredRestaurants } from "../services/api";
+import { useApp } from "../context/AppContext";
 
 export const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useApp();
 
   const [orders, setOrders] = useState<OrderRecord[]>(() => {
     try {
@@ -51,7 +53,10 @@ export const OrdersPage: React.FC = () => {
 
   const refreshOrders = async () => {
     try {
-      const list = await loadOrdersFromApi();
+      const list = await loadOrdersFromApi(
+        user?.id ? String(user.id) : undefined,
+        user?.phone || undefined
+      );
       if (list && list.length > 0) {
         setOrders(list);
       }
@@ -67,7 +72,7 @@ export const OrdersPage: React.FC = () => {
     });
     const interval = setInterval(refreshOrders, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user?.id, user?.phone]);
 
   const ongoingOrders = useMemo(() => {
     return orders.filter(

@@ -7,6 +7,8 @@ import {
   getSessionCookie,
   clearSessionCookie,
   preloadBrandAssets,
+  fetchNotifications,
+  markNotificationAsRead,
 } from "../services/api";
 
 export interface CartConflictData {
@@ -29,13 +31,15 @@ interface AppContextType {
   isNotifOpen: boolean;
   setIsNotifOpen: (open: boolean) => void;
   user: UserProfile;
-  login: (identifier: string, details?: { name?: string; phone?: string; email?: string; role?: "client" | "driver" | "restaurant" | "admin" }) => void;
+  login: (identifier: string, details?: { name?: string; phone?: string; email?: string; role?: "client" | "driver" | "restaurant" | "admin"; id?: string | number }) => void;
   updateProfile: (data: Partial<UserProfile>) => void;
   logout: () => void;
   address: UserAddress;
   saveAddress: (addr: UserAddress) => void;
   notifications: FoodiNotification[];
   markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
+  refreshNotifications: () => Promise<void>;
   conflictData: CartConflictData | null;
   confirmConflictReplace: () => void;
   cancelConflict: () => void;
@@ -156,6 +160,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       })
       .catch(() => {});
   }, []);
+
+  // Fetch real notifications from MySQL when user changes or on mount
+  const refreshNotifications = async () => {
+    try {
+      const notifs = await fetchNotifications(user?.id);
+      if (notifs && notifs.length > 0) {
+        setNotifications(notifs);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    refreshNotifications();
+  }, [user?.id]);
 
   useEffect(() => {
     try {
@@ -283,12 +301,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const login = (
     identifier: string,
-    details?: { name?: string; phone?: string; email?: string; role?: "client" | "driver" | "restaurant" | "admin" }
+    details?: { name?: string; phone?: string; email?: string; role?: "client" | "driver" | "restaurant" | "admin"; id?: string | number }
   ) => {
     localStorage.removeItem("foodi_restaurant_session");
     sessionStorage.clear();
     const isPhone = identifier.includes("+") || /^\d+$/.test(identifier.replace(/\s+/g, ""));
     const updated: UserProfile = {
+      id: details?.id,
       name: details?.name || "Fayçal Agadir",
       email: details?.email || (isPhone ? "faycal@foodi.ma" : identifier),
       phone: details?.phone || (isPhone ? identifier : "+212 6 12 34 56 78"),
@@ -331,6 +350,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     );
+    markNotificationAsRead(id, false, user?.id).catch((err) => {
+      console.warn("Could not mark notification read in MySQL:", err);
+    });
+  };
+
+  const markAllNotificationsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    markNotificationAsRead(undefined, true, user?.id).catch((err) => {
+      console.warn("Could not mark all notifications read in MySQL:", err);
+    });
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -359,6 +388,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveAddress,
         notifications,
         markNotificationRead,
+        markAllNotificationsRead,
+        refreshNotifications,
         conflictData,
         confirmConflictReplace,
         cancelConflict,

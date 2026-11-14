@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Phone, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Bike } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { AuthLayoutShell } from "../components/AuthLayoutShell";
+import { apiLogin } from "../services/api";
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const LoginPage: React.FC = () => {
   const [clientError, setClientError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
     setClientError("");
@@ -49,43 +50,49 @@ export const LoginPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
-
     const identifier = authMode === "email" ? email.trim() : phone.trim();
 
-    setTimeout(() => {
-      let role: "client" | "driver" | "restaurant" | "admin" = "client";
-      let dest = "/";
+    try {
+      const res = await apiLogin({
+        identifier,
+        password,
+      });
 
-      if (identifier.includes("admin")) {
-        role = "admin";
-        dest = "/admin";
-      } else if (identifier.includes("driver") || identifier.includes("tazi")) {
-        role = "driver";
-        dest = "/driver";
-      } else if (identifier.includes("mcdo") || identifier.includes("crusty") || identifier.includes("partner")) {
-        role = "restaurant";
-        dest = "/restaurant-dashboard";
+      if (res.success && res.user) {
+        login(res.user.email || identifier, {
+          id: res.user.id,
+          name: res.user.name,
+          email: res.user.email,
+          phone: res.user.phone,
+          role: res.user.role,
+        });
+
+        let dest = "/";
+        if (res.user.role === "admin") {
+          dest = "/admin";
+        } else if (res.user.role === "driver") {
+          dest = "/driver";
+        } else if (res.user.role === "restaurant") {
+          dest = "/restaurant-dashboard";
+        } else {
+          const isClientTarget =
+            redirectPath &&
+            !redirectPath.includes("admin") &&
+            !redirectPath.includes("driver") &&
+            !redirectPath.includes("restaurant") &&
+            !redirectPath.includes("partner");
+          dest = isClientTarget ? redirectPath : "/";
+        }
+
+        navigate(dest, { replace: true });
       } else {
-        const isClientTarget = redirectPath && !redirectPath.includes("admin") && !redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner");
-        dest = isClientTarget ? redirectPath : "/";
+        setClientError(res.message || "Identifiant ou mot de passe incorrect.");
       }
-
-      login(identifier, { role });
+    } catch (err: any) {
+      setClientError(err?.message || "Erreur de connexion au serveur. Vérifiez vos identifiants.");
+    } finally {
       setIsSubmitting(false);
-      navigate(dest, { replace: true });
-    }, 350);
-  };
-
-  const fillQuickAccount = (demoId: string) => {
-    if (demoId.includes("@")) {
-      setAuthMode("email");
-      setEmail(demoId);
-    } else {
-      setAuthMode("phone");
-      setPhone(demoId);
     }
-    setPassword("password123");
-    setClientError("");
   };
 
   return (
@@ -232,55 +239,6 @@ export const LoginPage: React.FC = () => {
           >
             S'inscrire
           </Link>
-        </div>
-
-        <div className="pt-2 border-t border-gray-100">
-          <div className="text-center text-[11px] font-bold text-[#7A8194] uppercase tracking-wider mb-2.5">
-            Accès Démo Immédiat
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                login("admin@foodi.ma", { name: "Superviseur Agadir", email: "admin@foodi.ma", role: "admin" });
-                navigate("/admin", { replace: true });
-              }}
-              className="py-2.5 px-3 rounded-xl bg-[#0B1020] hover:bg-[#1E293B] text-white text-xs font-black transition-all cursor-pointer text-center"
-            >
-              Admin
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                login("karim.benjelloun@crusty.ma", { name: "Karim Benjelloun", email: "karim.benjelloun@crusty.ma", role: "restaurant" });
-                navigate("/restaurant-dashboard", { replace: true });
-              }}
-              className="py-2.5 px-3 rounded-xl bg-[#FF5A00] hover:bg-[#E04F00] text-white text-xs font-black transition-all cursor-pointer text-center"
-            >
-              Restau
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                login("amine.tazi@foodi.ma", { name: "Amine Tazi", email: "amine.tazi@foodi.ma", role: "driver" });
-                navigate("/driver", { replace: true });
-              }}
-              className="py-2.5 px-3 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white text-xs font-black transition-all cursor-pointer text-center"
-            >
-              Livreur
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                login("faycal@foodi.ma", { name: "Fayçal Agadir", email: "faycal@foodi.ma", role: "client" });
-                const isClientTarget = redirectPath && !redirectPath.includes("admin") && !redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner");
-                navigate(isClientTarget ? redirectPath : "/", { replace: true });
-              }}
-              className="py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#0B1020] text-xs font-black transition-all cursor-pointer text-center"
-            >
-              Client
-            </button>
-          </div>
         </div>
       </div>
     </AuthLayoutShell>

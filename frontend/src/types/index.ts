@@ -107,6 +107,7 @@ export interface UserAddress {
 }
 
 export interface UserProfile {
+  id?: string | number;
   name: string;
   phone: string;
   email: string;
@@ -115,6 +116,8 @@ export interface UserProfile {
   notifyTracking?: boolean;
   notifyPromos?: boolean;
   notifyEmail?: boolean;
+  avatar_url?: string;
+  status?: string;
 }
 
 export interface FoodiNotification {

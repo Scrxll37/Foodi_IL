@@ -208,6 +208,10 @@ export const OrderConfirmationPage: React.FC = () => {
     try {
       const created = await createOrder({
         ...newOrder,
+        customerId: user?.id,
+        customerEmail: user?.email,
+        customerName: user?.name,
+        customerPhone: user?.phone,
         restaurantId: currentRestaurant?.id,
         branchId: closestBranch.id,
       });

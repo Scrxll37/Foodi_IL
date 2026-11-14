@@ -33,6 +33,18 @@ class OrderController extends Controller
             'delivery.driver.driverProfile',
         ])->latest();
 
+        if ($customerId = $request->query('customer_id')) {
+            $query->where('customer_id', $customerId);
+        }
+
+        if ($phone = $request->query('phone')) {
+            $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+            $query->where(function ($q) use ($phone, $cleanPhone) {
+                $q->where('delivery_recipient_phone', $phone)
+                  ->orWhere('delivery_recipient_phone', 'like', "%{$cleanPhone}%");
+            });
+        }
+
         if ($restaurantId = $request->query('restaurant_id')) {
             $query->where('restaurant_id', $restaurantId);
         }
@@ -112,7 +124,19 @@ class OrderController extends Controller
         $totalAmount = isset($data['total']) ? (float) $data['total'] : ($itemsSubtotal + $deliveryFee + $smallOrderFee + $tipAmount);
 
         // 5. Customer Identification
-        $customerId = $request->user()?->id ?? User::where('role', 'customer')->value('id') ?? 1;
+        $customerId = $data['customerId'] ?? $request->user()?->id;
+        if (!$customerId && !empty($data['customerPhone'])) {
+            $cleanP = preg_replace('/[^0-9]/', '', $data['customerPhone']);
+            $customerId = User::where('phone_number', $data['customerPhone'])
+                ->orWhere('phone_number', 'like', "%{$cleanP}%")
+                ->value('id');
+        }
+        if (!$customerId && !empty($data['customerEmail'])) {
+            $customerId = User::where('email', strtolower($data['customerEmail']))->value('id');
+        }
+        if (!$customerId) {
+            $customerId = User::where('role', 'customer')->value('id') ?? 9;
+        }
         $customerUser = User::find($customerId);
 
         // 6. Address parsing (supports nested or flat)
@@ -230,6 +254,24 @@ class OrderController extends Controller
             'verification_code' => $pickupPin,
             'driver_payout_amount' => $deliveryFee,
         ]);
+
+        // Insert notification in MySQL notifications table
+        try {
+            \Illuminate\Support\Facades\DB::table('notifications')->insert([
+                'id' => (string) Str::uuid(),
+                'type' => 'App\Notifications\OrderPlacedNotification',
+                'notifiable_type' => 'App\Models\User',
+                'notifiable_id' => $customerId,
+                'data' => json_encode([
+                    'title' => 'Commande confirmée !',
+                    'message' => "Votre commande #{$order->order_number} chez {$restaurant->name} a été enregistrée avec succès.",
+                    'type' => 'order',
+                ]),
+                'read_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } catch (\Throwable $e) {}
 
         $order->load(['restaurant', 'branch', 'customer', 'items.options', 'delivery.driver.driverProfile']);
         $formatted = $this->formatOrderRecord($order);

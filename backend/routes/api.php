@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PlatformSettingController;
 use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\CustomerAddressController;
@@ -53,3 +55,14 @@ Route::get('/orders', [OrderController::class, 'index']);
 Route::post('/orders', [OrderController::class, 'store']);
 Route::post('/orders/update', [OrderController::class, 'updateStatus']);
 Route::get('/orders/track/{token}', [OrderController::class, 'track']);
+
+// 5. Authentication & Customer Profiles (MySQL users)
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::get('/auth/me', [AuthController::class, 'me']);
+Route::post('/auth/profile', [AuthController::class, 'updateProfile']);
+
+// 6. Notifications (MySQL notifications)
+Route::get('/notifications', [NotificationController::class, 'index']);
+Route::post('/notifications/read', [NotificationController::class, 'markRead']);
+Route::post('/notifications', [NotificationController::class, 'store']);

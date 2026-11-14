@@ -1,4 +1,4 @@
-import { Restaurant, CuisineType, UserAddress, OrderRecord } from "../types";
+import { Restaurant, CuisineType, UserAddress, OrderRecord, FoodiNotification, UserProfile } from "../types";
 
 // In development, Vite proxy forwards /api to http://127.0.0.1:8000
 const API_BASE_URL = "/api";
@@ -62,8 +62,10 @@ export interface CreateOrderPayload {
   subtotal?: number;
   total?: number;
   tipAmount?: number;
+  customerId?: string | number;
   customerName?: string;
   customerPhone?: string;
+  customerEmail?: string;
   paymentMethod?: string;
   id?: string;
   token?: string;
@@ -317,11 +319,16 @@ export async function trackOrder(token: string): Promise<OrderRecord> {
 }
 
 /**
- * 9. Fetch All Orders (Customer history)
+ * 9. Fetch All Orders (Customer history from MySQL)
  */
-export async function fetchOrders(): Promise<OrderRecord[]> {
+export async function fetchOrders(userId?: string, phone?: string): Promise<OrderRecord[]> {
+  const params = new URLSearchParams();
+  if (userId) params.set("customer_id", userId);
+  if (phone) params.set("phone", phone);
+  const qs = params.toString() ? `?${params.toString()}` : "";
+
   try {
-    const res = await apiFetch<any>("/orders");
+    const res = await apiFetch<any>(`/orders${qs}`);
     const orders: OrderRecord[] = Array.isArray(res) ? res : (res.data || []);
     if (orders.length > 0) {
       localStorage.setItem("foodi_orders", JSON.stringify(orders));
@@ -482,5 +489,106 @@ export async function fetchBudgetMeals(): Promise<BudgetMealsResponse> {
 export function getStoredBudgetMeals(): BudgetMealsResponse | null {
   return getCached<BudgetMealsResponse>("budget_meals_all");
 }
+
+/**
+ * 14. Authentication APIs (Connected to MySQL users table)
+ */
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  token?: string;
+  user: UserProfile & { id?: string | number };
+}
+
+export async function apiLogin(payload: {
+  identifier?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+}): Promise<AuthResponse> {
+  const res = await apiFetch<AuthResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return res;
+}
+
+export async function apiRegister(payload: {
+  name: string;
+  email: string;
+  phone?: string;
+  password?: string;
+}): Promise<AuthResponse> {
+  const res = await apiFetch<AuthResponse>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return res;
+}
+
+export async function apiGetProfile(id?: string | number): Promise<{ success: boolean; user: UserProfile }> {
+  const qs = id ? `?id=${encodeURIComponent(id)}` : "";
+  return apiFetch<{ success: boolean; user: UserProfile }>(`/auth/me${qs}`);
+}
+
+export async function apiUpdateProfile(payload: {
+  id?: string | number;
+  name?: string;
+  phone?: string;
+  phone_number?: string;
+  email?: string;
+}): Promise<{ success: boolean; message?: string; user?: UserProfile }> {
+  return apiFetch<{ success: boolean; message?: string; user?: UserProfile }>("/auth/profile", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * 15. Notifications APIs (Connected to MySQL notifications table)
+ */
+export async function fetchNotifications(userId?: string | number): Promise<FoodiNotification[]> {
+  const qs = userId ? `?user_id=${encodeURIComponent(userId)}` : "";
+  try {
+    const res = await apiFetch<FoodiNotification[]>(`/notifications${qs}`);
+    if (Array.isArray(res) && res.length > 0) {
+      localStorage.setItem("foodi_notifications", JSON.stringify(res));
+      return res;
+    }
+  } catch (err) {
+    console.warn("Could not fetch notifications from MySQL:", err);
+  }
+
+  try {
+    const raw = localStorage.getItem("foodi_notifications");
+    if (raw) return JSON.parse(raw);
+  } catch {}
+
+  return [];
+}
+
+export async function markNotificationAsRead(
+  id?: string,
+  all?: boolean,
+  userId?: string | number
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>("/notifications/read", {
+    method: "POST",
+    body: JSON.stringify({ id, all, user_id: userId }),
+  });
+}
+
+export async function createNotification(payload: {
+  title: string;
+  message: string;
+  type?: string;
+  user_id?: string | number;
+}): Promise<{ success: boolean; notification?: FoodiNotification }> {
+  return apiFetch<{ success: boolean; notification?: FoodiNotification }>("/notifications", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { AuthLayoutShell } from "../components/AuthLayoutShell";
+import { apiRegister } from "../services/api";
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ export const RegisterPage: React.FC = () => {
     }, 450);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
 
@@ -96,15 +97,38 @@ export const RegisterPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    setClientErrors((prev) => ({ ...prev, general: "" }));
 
-    setTimeout(() => {
-      login(email.trim(), {
+    try {
+      const res = await apiRegister({
         name: name.trim(),
-        email: email.trim()
+        email: email.trim(),
+        password: password,
       });
+
+      if (res.success && res.user) {
+        login(res.user.email || email.trim(), {
+          id: res.user.id,
+          name: res.user.name,
+          email: res.user.email,
+          phone: res.user.phone,
+          role: "client",
+        });
+        navigate(redirectPath, { replace: true });
+      } else {
+        setClientErrors((prev) => ({
+          ...prev,
+          general: res.message || "Impossible de créer le compte. Veuillez vérifier vos informations.",
+        }));
+      }
+    } catch (err: any) {
+      setClientErrors((prev) => ({
+        ...prev,
+        general: err?.message || "Erreur de connexion au serveur. Veuillez réessayer.",
+      }));
+    } finally {
       setIsSubmitting(false);
-      navigate(redirectPath, { replace: true });
-    }, 400);
+    }
   };
 
   return (
@@ -553,6 +577,27 @@ export const RegisterPage: React.FC = () => {
                 <i className="fa-solid fa-circle-exclamation" />
                 <span>{clientErrors.agreed}</span>
               </p>
+            )}
+
+            {clientErrors.general && (
+              <div
+                style={{
+                  marginTop: "10px",
+                  padding: "10px 14px",
+                  borderRadius: "12px",
+                  backgroundColor: "#FEF2F2",
+                  border: "1px solid #FECACA",
+                  color: "#B91C1C",
+                  fontSize: "0.8125rem",
+                  fontWeight: 700,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <i className="fa-solid fa-circle-exclamation" />
+                <span>{clientErrors.general}</span>
+              </div>
             )}
 
             <div className="auth-step-actions" style={{ marginTop: "1rem" }}>

@@ -3,7 +3,7 @@ import { X, Bell, CheckCheck } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 export const NotificationDrawer: React.FC = () => {
-  const { isNotifOpen, setIsNotifOpen, notifications, markNotificationRead } = useApp();
+  const { isNotifOpen, setIsNotifOpen, notifications, markNotificationRead, markAllNotificationsRead } = useApp();
 
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(isNotifOpen);
@@ -28,7 +28,7 @@ export const NotificationDrawer: React.FC = () => {
   if (!shouldRender && !isNotifOpen) return null;
 
   const markAllRead = () => {
-    notifications.forEach((n) => markNotificationRead(n.id));
+    markAllNotificationsRead();
   };
 
   return (
