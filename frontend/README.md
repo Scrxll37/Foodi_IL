@@ -38,7 +38,7 @@ Foodi est une plateforme web moderne conçue pour la commande et la livraison ex
 src/
 ├── components/          # Composants UI (Header, SearchOverlay, CartDrawer, DishModal...)
 ├── context/             # État global de l'application (Panier, Utilisateur, Adresse)
-├── data/                # Données mockées au format JSON (Restaurants, Plats, Adresses)
+├── services/            # Services API REST connectés au backend Laravel & MySQL
 ├── pages/               # Pages de l'application (Accueil, Menus, Adresse, Auth, Suivi)
 ├── styles/              # Styles globaux et variables de thème
 └── types/               # Définitions TypeScript

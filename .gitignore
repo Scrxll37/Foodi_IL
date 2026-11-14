@@ -35,14 +35,21 @@ backend/storage/framework/sessions/*
 backend/storage/framework/views/*
 backend/storage/pail/*
 
-# OS generated
+# Editor & IDE files
 .DS_Store
 Thumbs.db
-
-# AI guidelines & assistant files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+CLAUDE.md
+AGENTS.md
 **/CLAUDE.md
 **/AGENTS.md
-**/.agents/
-**/.claude/
-**/.cursor/
-**/.gemini/
+.agents/
+.claude/
+.cursor/
+.gemini/
