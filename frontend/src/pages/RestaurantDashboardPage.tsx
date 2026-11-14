@@ -15,8 +15,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Restaurant, OrderRecord, Dish, MenuCategory, RestaurantBranch } from "../types";
-import defaultRestaurants from "../data/restaurants.json";
-import defaultOrders from "../data/orders.json";
+import { getStoredRestaurants } from "../services/api";
 import { EmailChangeModal } from "../components/EmailChangeModal";
 import { useApp } from "../context/AppContext";
 import "../styles/restaurant.css";
@@ -44,7 +43,7 @@ export const RestaurantDashboardPage: React.FC = () => {
       const saved = localStorage.getItem("foodi_restaurants");
       if (saved) return JSON.parse(saved);
     } catch {}
-    return defaultRestaurants as Restaurant[];
+    return getStoredRestaurants();
   });
 
   const { user, logout } = useApp();
@@ -82,7 +81,7 @@ export const RestaurantDashboardPage: React.FC = () => {
     const found = restaurants.find(
       (r) => r.id === activeRestaurantId || r.slug === activeRestaurantId
     );
-    return found || restaurants[0] || (defaultRestaurants[0] as Restaurant);
+    return found || restaurants[0] || (getStoredRestaurants()[0] as Restaurant);
   }, [restaurants, activeRestaurantId]);
 
   const [activeTab, setActiveTab] = useState<
@@ -611,7 +610,7 @@ export const RestaurantDashboardPage: React.FC = () => {
         if (stored) {
           liveList = JSON.parse(stored);
         } else {
-          liveList = defaultOrders as OrderRecord[];
+          liveList = [];
         }
       }
 
@@ -673,7 +672,7 @@ export const RestaurantDashboardPage: React.FC = () => {
         if (stored) {
           setOrders(JSON.parse(stored));
         } else {
-          setOrders(defaultOrders as OrderRecord[]);
+          setOrders([]);
         }
       } catch {}
     }

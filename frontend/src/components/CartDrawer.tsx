@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
-import restaurantsData from "../data/restaurants.json";
+import { getStoredRestaurants } from "../services/api";
 import { Restaurant } from "../types";
 
 export const CartDrawer: React.FC = () => {
@@ -32,7 +32,7 @@ export const CartDrawer: React.FC = () => {
   const currentRestaurant = useMemo(() => {
     if (cart.length === 0) return null;
     const first = cart[0];
-    return (restaurantsData as Restaurant[]).find(
+    return getStoredRestaurants().find(
       (r) => r.id === first.restaurantId || r.name.toLowerCase() === first.restaurantName.toLowerCase()
     );
   }, [cart]);

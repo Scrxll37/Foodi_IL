@@ -34,8 +34,6 @@ import {
   BudgetMeal,
   TopBudgetRestaurant,
 } from "../services/api";
-import restaurantsData from "../data/restaurants.json";
-import cuisinesData from "../data/cuisines.json";
 import { Restaurant, CuisineType } from "../types";
 
 interface HeroAd {

@@ -1,11 +1,19 @@
 import { Restaurant, CuisineType, UserAddress, OrderRecord } from "../types";
-import fallbackRestaurants from "../data/restaurants.json";
-import fallbackPricing from "../data/pricing.json";
-import fallbackCuisines from "../data/cuisines.json";
-import fallbackAddresses from "../data/addresses.json";
 
 // In development, Vite proxy forwards /api to http://127.0.0.1:8000
 const API_BASE_URL = "/api";
+
+export const DEFAULT_TARIFS: PlatformTarifs = {
+  pricePerKm: 4,
+  minDeliveryFee: 8,
+  smallOrderThreshold: 50,
+  smallOrderFee: 5,
+  defaultCommissionRate: 15,
+  serviceStatus: "active",
+  currency: "MAD",
+  supportPhone: "+212 5 28 84 92 10",
+  supportEmail: "supervision@foodi.ma",
+};
 
 export interface PlatformTarifs {
   pricePerKm: number;
@@ -137,7 +145,7 @@ export async function fetchTarifs(forceRefresh = false): Promise<PlatformTarifs>
   const cached = getCached<PlatformTarifs>(cacheKey);
   if (cached) return cached;
 
-  return fallbackPricing as PlatformTarifs;
+  return DEFAULT_TARIFS;
 }
 
 /**
@@ -153,19 +161,19 @@ export async function fetchCuisines(forceRefresh = false): Promise<CuisineType[]
       return data;
     }
   } catch (err) {
-    console.warn("Using fallback cuisines:", err);
+    console.warn("Using cached cuisines:", err);
   }
 
   const cached = getCached<CuisineType[]>(cacheKey);
   if (cached && cached.length > 0) return cached;
 
-  return fallbackCuisines as CuisineType[];
+  return [];
 }
 
 export function getStoredCuisines(): CuisineType[] {
   const cached = getCached<CuisineType[]>("cuisines");
   if (cached && cached.length > 0) return cached;
-  return fallbackCuisines as CuisineType[];
+  return [];
 }
 
 /**
@@ -197,19 +205,19 @@ export async function fetchRestaurants(params?: {
       return data;
     }
   } catch (err) {
-    console.warn("Using fallback restaurants:", err);
+    console.warn("Using cached restaurants:", err);
   }
 
   const cached = getCached<Restaurant[]>(cacheKey);
   if (cached && cached.length > 0) return cached;
 
-  return fallbackRestaurants as Restaurant[];
+  return [];
 }
 
 export function getStoredRestaurants(): Restaurant[] {
   const cached = getCached<Restaurant[]>("restaurants_all");
   if (cached && cached.length > 0) return cached;
-  return fallbackRestaurants as Restaurant[];
+  return [];
 }
 
 /**
@@ -226,13 +234,13 @@ export async function fetchRestaurant(idOrSlug: string, forceRefresh = false): P
       return data;
     }
   } catch (err) {
-    console.warn("Using fallback restaurant detail:", err);
+    console.warn("Using cached restaurant detail:", err);
   }
 
   const cached = getCached<Restaurant>(cacheKey);
   if (cached) return cached;
 
-  const found = (fallbackRestaurants as Restaurant[]).find(
+  const found = getStoredRestaurants().find(
     (r) => r.id === idOrSlug || r.slug === idOrSlug
   );
   return found || null;
@@ -241,7 +249,7 @@ export async function fetchRestaurant(idOrSlug: string, forceRefresh = false): P
 export function getStoredRestaurant(idOrSlug: string): Restaurant | null {
   const cached = getCached<Restaurant>(`restaurant_${idOrSlug}`);
   if (cached) return cached;
-  return (fallbackRestaurants as Restaurant[]).find((r) => r.id === idOrSlug || r.slug === idOrSlug) || null;
+  return getStoredRestaurants().find((r) => r.id === idOrSlug || r.slug === idOrSlug) || null;
 }
 
 /**
@@ -264,7 +272,7 @@ export async function fetchCustomerAddresses(): Promise<UserAddress[]> {
     if (stored) return JSON.parse(stored);
   } catch {}
 
-  return fallbackAddresses as UserAddress[];
+  return [];
 }
 
 /**

@@ -3,12 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/admin.css";
-import ordersData from "../data/orders.json";
-import restaurantsData from "../data/restaurants.json";
-import couriersData from "../data/drivers.json";
-import pricingData from "../data/pricing.json";
-import reviewsData from "../data/reviews.json";
-import pendingRestaurantsData from "../data/restaurants_pending.json";
+import { getStoredRestaurants } from "../services/api";
 import { useApp } from "../context/AppContext";
 
 interface DriverReview {
@@ -95,10 +90,10 @@ interface PlatformPricingSettings {
   supportEmail: string;
 }
 
-const DEFAULT_REVIEWS: DriverReview[] = reviewsData as DriverReview[];
-const AGADIR_20_COURIERS: AdminCourier[] = couriersData as AdminCourier[];
-const DEFAULT_PRICING: PlatformPricingSettings = pricingData as PlatformPricingSettings;
-const BASE_PENDING_RESTAURANTS: AdminRestaurant[] = pendingRestaurantsData as AdminRestaurant[];
+const DEFAULT_REVIEWS: DriverReview[] = [];
+const AGADIR_20_COURIERS: AdminCourier[] = [];
+const DEFAULT_PRICING: PlatformPricingSettings = { pricePerKm: 4, minDeliveryFee: 8, smallOrderThreshold: 50, smallOrderFee: 5, defaultCommissionRate: 15, serviceStatus: "active", supportPhone: "+212 5 28 84 92 10", supportEmail: "supervision@foodi.ma" };
+const BASE_PENDING_RESTAURANTS: AdminRestaurant[] = [];
 
 export const AdminDashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -160,7 +155,7 @@ export const AdminDashboardPage: React.FC = () => {
   });
 
   const [restaurants, setRestaurants] = useState<AdminRestaurant[]>(() => {
-    const baseList: AdminRestaurant[] = (restaurantsData as any[]).map((r, idx) => ({
+    const baseList: AdminRestaurant[] = (getStoredRestaurants() as any[]).map((r, idx) => ({
       id: r.id || `REST-${idx + 1}`,
       name: r.name,
       managerName: r.name === "Crusty" ? "Karim Benjelloun" : r.name === "McDonald's" ? "Direction Régionale Souss" : "Gérant Partenaire",
@@ -239,7 +234,7 @@ export const AdminDashboardPage: React.FC = () => {
       const stored = localStorage.getItem("foodi_admin_orders");
       if (stored) return JSON.parse(stored);
     } catch {}
-    return ordersData as any[];
+    return [];
   });
 
   const [pricingSettings, setPricingSettings] = useState<PlatformPricingSettings>(() => {

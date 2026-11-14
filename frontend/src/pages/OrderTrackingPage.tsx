@@ -22,8 +22,6 @@ import {
   Home,
   ArrowRight
 } from "lucide-react";
-import ordersData from "../data/orders.json";
-import driversData from "../data/drivers.json";
 import "../styles/restaurant.css";
 import { OrderRecord, OrderStatus } from "../types";
 import { useApp } from "../context/AppContext";
@@ -163,15 +161,8 @@ export const OrderTrackingPage: React.FC = () => {
       }
     } catch {}
 
-    // 3. Fallback to initial ordersData
-    const foundFallback = (ordersData as OrderRecord[]).find((o) => o.token === token || o.id === token);
-    if (foundFallback) {
-      setOrder(foundFallback);
-      setIsValidToken(true);
-    } else {
-      setOrder(null);
-      setIsValidToken(false);
-    }
+    setOrder(null);
+    setIsValidToken(false);
 
     setLoading(false);
   }, [token]);
@@ -354,7 +345,7 @@ export const OrderTrackingPage: React.FC = () => {
         }
 
         const rawCouriers = localStorage.getItem("foodi_admin_couriers_v2");
-        const allCouriers = rawCouriers ? JSON.parse(rawCouriers) : (driversData as any[]);
+        const allCouriers = rawCouriers ? JSON.parse(rawCouriers) : [];
         const onlineCouriers = Array.isArray(allCouriers)
           ? allCouriers.filter((d: any) => d.status === "active" && Boolean(d.isOnline))
           : [];

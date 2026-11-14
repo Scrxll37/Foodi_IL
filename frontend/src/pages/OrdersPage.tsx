@@ -21,10 +21,8 @@ import {
 import { HomeHeader } from "../components/HomeHeader";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Loader } from "../components/Loader";
-import ordersData from "../data/orders.json";
-import restaurantsData from "../data/restaurants.json";
 import { OrderRecord, Restaurant } from "../types";
-import { fetchOrders as loadOrdersFromApi, fetchRestaurants } from "../services/api";
+import { fetchOrders as loadOrdersFromApi, fetchRestaurants, getStoredRestaurants } from "../services/api";
 
 export const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,7 +32,7 @@ export const OrdersPage: React.FC = () => {
       const raw = localStorage.getItem("foodi_orders");
       if (raw) return JSON.parse(raw);
     } catch {}
-    return ordersData as OrderRecord[];
+    return [];
   });
   const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
     try {
@@ -44,7 +42,7 @@ export const OrdersPage: React.FC = () => {
         if (parsed?.data?.length > 0) return parsed.data;
       }
     } catch {}
-    return restaurantsData as Restaurant[];
+    return getStoredRestaurants();
   });
   const [loading, setLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);

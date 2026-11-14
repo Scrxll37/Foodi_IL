@@ -17,9 +17,6 @@ import {
   Home
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import restaurantsData from "../data/restaurants.json";
-import ordersData from "../data/orders.json";
-import driversData from "../data/drivers.json";
 import { Restaurant } from "../types";
 import { HomeHeader } from "../components/HomeHeader";
 import { createOrder, fetchRestaurants, getStoredRestaurants } from "../services/api";
@@ -221,7 +218,7 @@ export const OrderConfirmationPage: React.FC = () => {
       console.warn("Using fallback local order storage:", err);
       try {
         const existingRaw = localStorage.getItem("foodi_orders");
-        const existing = existingRaw ? JSON.parse(existingRaw) : ordersData;
+        const existing = existingRaw ? JSON.parse(existingRaw) : [];
         const updated = [newOrder, ...existing.filter((o: any) => o.id !== newOrder.id && o.token !== uniqueToken)];
         localStorage.setItem("foodi_orders", JSON.stringify(updated));
       } catch {}
@@ -273,7 +270,7 @@ export const OrderConfirmationPage: React.FC = () => {
     const getOnlineCouriers = () => {
       try {
         const raw = localStorage.getItem("foodi_admin_couriers_v2");
-        const list = raw ? JSON.parse(raw) : (driversData as any[]);
+        const list = raw ? JSON.parse(raw) : [];
         if (Array.isArray(list)) {
           return list.filter((d: any) => d.status === "active" && Boolean(d.isOnline));
         }

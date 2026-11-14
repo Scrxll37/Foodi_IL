@@ -1,12 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import restaurantsData from "../data/restaurants.json";
-import cuisinesData from "../data/cuisines.json";
+import { getStoredRestaurants, getStoredCuisines } from "../services/api";
 import { Restaurant } from "../types";
 
 export const Footer: React.FC = () => {
-  const restaurants: Restaurant[] = restaurantsData as Restaurant[];
-  const cuisines = cuisinesData;
+  const restaurants: Restaurant[] = getStoredRestaurants();
+  const cuisines = getStoredCuisines();
 
   return (
     <footer className="home-footer">

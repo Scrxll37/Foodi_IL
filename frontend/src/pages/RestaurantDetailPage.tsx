@@ -21,8 +21,7 @@ import { MobileBottomNav } from "../components/MobileBottomNav";
 import { DishModal } from "../components/DishModal";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
-import { fetchRestaurant, getStoredRestaurant } from "../services/api";
-import restaurantsData from "../data/restaurants.json";
+import { fetchRestaurant, getStoredRestaurant, getStoredRestaurants } from "../services/api";
 import { Restaurant, Dish } from "../types";
 import { useApp } from "../context/AppContext";
 
@@ -67,7 +66,7 @@ export const RestaurantDetailPage: React.FC = () => {
   const { addToCart, user, favorites, toggleFavorite } = useApp();
 
   const [restaurant, setRestaurant] = useState<Restaurant>(() => {
-    return (slug && getStoredRestaurant(slug)) || (restaurantsData[0] as Restaurant);
+    return (slug && getStoredRestaurant(slug)) || getStoredRestaurants()[0] || ({} as Restaurant);
   });
 
   const loadRestaurantData = useCallback(() => {

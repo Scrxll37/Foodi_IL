@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem, UserAddress, UserProfile, FoodiNotification } from "../types";
-import initialAddresses from "../data/addresses.json";
-import initialNotifications from "../data/notifications.json";
 import {
   saveCustomerAddress,
   fetchCustomerAddresses,
@@ -55,7 +53,31 @@ const defaultGuestUser: UserProfile = {
   isLoggedIn: false
 };
 
-const defaultAddr: UserAddress = initialAddresses[0] as UserAddress;
+const defaultAddr: UserAddress = {
+  id: "addr_default",
+  type: "apartment",
+  neighborhood: "Talborjt",
+  street: "Avenue Hassan II",
+  city: "Agadir",
+  buildingNameNumber: "Résidence Al Waha, Imm B",
+  floorNumber: "3",
+  doorNumber: "12",
+  instructions: "Sonner à l'interphone B12",
+  lat: 30.4278,
+  lng: -9.5981,
+  isDefault: true,
+};
+
+const DEFAULT_NOTIFICATIONS: FoodiNotification[] = [
+  {
+    id: "notif-1",
+    title: "Bienvenue sur Foodi !",
+    message: "Découvrez les meilleures enseignes d'Agadir livrées chez vous en quelques clics.",
+    time: "À l'instant",
+    isRead: false,
+    type: "system",
+  },
+];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -111,9 +133,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [notifications, setNotifications] = useState<FoodiNotification[]>(() => {
     try {
       const stored = localStorage.getItem("foodi_notifications");
-      return stored ? JSON.parse(stored) : initialNotifications;
+      return stored ? JSON.parse(stored) : DEFAULT_NOTIFICATIONS;
     } catch {
-      return initialNotifications as FoodiNotification[];
+      return DEFAULT_NOTIFICATIONS;
     }
   });
 

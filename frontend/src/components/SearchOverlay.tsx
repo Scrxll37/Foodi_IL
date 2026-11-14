@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, X, Clock, ArrowRight, Star, MapPin, Bike, Sparkles } from "lucide-react";
-import restaurantsData from "../data/restaurants.json";
-import { fetchRestaurants } from "../services/api";
+import { fetchRestaurants, getStoredRestaurants } from "../services/api";
 import { Restaurant } from "../types";
 import { useApp } from "../context/AppContext";
 
@@ -44,7 +43,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
         if (parsed?.data?.length > 0) return parsed.data;
       }
     } catch {}
-    return restaurantsData as Restaurant[];
+    return getStoredRestaurants();
   });
 
   useEffect(() => {

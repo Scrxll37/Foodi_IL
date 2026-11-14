@@ -9,8 +9,6 @@ import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import { fetchRestaurants, fetchCuisines, getStoredRestaurants, getStoredCuisines } from "../services/api";
-import fallbackRestaurants from "../data/restaurants.json";
-import fallbackCuisines from "../data/cuisines.json";
 import { Restaurant, CuisineType } from "../types";
 
 const SPECIAL_CATEGORIES = [

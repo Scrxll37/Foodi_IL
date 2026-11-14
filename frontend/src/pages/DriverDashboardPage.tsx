@@ -53,7 +53,7 @@ import {
   Layers
 } from "lucide-react";
 import { OrderRecord, OrderStatus } from "../types";
-import driversData from "../data/drivers.json";
+const DEFAULT_COURIER = { id: "c-fallback", fullName: "Livreur Foodi", phone: "+212 6 00 00 00 00", email: "driver@foodi.ma", status: "active", isOnline: true, lat: 30.4215, lng: -9.5982 };
 import { fetchRoadRoute, buildRouteGeometry, LatLng } from "../utils/routing";
 import { EmailChangeModal } from "../components/EmailChangeModal";
 import { DriverHeroIllustration } from "../components/DriverHeroIllustration";
@@ -77,7 +77,7 @@ export const DriverDashboardPage: React.FC = () => {
   const getMatchedCourier = useCallback(() => {
     try {
       const raw = localStorage.getItem("foodi_admin_couriers_v2");
-      const list = raw ? JSON.parse(raw) : (driversData as any[]);
+      const list = raw ? JSON.parse(raw) : [DEFAULT_COURIER];
       if (Array.isArray(list) && list.length > 0) {
         if (user && user.isLoggedIn) {
           const matched = list.find((c: any) =>
@@ -90,7 +90,7 @@ export const DriverDashboardPage: React.FC = () => {
         return list[0];
       }
     } catch {}
-    return (driversData as any[])[0];
+    return DEFAULT_COURIER;
   }, [user]);
 
   const [driverLocation, setDriverLocation] = useState<LatLng>([30.4215, -9.5982]);
@@ -99,7 +99,7 @@ export const DriverDashboardPage: React.FC = () => {
     try {
       const courier = getMatchedCourier();
       const raw = localStorage.getItem("foodi_admin_couriers_v2");
-      let list = raw ? JSON.parse(raw) : (driversData as any[]);
+      let list = raw ? JSON.parse(raw) : [DEFAULT_COURIER];
       if (!Array.isArray(list)) list = [];
       const cId = courier?.id;
       const cName = courier?.fullName;
