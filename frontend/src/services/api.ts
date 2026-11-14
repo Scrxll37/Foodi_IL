@@ -455,17 +455,16 @@ export interface TopBudgetRestaurant {
 
 export interface BudgetMealsResponse {
   status: string;
-  topRestaurants: TopBudgetRestaurant[];
+  topRestaurants?: TopBudgetRestaurant[];
   meals: BudgetMeal[];
   total: number;
 }
 
-export async function fetchBudgetMeals(restaurantSlug?: string): Promise<BudgetMealsResponse> {
-  const cacheKey = restaurantSlug && restaurantSlug !== "all" ? `budget_meals_${restaurantSlug}` : "budget_meals_all";
-  const query = restaurantSlug && restaurantSlug !== "all" ? `?restaurant=${encodeURIComponent(restaurantSlug)}` : "";
+export async function fetchBudgetMeals(): Promise<BudgetMealsResponse> {
+  const cacheKey = "budget_meals_all";
 
   try {
-    const res = await apiFetch<BudgetMealsResponse>(`/meals/budget${query}`);
+    const res = await apiFetch<BudgetMealsResponse>(`/meals/budget?_t=${Date.now()}`);
     if (res && res.meals) {
       setCached(cacheKey, res);
       return res;
@@ -477,12 +476,11 @@ export async function fetchBudgetMeals(restaurantSlug?: string): Promise<BudgetM
   const cached = getCached<BudgetMealsResponse>(cacheKey);
   if (cached && cached.meals) return cached;
 
-  return { status: "fallback", topRestaurants: [], meals: [], total: 0 };
+  return { status: "fallback", meals: [], total: 0 };
 }
 
-export function getStoredBudgetMeals(restaurantSlug?: string): BudgetMealsResponse | null {
-  const cacheKey = restaurantSlug && restaurantSlug !== "all" ? `budget_meals_${restaurantSlug}` : "budget_meals_all";
-  return getCached<BudgetMealsResponse>(cacheKey);
+export function getStoredBudgetMeals(): BudgetMealsResponse | null {
+  return getCached<BudgetMealsResponse>("budget_meals_all");
 }
 
 

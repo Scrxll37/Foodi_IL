@@ -53,108 +53,42 @@ class RestaurantController extends Controller
     }
 
     /**
-     * Get budget meals (<= 50 MAD) with top 3 restaurants filter.
+     * Get budget meals (<= 50 MAD).
+     * If user explicitly marks items with is_featured = 1, those items are returned.
      */
     public function budgetMeals(Request $request): JsonResponse
     {
-        // 1. Identify all parent restaurants with budget meals (real meals >= 15 MAD and <= 50 MAD)
-        $restaurantsWithBudget = Restaurant::whereNull('parent_restaurant_id')
-            ->whereHas('menuItems', function ($q) {
-                $q->where('price', '<=', 50)
-                  ->where('price', '>=', 15)
-                  ->where('is_available', true)
-                  ->whereDoesntHave('category', function ($cq) {
-                      $cq->where('name', 'like', '%Sauce%')
-                         ->orWhere('name', 'like', '%Boisson%')
-                         ->orWhere('name', 'like', '%Drinks%');
-                  });
-            })
-            ->withCount(['menuItems as budget_items_count' => function ($q) {
-                $q->where('price', '<=', 50)
-                  ->where('price', '>=', 15)
-                  ->where('is_available', true)
-                  ->whereDoesntHave('category', function ($cq) {
-                      $cq->where('name', 'like', '%Sauce%')
-                         ->orWhere('name', 'like', '%Boisson%')
-                         ->orWhere('name', 'like', '%Drinks%');
-                  });
-            }])
-            ->withCount('orders')
-            ->get();
-
-        // 2. Score and pick Top 3 restaurants
-        $sortedRestaus = $restaurantsWithBudget->sortByDesc(function ($r) {
-            $orderScore = ($r->orders_count ?? 0) * 10;
-            $ratingScore = ((float) ($r->rating_cache ?? 4.5)) * 5;
-            $itemsScore = min((int) ($r->budget_items_count ?? 0), 10);
-            return $orderScore + $ratingScore + $itemsScore;
-        })->values();
-
-        $top3Restaurants = $sortedRestaus->take(3)->map(function ($r) {
-            return [
-                'id' => (string) $r->id,
-                'name' => $r->name,
-                'slug' => $r->slug,
-                'logo' => $r->logo_path ?? '/images/restaurants/McDonalds.png',
-                'rating' => (float) ($r->rating_cache ?? 4.8),
-                'deliveryFee' => (float) ($r->base_delivery_fee ?? 10.0),
-                'mealsCount' => (int) $r->budget_items_count,
-            ];
-        })->values()->all();
-
-        // 3. Query budget meals
-        $restaurantFilter = $request->query('restaurant');
-        $mealsQuery = MenuItem::where('price', '<=', 50)
-            ->where('price', '>=', 15)
+        // 1. Fetch meals with price <= 50 that the user marked as is_featured = 1
+        $featuredMeals = MenuItem::where('price', '<=', 50)
             ->where('is_available', true)
-            ->whereDoesntHave('category', function ($cq) {
-                $cq->where('name', 'like', '%Sauce%')
-                   ->orWhere('name', 'like', '%Boisson%')
-                   ->orWhere('name', 'like', '%Drinks%');
-            })
+            ->where('is_featured', 1)
             ->with(['restaurant' => function ($q) {
                 $q->select('id', 'name', 'slug', 'logo_path', 'base_delivery_fee', 'rating_cache');
-            }]);
+            }])
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
 
-        if ($restaurantFilter && $restaurantFilter !== 'all') {
-            $mealsQuery->whereHas('restaurant', function ($q) use ($restaurantFilter) {
-                $q->where('slug', $restaurantFilter)->orWhere('id', $restaurantFilter);
-            });
-            $meals = $mealsQuery->orderBy('price', 'asc')->take(40)->get();
+        if ($featuredMeals->count() > 0) {
+            // User explicitly chose which dishes to show!
+            $meals = $featuredMeals;
         } else {
-            // For "all", take meals from top restaurants, interleaving to provide great variety
-            $topIds = $sortedRestaus->take(5)->pluck('id')->all();
-            $rawMeals = $mealsQuery->whereIn('restaurant_id', $topIds)
-                ->orderByRaw('CASE WHEN is_featured = 1 THEN 0 WHEN is_popular = 1 THEN 1 ELSE 2 END')
+            // Default fallback if no dishes are explicitly marked as is_featured
+            $meals = MenuItem::where('price', '<=', 50)
+                ->where('price', '>=', 15)
+                ->where('is_available', true)
+                ->whereDoesntHave('category', function ($cq) {
+                    $cq->where('name', 'like', '%Sauce%')
+                       ->orWhere('name', 'like', '%Boisson%')
+                       ->orWhere('name', 'like', '%Drinks%');
+                })
+                ->with(['restaurant' => function ($q) {
+                    $q->select('id', 'name', 'slug', 'logo_path', 'base_delivery_fee', 'rating_cache');
+                }])
+                ->orderBy('sort_order', 'asc')
                 ->orderBy('price', 'asc')
+                ->take(30)
                 ->get();
-
-            // Interleave meals across restaurants
-            $byRestaurant = $rawMeals->groupBy('restaurant_id');
-            $interleaved = collect();
-            $maxItems = $byRestaurant->map->count()->max() ?? 0;
-
-            for ($i = 0; $i < $maxItems; $i++) {
-                foreach ($byRestaurant as $group) {
-                    if (isset($group[$i])) {
-                        $interleaved->push($group[$i]);
-                    }
-                }
-            }
-
-            $meals = $interleaved->take(35);
-
-            // Backfill if fewer than 10
-            if ($meals->count() < 10) {
-                $meals = MenuItem::where('price', '<=', 50)
-                    ->where('is_available', true)
-                    ->with(['restaurant' => function ($q) {
-                        $q->select('id', 'name', 'slug', 'logo_path', 'base_delivery_fee', 'rating_cache');
-                    }])
-                    ->orderBy('price', 'asc')
-                    ->take(30)
-                    ->get();
-            }
         }
 
         $formattedMeals = $meals->map(function ($meal) {
@@ -181,7 +115,6 @@ class RestaurantController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'topRestaurants' => $top3Restaurants,
             'meals' => $formattedMeals,
             'total' => $formattedMeals->count(),
         ]);
