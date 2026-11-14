@@ -194,7 +194,6 @@ export const HomePage: React.FC = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>(getStoredRestaurants);
   const [cuisines, setCuisines] = useState<CuisineType[]>(getStoredCuisines);
 
-  // Budget Meals (< 50 MAD) State with Real DB Data
   const initialBudget = getStoredBudgetMeals();
   const [budgetMeals, setBudgetMeals] = useState<BudgetMeal[]>(initialBudget?.meals || []);
 

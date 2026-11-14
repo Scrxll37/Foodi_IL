@@ -12,8 +12,9 @@ export const NotificationDrawer: React.FC = () => {
     if (isNotifOpen) {
       setShouldRender(true);
       setIsClosing(false);
+      markAllNotificationsRead();
     }
-  }, [isNotifOpen]);
+  }, [isNotifOpen, markAllNotificationsRead]);
 
   const handleClose = () => {
     if (isClosing) return;

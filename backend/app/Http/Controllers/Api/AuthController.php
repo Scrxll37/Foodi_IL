@@ -14,9 +14,6 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    /**
-     * User Login: authenticate against MySQL users table.
-     */
     public function login(Request $request): JsonResponse
     {
         $identifier = trim($request->input('identifier') ?? $request->input('email') ?? $request->input('phone') ?? '');
@@ -29,12 +26,10 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Find user by email or phone
         $user = null;
         if (str_contains($identifier, '@')) {
             $user = User::where('email', strtolower($identifier))->first();
         } else {
-            // Normalize phone: strip spaces, dashes, parentheses
             $cleanPhone = preg_replace('/[^0-9]/', '', $identifier);
             $user = User::where(function ($q) use ($identifier, $cleanPhone) {
                 $q->where('phone_number', $identifier)
@@ -49,7 +44,6 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Check password
         $passwordValid = Hash::check($password, $user->password) || ($password === 'password123');
 
         if (!$passwordValid) {
@@ -59,9 +53,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Format role for frontend consumption ('client' | 'driver' | 'restaurant' | 'admin')
         $frontendRole = $this->formatFrontendRole($user->role);
-
         $token = 'tok_' . Str::random(40);
 
         return response()->json([
@@ -81,9 +73,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * User Registration: insert new record into MySQL users table.
-     */
     public function register(Request $request): JsonResponse
     {
         $name = trim($request->input('name', ''));
@@ -91,7 +80,6 @@ class AuthController extends Controller
         $phone = trim($request->input('phone') ?? $request->input('phone_number') ?? '');
         $password = (string) $request->input('password', '');
 
-        // Basic validations
         if (empty($name) || strlen($name) < 3) {
             return response()->json([
                 'success' => false,
@@ -113,7 +101,6 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Check if email already exists
         if (User::where('email', $email)->exists()) {
             return response()->json([
                 'success' => false,
@@ -121,12 +108,10 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Format phone
         if (empty($phone)) {
             $phone = '+212 6 ' . mt_rand(10, 99) . ' ' . mt_rand(10, 99) . ' ' . mt_rand(10, 99);
         }
 
-        // Insert new customer into MySQL users table
         $user = User::create([
             'name' => $name,
             'email' => $email,
@@ -136,7 +121,6 @@ class AuthController extends Controller
             'status' => UserStatus::Active,
         ]);
 
-        // Insert a welcome notification in MySQL notifications table
         try {
             DB::table('notifications')->insert([
                 'id' => (string) Str::uuid(),
@@ -152,9 +136,7 @@ class AuthController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Could not insert welcome notification: ' . $e->getMessage());
-        }
+        } catch (\Throwable $e) {}
 
         $token = 'tok_' . Str::random(40);
 
@@ -174,9 +156,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    /**
-     * Get current user profile from MySQL.
-     */
     public function me(Request $request): JsonResponse
     {
         $id = $request->query('id') ?? $request->header('X-User-Id');
@@ -201,9 +180,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Update user profile in MySQL.
-     */
     public function updateProfile(Request $request): JsonResponse
     {
         $id = $request->input('id');
@@ -244,9 +220,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Map backend UserRole enum to frontend role string.
-     */
     private function formatFrontendRole(mixed $role): string
     {
         $roleStr = $role instanceof \BackedEnum ? $role->value : (string) $role;

@@ -105,7 +105,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         }
       }
-      // Fallback check in session cookie
       const cookieUser = getSessionCookie();
       if (cookieUser && cookieUser.isLoggedIn) {
         return cookieUser;
@@ -148,7 +147,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [conflictData, setConflictData] = useState<CartConflictData | null>(null);
 
-  // Preload critical assets and sync saved addresses from backend on mount
   useEffect(() => {
     preloadBrandAssets();
     fetchCustomerAddresses()
@@ -161,7 +159,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       .catch(() => {});
   }, []);
 
-  // Fetch real notifications from MySQL when user changes or on mount
   const refreshNotifications = async () => {
     try {
       const notifs = await fetchNotifications(user?.id);

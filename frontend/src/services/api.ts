@@ -1,6 +1,5 @@
 import { Restaurant, CuisineType, UserAddress, OrderRecord, FoodiNotification, UserProfile } from "../types";
 
-// In development, Vite proxy forwards /api to http://127.0.0.1:8000
 const API_BASE_URL = "/api";
 
 export const DEFAULT_TARIFS: PlatformTarifs = {
@@ -73,20 +72,16 @@ export interface CreateOrderPayload {
   travelTime?: number;
 }
 
-// Client-side cache TTL: 5 minutes (in milliseconds)
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
-// Memory cache for instant tab switches
 const memoryCache = new Map<string, { timestamp: number; data: any }>();
 
 function getCached<T>(key: string): T | null {
-  // 1. Check in-memory
   const mem = memoryCache.get(key);
   if (mem && Date.now() - mem.timestamp < CACHE_TTL_MS) {
     return mem.data as T;
   }
 
-  // 2. Check localStorage
   try {
     const raw = localStorage.getItem(`foodi_cache_${key}`);
     if (raw) {
@@ -109,9 +104,6 @@ function setCached<T>(key: string, data: T): void {
   } catch {}
 }
 
-/**
- * Universal JSON Fetcher with error handling
- */
 async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   const response = await fetch(url, {
@@ -131,9 +123,6 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> 
   return response.json();
 }
 
-/**
- * 1. Fetch Tarifs and Platform Settings
- */
 export async function fetchTarifs(forceRefresh = false): Promise<PlatformTarifs> {
   const cacheKey = "tarifs";
   try {
@@ -150,9 +139,6 @@ export async function fetchTarifs(forceRefresh = false): Promise<PlatformTarifs>
   return DEFAULT_TARIFS;
 }
 
-/**
- * 2. Fetch Cuisines list (Always queries DB for fresh state, falls back to cache)
- */
 export async function fetchCuisines(forceRefresh = false): Promise<CuisineType[]> {
   const cacheKey = "cuisines";
   try {
@@ -178,9 +164,6 @@ export function getStoredCuisines(): CuisineType[] {
   return [];
 }
 
-/**
- * 3. Fetch Restaurants list (Always queries DB for fresh state, falls back to cache)
- */
 export async function fetchRestaurants(params?: {
   q?: string;
   cuisine?: string;
@@ -222,9 +205,6 @@ export function getStoredRestaurants(): Restaurant[] {
   return [];
 }
 
-/**
- * 4. Fetch Single Restaurant with Menu & Dishes (Always queries DB, updates cache)
- */
 export async function fetchRestaurant(idOrSlug: string, forceRefresh = false): Promise<Restaurant | null> {
   const cacheKey = `restaurant_${idOrSlug}`;
 
@@ -250,13 +230,12 @@ export async function fetchRestaurant(idOrSlug: string, forceRefresh = false): P
 
 export function getStoredRestaurant(idOrSlug: string): Restaurant | null {
   const cached = getCached<Restaurant>(`restaurant_${idOrSlug}`);
-  if (cached) return cached;
-  return getStoredRestaurants().find((r) => r.id === idOrSlug || r.slug === idOrSlug) || null;
+  if (cached && Array.isArray(cached.categories) && cached.categories.length > 0) return cached;
+  const found = getStoredRestaurants().find((r) => r.id === idOrSlug || r.slug === idOrSlug);
+  if (found && Array.isArray(found.categories) && found.categories.length > 0) return found;
+  return null;
 }
 
-/**
- * 5. Fetch Customer Saved Addresses
- */
 export async function fetchCustomerAddresses(): Promise<UserAddress[]> {
   try {
     const res = await apiFetch<any>("/customer/addresses");
@@ -277,9 +256,6 @@ export async function fetchCustomerAddresses(): Promise<UserAddress[]> {
   return [];
 }
 
-/**
- * 6. Save Customer Address
- */
 export async function saveCustomerAddress(address: Partial<UserAddress>): Promise<UserAddress> {
   const res = await apiFetch<any>("/customer/addresses", {
     method: "POST",
@@ -288,9 +264,6 @@ export async function saveCustomerAddress(address: Partial<UserAddress>): Promis
   return res.data || res;
 }
 
-/**
- * 7. Place a Customer Order (Inserts into MySQL)
- */
 export async function createOrder(payload: CreateOrderPayload): Promise<OrderRecord> {
   const res = await apiFetch<any>("/orders", {
     method: "POST",
@@ -299,7 +272,6 @@ export async function createOrder(payload: CreateOrderPayload): Promise<OrderRec
 
   const orderRecord: OrderRecord = res.order || res.data || res;
 
-  // Persist order in local storage list for customer history
   try {
     const raw = localStorage.getItem("foodi_orders");
     const current: OrderRecord[] = raw ? JSON.parse(raw) : [];
@@ -310,17 +282,11 @@ export async function createOrder(payload: CreateOrderPayload): Promise<OrderRec
   return orderRecord;
 }
 
-/**
- * 8. Real-time Order Tracking by Token
- */
 export async function trackOrder(token: string): Promise<OrderRecord> {
   const res = await apiFetch<any>(`/orders/track/${token}`);
   return res.data || res.order || res;
 }
 
-/**
- * 9. Fetch All Orders (Customer history from MySQL)
- */
 export async function fetchOrders(userId?: string, phone?: string): Promise<OrderRecord[]> {
   const params = new URLSearchParams();
   if (userId) params.set("customer_id", userId);
@@ -346,9 +312,6 @@ export async function fetchOrders(userId?: string, phone?: string): Promise<Orde
   return [];
 }
 
-/**
- * 10. Update Order Status (Syncs to MySQL orders and deliveries table)
- */
 export async function updateOrderStatus(payload: {
   id?: string;
   token?: string;
@@ -378,9 +341,6 @@ export async function updateOrderStatus(payload: {
   return updated;
 }
 
-/**
- * 11. Session Cookie Helpers
- */
 export function setSessionCookie(user: any): void {
   if (typeof document === "undefined") return;
   const cookieVal = encodeURIComponent(JSON.stringify(user));
@@ -403,9 +363,6 @@ export function clearSessionCookie(): void {
   document.cookie = "foodi_session=; path=/; max-age=0";
 }
 
-/**
- * 12. Preload and Cache Critical Brand Logos to eliminate latency
- */
 export function preloadBrandAssets(): void {
   if (typeof window === "undefined") return;
   const criticalLogos = [
@@ -428,9 +385,6 @@ export function preloadBrandAssets(): void {
   });
 }
 
-/**
- * 13. Budget Meals & Top 3 Restaurants (< 50 MAD)
- */
 export interface BudgetMeal {
   id: string | number;
   name: string;
@@ -490,9 +444,6 @@ export function getStoredBudgetMeals(): BudgetMealsResponse | null {
   return getCached<BudgetMealsResponse>("budget_meals_all");
 }
 
-/**
- * 14. Authentication APIs (Connected to MySQL users table)
- */
 export interface AuthResponse {
   success: boolean;
   message?: string;
@@ -544,9 +495,6 @@ export async function apiUpdateProfile(payload: {
   });
 }
 
-/**
- * 15. Notifications APIs (Connected to MySQL notifications table)
- */
 export async function fetchNotifications(userId?: string | number): Promise<FoodiNotification[]> {
   const qs = userId ? `?user_id=${encodeURIComponent(userId)}` : "";
   try {
@@ -589,6 +537,3 @@ export async function createNotification(payload: {
     body: JSON.stringify(payload),
   });
 }
-
-
-

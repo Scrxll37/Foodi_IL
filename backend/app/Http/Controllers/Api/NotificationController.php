@@ -10,9 +10,6 @@ use Illuminate\Support\Str;
 
 class NotificationController extends Controller
 {
-    /**
-     * Get user notifications from MySQL notifications table.
-     */
     public function index(Request $request): JsonResponse
     {
         $userId = $request->query('user_id') ?? $request->header('X-User-Id');
@@ -29,7 +26,6 @@ class NotificationController extends Controller
 
         $records = $query->take(30)->get();
 
-        // If no notifications exist yet in MySQL for this user, seed the welcome notification into MySQL
         if ($records->isEmpty()) {
             $newId = (string) Str::uuid();
             DB::table('notifications')->insert([
@@ -68,9 +64,6 @@ class NotificationController extends Controller
         return response()->json($notifications);
     }
 
-    /**
-     * Mark notification(s) as read in MySQL.
-     */
     public function markRead(Request $request): JsonResponse
     {
         $id = $request->input('id');
@@ -90,9 +83,6 @@ class NotificationController extends Controller
         return response()->json(['success' => true, 'message' => 'Notification marquée comme lue']);
     }
 
-    /**
-     * Insert a new notification into MySQL.
-     */
     public function store(Request $request): JsonResponse
     {
         $title = $request->input('title', 'Alerte Foodi');

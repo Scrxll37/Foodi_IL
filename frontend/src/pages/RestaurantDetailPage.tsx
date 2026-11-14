@@ -65,19 +65,44 @@ export const RestaurantDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { addToCart, user, favorites, toggleFavorite } = useApp();
 
-  const [restaurant, setRestaurant] = useState<Restaurant>(() => {
-    return (slug && getStoredRestaurant(slug)) || getStoredRestaurants()[0] || ({} as Restaurant);
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(() => {
+    if (slug) {
+      const cached = getStoredRestaurant(slug);
+      if (cached && Array.isArray(cached.categories) && cached.categories.length > 0) {
+        return cached;
+      }
+    }
+    return null;
   });
 
-  const loadRestaurantData = useCallback(() => {
+  const [pageLoading, setPageLoading] = useState<boolean>(() => {
     if (slug) {
-      fetchRestaurant(slug).then((data) => {
-        if (data) {
-          setRestaurant(data);
-          setPageLoading(false);
-        }
-      });
+      const cached = getStoredRestaurant(slug);
+      if (cached && Array.isArray(cached.categories) && cached.categories.length > 0) {
+        return false;
+      }
     }
+    return true;
+  });
+
+  const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
+  const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
+  const loadRestaurantData = useCallback(() => {
+    if (!slug) return;
+    fetchRestaurant(slug, true)
+      .then((data) => {
+        if (data && data.name) {
+          setRestaurant(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not load restaurant:", err);
+      })
+      .finally(() => {
+        setPageLoading(false);
+      });
   }, [slug]);
 
   useEffect(() => {
@@ -86,31 +111,23 @@ export const RestaurantDetailPage: React.FC = () => {
     return () => window.removeEventListener("focus", loadRestaurantData);
   }, [loadRestaurantData]);
 
-  const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
-  const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
-  const [pageLoading, setPageLoading] = useState(true);
-  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 250);
-    return () => clearTimeout(timer);
-  }, [restaurant.id]);
-
   const satisfactionRate = useMemo(() => {
+    if (!restaurant) return 96;
     const score = Math.round((Number(restaurant.rating || 4.5) / 5) * 100);
     return Math.min(99, Math.max(78, score));
-  }, [restaurant.rating]);
+  }, [restaurant]);
 
   const verifiedReviewCount = useMemo(() => {
-    return Number(restaurant.reviewCount) || 142;
-  }, [restaurant.reviewCount]);
+    return Number(restaurant?.reviewCount) || 142;
+  }, [restaurant]);
 
   const allDishes = useMemo(() => {
+    if (!restaurant || !Array.isArray(restaurant.categories)) return [];
     const list: Dish[] = [];
     restaurant.categories.forEach((cat) => {
-      cat.dishes.forEach((d) => list.push(d));
+      if (Array.isArray(cat.dishes)) {
+        cat.dishes.forEach((d) => list.push(d));
+      }
     });
     return list;
   }, [restaurant]);
@@ -124,6 +141,7 @@ export const RestaurantDetailPage: React.FC = () => {
       navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
+    if (!restaurant) return;
     if (dish.hasOptions) {
       setSelectedDish(dish);
     } else {
@@ -151,9 +169,13 @@ export const RestaurantDetailPage: React.FC = () => {
     }
   };
 
-  const isFav = favorites.includes(restaurant.slug);
+  const isFav = useMemo(() => {
+    if (!restaurant?.slug || !Array.isArray(favorites)) return false;
+    return favorites.includes(restaurant.slug);
+  }, [restaurant?.slug, favorites]);
 
   const displayedCategories = useMemo(() => {
+    if (!restaurant || !Array.isArray(restaurant.categories)) return [];
     if (activeCategoryId === "promotions") {
       return [
         {
@@ -172,8 +194,8 @@ export const RestaurantDetailPage: React.FC = () => {
     return restaurant.categories;
   }, [restaurant, activeCategoryId, promoDishes]);
 
-  if (pageLoading) {
-    return <Loader fullScreen message={`Chargement du menu ${restaurant.name}...`} />;
+  if (pageLoading || !restaurant || !restaurant.id || !Array.isArray(restaurant.categories)) {
+    return <Loader fullScreen message="Chargement du restaurant et de la carte..." />;
   }
 
   return (

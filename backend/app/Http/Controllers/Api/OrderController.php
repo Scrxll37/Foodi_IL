@@ -20,9 +20,6 @@ use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
-    /**
-     * Get list of orders from MySQL (for customer history, restaurant dashboard, driver).
-     */
     public function index(Request $request): JsonResponse
     {
         $query = Order::with([
@@ -60,17 +57,8 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
-    /**
-     * Customer checkout: Create a new order in MySQL.
-     */
     public function store(Request $request): JsonResponse
     {
-        \Illuminate\Support\Facades\Log::info('OrderController::store received', [
-            'content' => $request->getContent(),
-            'all' => $request->all(),
-            'json' => $request->json()->all(),
-        ]);
-
         $data = $request->json()->all();
         if (empty($data)) {
             $data = $request->all();
@@ -80,7 +68,6 @@ class OrderController extends Controller
             $data = json_decode($raw, true) ?: [];
         }
 
-        // 1. Resolve Restaurant
         $restaurant = null;
         if (!empty($data['restaurantId'])) {
             $restaurant = Restaurant::find($data['restaurantId'])
@@ -96,7 +83,6 @@ class OrderController extends Controller
         $branchId = $data['branchId'] ?? null;
         $setting = PlatformSetting::current();
 
-        // 2. Parse Items & Calculate Subtotal
         $itemsData = $data['items'] ?? [];
         if (is_string($itemsData)) {
             $itemsData = json_decode($itemsData, true) ?: [];
@@ -111,19 +97,16 @@ class OrderController extends Controller
             $itemsSubtotal = (float) $data['subtotal'];
         }
 
-        // 3. Small Order Surcharge (5 MAD if < 50 MAD)
         $smallOrderThreshold = $setting ? (float) $setting->small_order_threshold : 50.0;
         $smallOrderFeeRate = $setting ? (float) $setting->small_order_fee : 5.0;
         $smallOrderFee = ($itemsSubtotal < $smallOrderThreshold) ? $smallOrderFeeRate : 0.0;
 
-        // 4. Delivery Fee & Total
         $deliveryFee = isset($data['deliveryFee'])
             ? (float) $data['deliveryFee']
             : (float) ($restaurant->base_delivery_fee ?? 10.0);
         $tipAmount = isset($data['tipAmount']) ? (float) $data['tipAmount'] : 0.0;
         $totalAmount = isset($data['total']) ? (float) $data['total'] : ($itemsSubtotal + $deliveryFee + $smallOrderFee + $tipAmount);
 
-        // 5. Customer Identification
         $customerId = $data['customerId'] ?? $request->user()?->id;
         if (!$customerId && !empty($data['customerPhone'])) {
             $cleanP = preg_replace('/[^0-9]/', '', $data['customerPhone']);
@@ -139,7 +122,6 @@ class OrderController extends Controller
         }
         $customerUser = User::find($customerId);
 
-        // 6. Address parsing (supports nested or flat)
         $addressData = $data['address'] ?? [];
         $neighborhood = is_array($addressData)
             ? ($addressData['neighborhood'] ?? ($data['neighborhood'] ?? 'Talborjt'))
@@ -166,12 +148,10 @@ class OrderController extends Controller
             ? ($addressData['lng'] ?? ($data['lng'] ?? -9.5981))
             : ($data['lng'] ?? -9.5981);
 
-        // 7. Security Identifiers
         $orderNumber = !empty($data['id']) ? $data['id'] : ('CMD-AGD-' . mt_rand(1000, 9999));
         $token = !empty($data['token']) ? $data['token'] : ('trk_' . Str::random(32));
         $pickupPin = str_pad((string) mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
 
-        // 8. Auto-accept determination
         $isAutoAccept = $restaurant->auto_accept_orders ?? true;
         $initialStatus = $isAutoAccept ? OrderStatus::Preparing : OrderStatus::Pending;
 
@@ -206,7 +186,6 @@ class OrderController extends Controller
             'preparing_at' => $isAutoAccept ? now() : null,
         ]);
 
-        // 9. Insert Order Items
         foreach ($itemsData as $item) {
             $dishId = $item['dishId'] ?? null;
             $orderItem = OrderItem::create([
@@ -238,7 +217,6 @@ class OrderController extends Controller
             }
         }
 
-        // 10. Status Log & Delivery
         OrderStatusLog::create([
             'order_id' => $order->id,
             'from_status' => null,
@@ -255,7 +233,6 @@ class OrderController extends Controller
             'driver_payout_amount' => $deliveryFee,
         ]);
 
-        // Insert notification in MySQL notifications table
         try {
             \Illuminate\Support\Facades\DB::table('notifications')->insert([
                 'id' => (string) Str::uuid(),
@@ -285,9 +262,6 @@ class OrderController extends Controller
         ], 201);
     }
 
-    /**
-     * Update order status (accept, preparing, searching driver, delivered).
-     */
     public function updateStatus(Request $request): JsonResponse
     {
         $token = $request->input('token');
@@ -330,7 +304,6 @@ class OrderController extends Controller
             }
         }
 
-        // Update driver if assigned
         if ($courierId = $request->input('courierId')) {
             $driverUser = User::find($courierId);
             if ($driverUser) {
@@ -355,9 +328,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Real-time Order Tracking by token.
-     */
     public function track(string $token): JsonResponse
     {
         $order = Order::where('token', $token)
@@ -385,9 +355,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Format Eloquent Order model into full OrderRecord type for React.
-     */
     private function formatOrderRecord(Order $order): array
     {
         $branch = $order->branch ?? $order->restaurant;
@@ -395,7 +362,6 @@ class OrderController extends Controller
         $driver = $delivery?->driver ?? $order->driver;
         $driverProfile = $driver?->driverProfile;
 
-        // Map internal enum to frontend status
         $frontendStatus = match ($order->status) {
             OrderStatus::Pending => 'pending_confirmation',
             OrderStatus::Confirmed, OrderStatus::Preparing => 'preparing',

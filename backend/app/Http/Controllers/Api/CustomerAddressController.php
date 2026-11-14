@@ -10,9 +10,6 @@ use Illuminate\Http\Request;
 
 class CustomerAddressController extends Controller
 {
-    /**
-     * Get saved addresses for current customer from MySQL.
-     */
     public function index(Request $request): JsonResponse
     {
         $userId = $request->user()?->id ?? User::where('role', 'customer')->value('id') ?? 1;
@@ -31,9 +28,6 @@ class CustomerAddressController extends Controller
         ]);
     }
 
-    /**
-     * Store or update a customer delivery address in MySQL.
-     */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -68,7 +62,6 @@ class CustomerAddressController extends Controller
         }
 
         if (!$address && $isDefault) {
-            // Find existing default address to update
             $address = CustomerAddress::where('user_id', $userId)->where('is_default', true)->first();
         }
 
@@ -127,4 +120,3 @@ class CustomerAddressController extends Controller
         ];
     }
 }
-

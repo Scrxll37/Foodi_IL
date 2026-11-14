@@ -11,16 +11,12 @@ use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
 {
-    /**
-     * Get all active restaurants with their branches and cuisines.
-     */
     public function index(Request $request): JsonResponse
     {
         $query = Restaurant::query()
-            ->whereNull('parent_restaurant_id') // Only parent restaurants at top level
+            ->whereNull('parent_restaurant_id')
             ->with(['branches', 'cuisineTypes', 'schedules']);
 
-        // Search query
         if ($search = $request->query('q')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -29,14 +25,12 @@ class RestaurantController extends Controller
             });
         }
 
-        // Cuisine filter
         if ($cuisineSlug = $request->query('cuisine')) {
             $query->whereHas('cuisineTypes', function ($q) use ($cuisineSlug) {
                 $q->where('slug', $cuisineSlug);
             });
         }
 
-        // Neighborhood filter
         if ($neighborhood = $request->query('neighborhood')) {
             $query->where(function ($q) use ($neighborhood) {
                 $q->where('neighborhood', $neighborhood)
@@ -48,17 +42,11 @@ class RestaurantController extends Controller
             return $this->formatRestaurantListItem($r);
         })->values();
 
-        // Compatible with both direct array and { data: [...] } consumers
         return response()->json($restaurants);
     }
 
-    /**
-     * Get budget meals (<= 50 MAD).
-     * If user explicitly marks items with is_featured = 1, those items are returned.
-     */
     public function budgetMeals(Request $request): JsonResponse
     {
-        // 1. Fetch meals with price <= 50 that the user marked as is_featured = 1
         $featuredMeals = MenuItem::where('price', '<=', 50)
             ->where('is_available', true)
             ->where('is_featured', 1)
@@ -70,10 +58,8 @@ class RestaurantController extends Controller
             ->get();
 
         if ($featuredMeals->count() > 0) {
-            // User explicitly chose which dishes to show!
             $meals = $featuredMeals;
         } else {
-            // Default fallback if no dishes are explicitly marked as is_featured
             $meals = MenuItem::where('price', '<=', 50)
                 ->where('price', '>=', 15)
                 ->where('is_available', true)
@@ -120,9 +106,6 @@ class RestaurantController extends Controller
         ]);
     }
 
-    /**
-     * Get single restaurant with branches, menu categories, dishes, and options.
-     */
     public function show(string $idOrSlug): JsonResponse
     {
         $restaurant = Restaurant::where('id', $idOrSlug)
@@ -151,9 +134,6 @@ class RestaurantController extends Controller
         ]);
     }
 
-    /**
-     * Update restaurant parameters (auto-accept, delivery fee, etc.).
-     */
     public function update(Request $request): JsonResponse
     {
         $id = $request->input('id');
@@ -192,9 +172,6 @@ class RestaurantController extends Controller
         ]);
     }
 
-    /**
-     * Get list of cuisines with images/icons.
-     */
     public function cuisines(): JsonResponse
     {
         $cuisines = CuisineType::all()->map(function (CuisineType $c) {
@@ -211,9 +188,6 @@ class RestaurantController extends Controller
         return response()->json($cuisines);
     }
 
-    /**
-     * Format restaurant for listing cards.
-     */
     private function formatRestaurantListItem(Restaurant $r): array
     {
         $primaryCuisine = $r->cuisineTypes->first();
@@ -255,9 +229,6 @@ class RestaurantController extends Controller
         ];
     }
 
-    /**
-     * Format full restaurant details with categories, dishes, and options.
-     */
     private function formatRestaurantDetail(Restaurant $r): array
     {
         $base = $this->formatRestaurantListItem($r);

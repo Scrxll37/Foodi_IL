@@ -8,9 +8,6 @@ use Illuminate\Http\JsonResponse;
 
 class PlatformSettingController extends Controller
 {
-    /**
-     * Get platform tarification and pricing settings.
-     */
     public function index(): JsonResponse
     {
         $setting = PlatformSetting::current();

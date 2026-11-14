@@ -122,7 +122,6 @@ export const OrderTrackingPage: React.FC = () => {
       return;
     }
 
-    // 1. Fetch live order tracking directly by token from Laravel MySQL
     try {
       const serverOrder = await trackOrder(token);
       if (serverOrder && (serverOrder.token === token || serverOrder.id === token)) {
@@ -141,7 +140,6 @@ export const OrderTrackingPage: React.FC = () => {
       setNetworkError(true);
     }
 
-    // 2. Fallback to localStorage orders cache
     try {
       const raw = localStorage.getItem("foodi_orders");
       if (raw) {
