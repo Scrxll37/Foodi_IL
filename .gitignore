@@ -38,3 +38,11 @@ backend/storage/pail/*
 # OS generated
 .DS_Store
 Thumbs.db
+
+# AI guidelines & assistant files
+**/CLAUDE.md
+**/AGENTS.md
+**/.agents/
+**/.claude/
+**/.cursor/
+**/.gemini/
