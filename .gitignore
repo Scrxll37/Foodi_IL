@@ -20,6 +20,13 @@ backend/public/build/
 backend/public/hot
 backend/public/storage
 
+# Databases & SQL dumps
+*.sql
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.db
+
 # Logs & caches
 *.log
 backend/storage/logs/*.log
