@@ -24,10 +24,11 @@ import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import { getNearestBranchInfo } from "../utils/delivery";
+import { fetchRestaurants, fetchCuisines } from "../services/api";
 import restaurantsData from "../data/restaurants.json";
 import cuisinesData from "../data/cuisines.json";
 import budgetMealsData from "../data/budget_meals.json";
-import { Restaurant } from "../types";
+import { Restaurant, CuisineType } from "../types";
 
 interface HeroAd {
   id: number;
@@ -195,13 +196,44 @@ const SECTION_INFOS: Record<string, SectionInfoModalData> = {
 };
 
 export const HomePage: React.FC = () => {
-  const { address, user } = useApp();
+  const { address, user, favorites, toggleFavorite } = useApp();
   const userLat = address?.lat || 30.4278;
   const userLng = address?.lng || -9.5981;
 
-  const restaurants: Restaurant[] = restaurantsData as Restaurant[];
-  const cuisines = cuisinesData;
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
+    try {
+      const cached = localStorage.getItem("foodi_cache_restaurants_all");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data && parsed.data.length > 0) return parsed.data;
+      }
+    } catch {}
+    return restaurantsData as Restaurant[];
+  });
+  const [cuisines, setCuisines] = useState<CuisineType[]>(() => {
+    try {
+      const cached = localStorage.getItem("foodi_cache_cuisines");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data && parsed.data.length > 0) return parsed.data;
+      }
+    } catch {}
+    return cuisinesData as CuisineType[];
+  });
   const budgetMeals: BudgetMeal[] = budgetMealsData as BudgetMeal[];
+
+  useEffect(() => {
+    fetchRestaurants().then((data) => {
+      if (data && data.length > 0) {
+        setRestaurants(data);
+      }
+    });
+    fetchCuisines().then((data) => {
+      if (data && data.length > 0) {
+        setCuisines(data);
+      }
+    });
+  }, []);
 
   const [activeCuisine, setActiveCuisine] = useState<string>("all");
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
@@ -214,28 +246,12 @@ export const HomePage: React.FC = () => {
   const filteredObserverRef = useRef<IntersectionObserver | null>(null);
   const isFirstMount = useRef(true);
 
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem("foodi_favorites");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoading(false);
     }, 250);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("foodi_favorites", JSON.stringify(favorites));
-    } catch {
-    }
-  }, [favorites]);
 
   useEffect(() => {
     if (isFirstMount.current) {
@@ -287,12 +303,10 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const toggleFavorite = (e: React.MouseEvent, slug: string) => {
+  const handleToggleFavorite = (e: React.MouseEvent, slug: string) => {
     e.stopPropagation();
     e.preventDefault();
-    setFavorites((prev) =>
-      prev.includes(slug) ? prev.filter((item) => item !== slug) : [...prev, slug]
-    );
+    toggleFavorite(slug);
   };
 
   const fastSliderRef = useRef<HTMLDivElement>(null);
@@ -465,7 +479,7 @@ export const HomePage: React.FC = () => {
 
           <button
             type="button"
-            onClick={(e) => toggleFavorite(e, restaurant.slug)}
+            onClick={(e) => handleToggleFavorite(e, restaurant.slug)}
             className={`restaurant-card-fav-btn ${isFav ? "active" : ""}`}
             title="Favoris"
           >

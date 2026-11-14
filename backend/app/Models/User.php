@@ -2,47 +2,37 @@
 
 namespace App\Models;
 
-use App\Concerns\HasTeams;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
-use Database\Factories\UserFactory;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
-use Laravel\Fortify\Contracts\PasskeyUser;
-use Laravel\Fortify\PasskeyAuthenticatable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable([
-    'name',
-    'email',
-    'phone_number',
-    'password',
-    'role',
-    'status',
-    'avatar_url',
-    'current_team_id',
-    'suspended_until',
-    'banned_at',
-    'ban_reason',
-])]
-#[Hidden([
-    'password',
-    'two_factor_secret',
-    'two_factor_recovery_codes',
-    'remember_token',
-])]
-class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
+class User extends Authenticatable
 {
-    use HasFactory, HasTeams, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'phone_number',
+        'password',
+        'role',
+        'status',
+        'avatar_url',
+        'current_team_id',
+        'suspended_until',
+        'banned_at',
+        'ban_reason',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     protected function casts(): array
     {
@@ -51,7 +41,6 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'password' => 'hashed',
             'role' => UserRole::class,
             'status' => UserStatus::class,
-            'two_factor_confirmed_at' => 'datetime',
             'suspended_until' => 'datetime',
             'banned_at' => 'datetime',
         ];
@@ -99,6 +88,11 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return $this->hasMany(CustomerAddress::class);
     }
 
+    public function addresses(): HasMany
+    {
+        return $this->customerAddresses();
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'customer_id');
@@ -137,12 +131,5 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     public function favoriteRestaurants(): BelongsToMany
     {
         return $this->belongsToMany(Restaurant::class, 'favorite_restaurants')->withTimestamps();
-    }
-
-    public function sendEmailVerificationNotification(): void
-    {
-        if (app()->environment('testing')) {
-            $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
-        }
     }
 }

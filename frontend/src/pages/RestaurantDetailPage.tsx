@@ -21,6 +21,7 @@ import { MobileBottomNav } from "../components/MobileBottomNav";
 import { DishModal } from "../components/DishModal";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
+import { fetchRestaurant } from "../services/api";
 import restaurantsData from "../data/restaurants.json";
 import { Restaurant, Dish } from "../types";
 import { useApp } from "../context/AppContext";
@@ -63,24 +64,35 @@ const getDishFallbackDescription = (dishName: string, categoryName: string): str
 export const RestaurantDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addToCart, user } = useApp();
+  const { addToCart, user, favorites, toggleFavorite } = useApp();
 
-  const restaurants: Restaurant[] = restaurantsData as Restaurant[];
-  const restaurant = restaurants.find((r) => r.slug === slug) || restaurants[0];
+  const [restaurant, setRestaurant] = useState<Restaurant>(() => {
+    try {
+      const cached = localStorage.getItem(`foodi_cache_restaurant_${slug}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data?.name) return parsed.data;
+      }
+    } catch {}
+    const local = (restaurantsData as Restaurant[]).find((r) => r.slug === slug || r.id === slug);
+    return local || (restaurantsData[0] as Restaurant);
+  });
+
+  useEffect(() => {
+    if (slug) {
+      fetchRestaurant(slug).then((data) => {
+        if (data) {
+          setRestaurant(data);
+          setPageLoading(false);
+        }
+      });
+    }
+  }, [slug]);
 
   const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem("foodi_favorites");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -88,19 +100,6 @@ export const RestaurantDetailPage: React.FC = () => {
     }, 250);
     return () => clearTimeout(timer);
   }, [restaurant.id]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("foodi_favorites", JSON.stringify(favorites));
-    } catch {
-    }
-  }, [favorites]);
-
-  const toggleFavorite = (resSlug: string) => {
-    setFavorites((prev) =>
-      prev.includes(resSlug) ? prev.filter((item) => item !== resSlug) : [...prev, resSlug]
-    );
-  };
 
   const satisfactionRate = useMemo(() => {
     const score = Math.round((Number(restaurant.rating || 4.5) / 5) * 100);

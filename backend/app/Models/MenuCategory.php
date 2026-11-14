@@ -36,4 +36,9 @@ class MenuCategory extends Model
     {
         return $this->hasMany(MenuItem::class)->orderBy('sort_order');
     }
+
+    public function menuItems(): HasMany
+    {
+        return $this->items();
+    }
 }

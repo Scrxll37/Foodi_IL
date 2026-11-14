@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum DeliveryStatus: string
 {
+    case PendingAssignment = 'pending_assignment';
     case Assigned = 'assigned';
     case Accepted = 'accepted';
     case Rejected = 'rejected';
@@ -15,6 +16,7 @@ enum DeliveryStatus: string
     public function label(): string
     {
         return match ($this) {
+            self::PendingAssignment => 'Waiting for Driver',
             self::Assigned => 'Assigned to Driver',
             self::Accepted => 'Accepted by Driver',
             self::Rejected => 'Rejected by Driver',

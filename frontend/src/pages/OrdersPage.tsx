@@ -24,44 +24,50 @@ import { Loader } from "../components/Loader";
 import ordersData from "../data/orders.json";
 import restaurantsData from "../data/restaurants.json";
 import { OrderRecord, Restaurant } from "../types";
+import { fetchOrders as loadOrdersFromApi, fetchRestaurants } from "../services/api";
 
 export const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState<OrderRecord[]>(() => {
+    try {
+      const raw = localStorage.getItem("foodi_orders");
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return ordersData as OrderRecord[];
+  });
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
+    try {
+      const cached = localStorage.getItem("foodi_cache_restaurants_all");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data?.length > 0) return parsed.data;
+      }
+    } catch {}
+    return restaurantsData as Restaurant[];
+  });
+  const [loading, setLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   const [copiedId, setCopiedId] = useState(false);
 
-  const fetchOrders = async () => {
-    let list: OrderRecord[] = [];
+  const refreshOrders = async () => {
     try {
-      const res = await fetch("/api/orders");
-      if (res.ok) {
-        list = await res.json();
+      const list = await loadOrdersFromApi();
+      if (list && list.length > 0) {
+        setOrders(list);
       }
-    } catch {}
-
-    try {
-      const raw = localStorage.getItem("foodi_orders");
-      if (raw) {
-        const localList: OrderRecord[] = JSON.parse(raw);
-        list = [...localList, ...list.filter((o) => !localList.some((l) => l.id === o.id))];
-      }
-    } catch {}
-
-    if (list.length === 0) {
-      list = ordersData as OrderRecord[];
+    } catch (err) {
+      console.warn("Could not refresh orders from API:", err);
     }
-
-    setOrders(list);
-    setLoading(false);
   };
 
   useEffect(() => {
-    fetchOrders();
-    const interval = setInterval(fetchOrders, 3500);
+    refreshOrders();
+    fetchRestaurants().then((list) => {
+      if (list && list.length > 0) setRestaurants(list);
+    });
+    const interval = setInterval(refreshOrders, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -84,7 +90,7 @@ export const OrdersPage: React.FC = () => {
   }, [orders]);
 
   const getShopCover = (shopName: string, fallbackLogo?: string) => {
-    const found = (restaurantsData as Restaurant[]).find(
+    const found = restaurants.find(
       (r) =>
         r.name.toLowerCase() === shopName.toLowerCase() ||
         shopName.toLowerCase().includes(r.name.toLowerCase()) ||
@@ -95,7 +101,7 @@ export const OrdersPage: React.FC = () => {
   };
 
   const getShopSlug = (shopName: string) => {
-    const found = (restaurantsData as Restaurant[]).find(
+    const found = restaurants.find(
       (r) =>
         r.name.toLowerCase() === shopName.toLowerCase() ||
         shopName.toLowerCase().includes(r.name.toLowerCase()) ||

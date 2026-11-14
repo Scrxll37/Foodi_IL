@@ -15,7 +15,9 @@ class CuisineType extends Model
     protected $fillable = [
         'name',
         'slug',
+        'description',
         'icon_path',
+        'image_path',
         'created_at',
     ];
 

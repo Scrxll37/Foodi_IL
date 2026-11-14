@@ -22,6 +22,7 @@ import ordersData from "../data/orders.json";
 import driversData from "../data/drivers.json";
 import { Restaurant } from "../types";
 import { HomeHeader } from "../components/HomeHeader";
+import { createOrder, fetchRestaurants } from "../services/api";
 
 export const OrderConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,20 +36,34 @@ export const OrderConfirmationPage: React.FC = () => {
   const [confirmedOrder, setConfirmedOrder] = useState<any | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
 
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
+    try {
+      const cached = localStorage.getItem("foodi_cache_restaurants_all");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data?.length > 0) return parsed.data;
+      }
+    } catch {}
+    return restaurantsData as Restaurant[];
+  });
+
   useEffect(() => {
+    fetchRestaurants().then((data) => {
+      if (data && data.length > 0) setRestaurants(data);
+    });
     const timer = setTimeout(() => {
       setPageLoading(false);
-    }, 650);
+    }, 450);
     return () => clearTimeout(timer);
   }, []);
 
   const currentRestaurant = useMemo(() => {
     if (cart.length === 0) return null;
     const first = cart[0];
-    return (restaurantsData as Restaurant[]).find(
-      (r) => r.id === first.restaurantId || r.name.toLowerCase() === first.restaurantName.toLowerCase()
+    return restaurants.find(
+      (r) => r.id === first.restaurantId || r.name.toLowerCase() === (first.restaurantName || "").toLowerCase()
     );
-  }, [cart]);
+  }, [cart, restaurants]);
 
   const userLat = address?.lat || 30.4278;
   const userLng = address?.lng || -9.5981;
@@ -201,20 +216,25 @@ export const OrderConfirmationPage: React.FC = () => {
       createdAt: Date.now()
     };
 
+    let savedOrder: any = newOrder;
     try {
-      await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrder)
+      const created = await createOrder({
+        ...newOrder,
+        restaurantId: currentRestaurant?.id,
+        branchId: closestBranch.id,
       });
-    } catch {}
-
-    try {
-      const existingRaw = localStorage.getItem("foodi_orders");
-      const existing = existingRaw ? JSON.parse(existingRaw) : ordersData;
-      const updated = [newOrder, ...existing.filter((o: any) => o.id !== newOrder.id && o.token !== uniqueToken)];
-      localStorage.setItem("foodi_orders", JSON.stringify(updated));
-    } catch {}
+      if (created && created.token) {
+        savedOrder = { ...newOrder, ...created };
+      }
+    } catch (err) {
+      console.warn("Using fallback local order storage:", err);
+      try {
+        const existingRaw = localStorage.getItem("foodi_orders");
+        const existing = existingRaw ? JSON.parse(existingRaw) : ordersData;
+        const updated = [newOrder, ...existing.filter((o: any) => o.id !== newOrder.id && o.token !== uniqueToken)];
+        localStorage.setItem("foodi_orders", JSON.stringify(updated));
+      } catch {}
+    }
 
     const autoAcceptRaw = localStorage.getItem(`foodi_auto_accept_${currentRestaurant?.id}`);
     const isAutoAccept = autoAcceptRaw !== null ? JSON.parse(autoAcceptRaw) : (currentRestaurant?.autoAcceptOrders ?? true);
@@ -365,7 +385,7 @@ export const OrderConfirmationPage: React.FC = () => {
     setTimeout(() => {
       clearCart();
       setIsPlacingOrder(false);
-      setConfirmedOrder(newOrder);
+      setConfirmedOrder(savedOrder);
     }, 1200);
   };
 

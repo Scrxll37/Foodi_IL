@@ -28,6 +28,7 @@ import "../styles/restaurant.css";
 import { OrderRecord, OrderStatus } from "../types";
 import { useApp } from "../context/AppContext";
 import { HomeHeader } from "../components/HomeHeader";
+import { trackOrder, updateOrderStatus } from "../services/api";
 import {
   fetchRoadRoute,
   buildRouteGeometry,
@@ -123,40 +124,50 @@ export const OrderTrackingPage: React.FC = () => {
       return;
     }
 
-    let allOrders: OrderRecord[] = [];
-
+    // 1. Fetch live order tracking directly by token from Laravel MySQL
     try {
-      const res = await fetch("/api/orders");
-      if (res.ok) {
-        allOrders = await res.json();
+      const serverOrder = await trackOrder(token);
+      if (serverOrder && (serverOrder.token === token || serverOrder.id === token)) {
+        setOrder(serverOrder);
+        setIsValidToken(true);
+        const isAssigned =
+          serverOrder.status === "heading_to_restaurant" ||
+          serverOrder.status === "in_delivery" ||
+          serverOrder.status === "delivered";
+        setCourierAssigned(isAssigned);
+        setLoading(false);
         setNetworkError(false);
+        return;
       }
     } catch {
       setNetworkError(true);
     }
 
+    // 2. Fallback to localStorage orders cache
     try {
       const raw = localStorage.getItem("foodi_orders");
       if (raw) {
         const localList: OrderRecord[] = JSON.parse(raw);
-        allOrders = [...localList, ...allOrders.filter((o) => !localList.some((l) => l.id === o.id))];
+        const found = localList.find((o) => o.token === token || o.id === token);
+        if (found) {
+          setOrder(found);
+          setIsValidToken(true);
+          const isAssigned =
+            found.status === "heading_to_restaurant" ||
+            found.status === "in_delivery" ||
+            found.status === "delivered";
+          setCourierAssigned(isAssigned);
+          setLoading(false);
+          return;
+        }
       }
     } catch {}
 
-    if (allOrders.length === 0) {
-      allOrders = ordersData as OrderRecord[];
-    }
-
-    const found = allOrders.find((o) => o.token === token || o.id === token);
-
-    if (found) {
-      setOrder(found);
+    // 3. Fallback to initial ordersData
+    const foundFallback = (ordersData as OrderRecord[]).find((o) => o.token === token || o.id === token);
+    if (foundFallback) {
+      setOrder(foundFallback);
       setIsValidToken(true);
-      const isAssigned =
-        found.status === "heading_to_restaurant" ||
-        found.status === "in_delivery" ||
-        found.status === "delivered";
-      setCourierAssigned(isAssigned);
     } else {
       setOrder(null);
       setIsValidToken(false);
@@ -169,7 +180,7 @@ export const OrderTrackingPage: React.FC = () => {
     loadOrder();
     const pollInterval = setInterval(() => {
       loadOrder();
-    }, 3500);
+    }, 4000);
 
     return () => clearInterval(pollInterval);
   }, [loadOrder]);
@@ -205,12 +216,15 @@ export const OrderTrackingPage: React.FC = () => {
     setOrder((prev) => (prev ? ({ ...prev, ...patch } as OrderRecord) : null));
 
     try {
-      await fetch("/api/orders/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch)
+      await updateOrderStatus({
+        token: order.token,
+        id: order.id,
+        status: newStatus,
+        notes: label,
       });
-    } catch {}
+    } catch (e) {
+      console.warn("Could not sync status to server:", e);
+    }
 
     try {
       const raw = localStorage.getItem("foodi_orders");

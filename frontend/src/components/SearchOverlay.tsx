@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, X, Clock, ArrowRight, Star, MapPin, Bike, Sparkles } from "lucide-react";
 import restaurantsData from "../data/restaurants.json";
+import { fetchRestaurants } from "../services/api";
 import { Restaurant } from "../types";
 import { useApp } from "../context/AppContext";
 
@@ -35,7 +36,24 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
     }
   });
 
-  const restaurants: Restaurant[] = restaurantsData as Restaurant[];
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
+    try {
+      const cached = localStorage.getItem("foodi_cache_restaurants_all");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data?.length > 0) return parsed.data;
+      }
+    } catch {}
+    return restaurantsData as Restaurant[];
+  });
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchRestaurants().then((data) => {
+        if (data && data.length > 0) setRestaurants(data);
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {

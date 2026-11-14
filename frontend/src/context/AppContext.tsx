@@ -2,6 +2,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem, UserAddress, UserProfile, FoodiNotification } from "../types";
 import initialAddresses from "../data/addresses.json";
 import initialNotifications from "../data/notifications.json";
+import {
+  saveCustomerAddress,
+  fetchCustomerAddresses,
+  setSessionCookie,
+  getSessionCookie,
+  clearSessionCookie,
+  preloadBrandAssets,
+} from "../services/api";
 
 export interface CartConflictData {
   pendingItem: Omit<CartItem, "id">;
@@ -33,6 +41,9 @@ interface AppContextType {
   conflictData: CartConflictData | null;
   confirmConflictReplace: () => void;
   cancelConflict: () => void;
+  favorites: string[];
+  toggleFavorite: (slug: string) => void;
+  isFavorite: (slug: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -68,9 +79,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         }
       }
+      // Fallback check in session cookie
+      const cookieUser = getSessionCookie();
+      if (cookieUser && cookieUser.isLoggedIn) {
+        return cookieUser;
+      }
       return defaultGuestUser;
     } catch {
       return defaultGuestUser;
+    }
+  });
+
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("foodi_favorites");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
   });
 
@@ -97,6 +122,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [conflictData, setConflictData] = useState<CartConflictData | null>(null);
 
+  // Preload critical assets and sync saved addresses from backend on mount
+  useEffect(() => {
+    preloadBrandAssets();
+    fetchCustomerAddresses()
+      .then((addresses) => {
+        if (addresses && addresses.length > 0) {
+          const def = addresses.find((a) => a.isDefault) || addresses[0];
+          setAddress(def);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("foodi_favorites", JSON.stringify(favorites));
+    } catch {}
+  }, [favorites]);
+
+  const toggleFavorite = (slug: string) => {
+    setFavorites((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
+    );
+  };
+
+  const isFavorite = (slug: string) => favorites.includes(slug);
+
   useEffect(() => {
     localStorage.setItem("foodi_cart", JSON.stringify(cart));
   }, [cart]);
@@ -105,9 +157,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (user.isLoggedIn) {
       localStorage.setItem("foodi_user", JSON.stringify(user));
       localStorage.setItem("foodi_authenticated", "true");
+      setSessionCookie(user);
     } else {
       localStorage.removeItem("foodi_user");
       localStorage.removeItem("foodi_authenticated");
+      clearSessionCookie();
     }
   }, [user]);
 
@@ -243,6 +297,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const saveAddress = (addr: UserAddress) => {
     setAddress(addr);
+    try {
+      localStorage.setItem("foodi_address", JSON.stringify(addr));
+    } catch {}
+    saveCustomerAddress(addr).catch((err) => {
+      console.warn("Could not sync address to server:", err);
+    });
   };
 
   const markNotificationRead = (id: string) => {
@@ -279,7 +339,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         markNotificationRead,
         conflictData,
         confirmConflictReplace,
-        cancelConflict
+        cancelConflict,
+        favorites,
+        toggleFavorite,
+        isFavorite
       }}
     >
       {children}

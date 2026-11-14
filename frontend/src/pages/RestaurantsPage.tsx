@@ -7,9 +7,11 @@ import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
-import restaurantsData from "../data/restaurants.json";
-import cuisinesData from "../data/cuisines.json";
-import { Restaurant } from "../types";
+import { useApp } from "../context/AppContext";
+import { fetchRestaurants, fetchCuisines } from "../services/api";
+import fallbackRestaurants from "../data/restaurants.json";
+import fallbackCuisines from "../data/cuisines.json";
+import { Restaurant, CuisineType } from "../types";
 
 const SPECIAL_CATEGORIES = [
   {
@@ -36,6 +38,7 @@ const SPECIAL_CATEGORIES = [
 ];
 
 export const RestaurantsPage: React.FC = () => {
+  const { favorites, toggleFavorite } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "all";
 
@@ -44,36 +47,40 @@ export const RestaurantsPage: React.FC = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const [favorites, setFavorites] = useState<string[]>(() => {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
     try {
-      const saved = localStorage.getItem("foodi_favorites");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
+      const cached = localStorage.getItem("foodi_cache_restaurants_all");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data?.length > 0) return parsed.data;
+      }
+    } catch {}
+    return fallbackRestaurants as Restaurant[];
+  });
+
+  const [cuisines, setCuisines] = useState<CuisineType[]>(() => {
+    try {
+      const cached = localStorage.getItem("foodi_cache_cuisines");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.data?.length > 0) return parsed.data;
+      }
+    } catch {}
+    return fallbackCuisines as CuisineType[];
   });
 
   useEffect(() => {
+    fetchRestaurants().then((data) => {
+      if (data && data.length > 0) setRestaurants(data);
+    });
+    fetchCuisines().then((data) => {
+      if (data && data.length > 0) setCuisines(data);
+    });
     const timer = setTimeout(() => {
       setPageLoading(false);
-    }, 250);
+    }, 150);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("foodi_favorites", JSON.stringify(favorites));
-    } catch {
-    }
-  }, [favorites]);
-
-  const toggleFavorite = (slug: string) => {
-    setFavorites((prev) =>
-      prev.includes(slug) ? prev.filter((item) => item !== slug) : [...prev, slug]
-    );
-  };
-
-  const restaurants: Restaurant[] = restaurantsData as Restaurant[];
 
   useEffect(() => {
     const cat = searchParams.get("category");
@@ -103,7 +110,7 @@ export const RestaurantsPage: React.FC = () => {
         return r.isPromo || r.deliveryFee === 0;
       }
 
-      const currentCategoryObj = cuisinesData.find((c) => c.slug === selectedCategory);
+      const currentCategoryObj = cuisines.find((c) => c.slug === selectedCategory);
       const matchesCategory =
         selectedCategory === "all" ||
         (currentCategoryObj && r.cuisine.toLowerCase().includes(currentCategoryObj.name.toLowerCase())) ||
@@ -209,7 +216,7 @@ export const RestaurantsPage: React.FC = () => {
                 );
               })}
 
-              {cuisinesData.map((c) => {
+              {cuisines.map((c) => {
                 const isActive = selectedCategory === c.slug;
                 return (
                   <button
