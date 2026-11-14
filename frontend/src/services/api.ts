@@ -122,35 +122,29 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> 
 }
 
 /**
- * 1. Fetch Tarifs and Platform Settings (Cached 5 min)
+ * 1. Fetch Tarifs and Platform Settings
  */
 export async function fetchTarifs(forceRefresh = false): Promise<PlatformTarifs> {
   const cacheKey = "tarifs";
-  if (!forceRefresh) {
-    const cached = getCached<PlatformTarifs>(cacheKey);
-    if (cached) return cached;
-  }
-
   try {
     const data = await apiFetch<PlatformTarifs>("/settings/tarifs");
     setCached(cacheKey, data);
     return data;
   } catch (err) {
     console.warn("Using fallback pricing:", err);
-    return fallbackPricing as PlatformTarifs;
   }
+
+  const cached = getCached<PlatformTarifs>(cacheKey);
+  if (cached) return cached;
+
+  return fallbackPricing as PlatformTarifs;
 }
 
 /**
- * 2. Fetch Cuisines list (Cached 5 min)
+ * 2. Fetch Cuisines list (Always queries DB for fresh state, falls back to cache)
  */
 export async function fetchCuisines(forceRefresh = false): Promise<CuisineType[]> {
   const cacheKey = "cuisines";
-  if (!forceRefresh) {
-    const cached = getCached<CuisineType[]>(cacheKey);
-    if (cached) return cached;
-  }
-
   try {
     const res = await apiFetch<any>("/cuisines");
     const data = Array.isArray(res) ? res : (res.data || []);
@@ -162,11 +156,20 @@ export async function fetchCuisines(forceRefresh = false): Promise<CuisineType[]
     console.warn("Using fallback cuisines:", err);
   }
 
+  const cached = getCached<CuisineType[]>(cacheKey);
+  if (cached && cached.length > 0) return cached;
+
+  return fallbackCuisines as CuisineType[];
+}
+
+export function getStoredCuisines(): CuisineType[] {
+  const cached = getCached<CuisineType[]>("cuisines");
+  if (cached && cached.length > 0) return cached;
   return fallbackCuisines as CuisineType[];
 }
 
 /**
- * 3. Fetch Restaurants list (Cached 5 min for default list)
+ * 3. Fetch Restaurants list (Always queries DB for fresh state, falls back to cache)
  */
 export async function fetchRestaurants(params?: {
   q?: string;
@@ -178,11 +181,6 @@ export async function fetchRestaurants(params?: {
   const cacheKey = isFiltered
     ? `restaurants_${params?.q || ""}_${params?.cuisine || ""}_${params?.neighborhood || ""}`
     : "restaurants_all";
-
-  if (!params?.forceRefresh) {
-    const cached = getCached<Restaurant[]>(cacheKey);
-    if (cached) return cached;
-  }
 
   try {
     const query = new URLSearchParams();
@@ -202,18 +200,23 @@ export async function fetchRestaurants(params?: {
     console.warn("Using fallback restaurants:", err);
   }
 
+  const cached = getCached<Restaurant[]>(cacheKey);
+  if (cached && cached.length > 0) return cached;
+
+  return fallbackRestaurants as Restaurant[];
+}
+
+export function getStoredRestaurants(): Restaurant[] {
+  const cached = getCached<Restaurant[]>("restaurants_all");
+  if (cached && cached.length > 0) return cached;
   return fallbackRestaurants as Restaurant[];
 }
 
 /**
- * 4. Fetch Single Restaurant with Menu & Dishes (Cached 5 min per restaurant)
+ * 4. Fetch Single Restaurant with Menu & Dishes (Always queries DB, updates cache)
  */
 export async function fetchRestaurant(idOrSlug: string, forceRefresh = false): Promise<Restaurant | null> {
   const cacheKey = `restaurant_${idOrSlug}`;
-  if (!forceRefresh) {
-    const cached = getCached<Restaurant>(cacheKey);
-    if (cached) return cached;
-  }
 
   try {
     const res = await apiFetch<any>(`/restaurants/${idOrSlug}`);
@@ -226,10 +229,19 @@ export async function fetchRestaurant(idOrSlug: string, forceRefresh = false): P
     console.warn("Using fallback restaurant detail:", err);
   }
 
+  const cached = getCached<Restaurant>(cacheKey);
+  if (cached) return cached;
+
   const found = (fallbackRestaurants as Restaurant[]).find(
     (r) => r.id === idOrSlug || r.slug === idOrSlug
   );
   return found || null;
+}
+
+export function getStoredRestaurant(idOrSlug: string): Restaurant | null {
+  const cached = getCached<Restaurant>(`restaurant_${idOrSlug}`);
+  if (cached) return cached;
+  return (fallbackRestaurants as Restaurant[]).find((r) => r.id === idOrSlug || r.slug === idOrSlug) || null;
 }
 
 /**

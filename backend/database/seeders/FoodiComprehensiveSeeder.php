@@ -62,8 +62,7 @@ class FoodiComprehensiveSeeder extends Seeder
             ['name' => 'Poulet Frit', 'slug' => 'poulet', 'icon_path' => '/images/cuisines/poulet.png'],
             ['name' => 'Italien', 'slug' => 'italien', 'icon_path' => '/images/cuisines/italien.png'],
             ['name' => 'Marocain', 'slug' => 'marocain', 'icon_path' => '/images/cuisines/marocain.png'],
-            ['name' => 'Salades', 'slug' => 'salades', 'icon_path' => '/images/cuisines/salades.png'],
-        ];
+         ];
 
         $cuisineMap = [];
         foreach ($cuisinesData as $c) {

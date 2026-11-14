@@ -22,7 +22,7 @@ import ordersData from "../data/orders.json";
 import driversData from "../data/drivers.json";
 import { Restaurant } from "../types";
 import { HomeHeader } from "../components/HomeHeader";
-import { createOrder, fetchRestaurants } from "../services/api";
+import { createOrder, fetchRestaurants, getStoredRestaurants } from "../services/api";
 
 export const OrderConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,16 +36,7 @@ export const OrderConfirmationPage: React.FC = () => {
   const [confirmedOrder, setConfirmedOrder] = useState<any | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
 
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
-    try {
-      const cached = localStorage.getItem("foodi_cache_restaurants_all");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.data?.length > 0) return parsed.data;
-      }
-    } catch {}
-    return restaurantsData as Restaurant[];
-  });
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(getStoredRestaurants);
 
   useEffect(() => {
     fetchRestaurants().then((data) => {

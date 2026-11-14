@@ -8,7 +8,7 @@ import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
-import { fetchRestaurants, fetchCuisines } from "../services/api";
+import { fetchRestaurants, fetchCuisines, getStoredRestaurants, getStoredCuisines } from "../services/api";
 import fallbackRestaurants from "../data/restaurants.json";
 import fallbackCuisines from "../data/cuisines.json";
 import { Restaurant, CuisineType } from "../types";
@@ -47,40 +47,29 @@ export const RestaurantsPage: React.FC = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
-    try {
-      const cached = localStorage.getItem("foodi_cache_restaurants_all");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.data?.length > 0) return parsed.data;
-      }
-    } catch {}
-    return fallbackRestaurants as Restaurant[];
-  });
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(getStoredRestaurants);
+  const [cuisines, setCuisines] = useState<CuisineType[]>(getStoredCuisines);
 
-  const [cuisines, setCuisines] = useState<CuisineType[]>(() => {
-    try {
-      const cached = localStorage.getItem("foodi_cache_cuisines");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.data?.length > 0) return parsed.data;
-      }
-    } catch {}
-    return fallbackCuisines as CuisineType[];
-  });
-
-  useEffect(() => {
+  const loadData = useCallback(() => {
     fetchRestaurants().then((data) => {
       if (data && data.length > 0) setRestaurants(data);
     });
     fetchCuisines().then((data) => {
       if (data && data.length > 0) setCuisines(data);
     });
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    window.addEventListener("focus", loadData);
     const timer = setTimeout(() => {
       setPageLoading(false);
     }, 150);
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("focus", loadData);
+    };
+  }, [loadData]);
 
   useEffect(() => {
     const cat = searchParams.get("category");

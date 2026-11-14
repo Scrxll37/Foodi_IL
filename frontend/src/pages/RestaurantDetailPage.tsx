@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Star,
@@ -21,7 +21,7 @@ import { MobileBottomNav } from "../components/MobileBottomNav";
 import { DishModal } from "../components/DishModal";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
-import { fetchRestaurant } from "../services/api";
+import { fetchRestaurant, getStoredRestaurant } from "../services/api";
 import restaurantsData from "../data/restaurants.json";
 import { Restaurant, Dish } from "../types";
 import { useApp } from "../context/AppContext";
@@ -67,18 +67,10 @@ export const RestaurantDetailPage: React.FC = () => {
   const { addToCart, user, favorites, toggleFavorite } = useApp();
 
   const [restaurant, setRestaurant] = useState<Restaurant>(() => {
-    try {
-      const cached = localStorage.getItem(`foodi_cache_restaurant_${slug}`);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.data?.name) return parsed.data;
-      }
-    } catch {}
-    const local = (restaurantsData as Restaurant[]).find((r) => r.slug === slug || r.id === slug);
-    return local || (restaurantsData[0] as Restaurant);
+    return (slug && getStoredRestaurant(slug)) || (restaurantsData[0] as Restaurant);
   });
 
-  useEffect(() => {
+  const loadRestaurantData = useCallback(() => {
     if (slug) {
       fetchRestaurant(slug).then((data) => {
         if (data) {
@@ -88,6 +80,12 @@ export const RestaurantDetailPage: React.FC = () => {
       });
     }
   }, [slug]);
+
+  useEffect(() => {
+    loadRestaurantData();
+    window.addEventListener("focus", loadRestaurantData);
+    return () => window.removeEventListener("focus", loadRestaurantData);
+  }, [loadRestaurantData]);
 
   const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);

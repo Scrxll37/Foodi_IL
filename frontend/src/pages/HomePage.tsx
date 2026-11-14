@@ -24,7 +24,7 @@ import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import { getNearestBranchInfo } from "../utils/delivery";
-import { fetchRestaurants, fetchCuisines } from "../services/api";
+import { fetchRestaurants, fetchCuisines, getStoredRestaurants, getStoredCuisines } from "../services/api";
 import restaurantsData from "../data/restaurants.json";
 import cuisinesData from "../data/cuisines.json";
 import budgetMealsData from "../data/budget_meals.json";
@@ -200,29 +200,11 @@ export const HomePage: React.FC = () => {
   const userLat = address?.lat || 30.4278;
   const userLng = address?.lng || -9.5981;
 
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => {
-    try {
-      const cached = localStorage.getItem("foodi_cache_restaurants_all");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.data && parsed.data.length > 0) return parsed.data;
-      }
-    } catch {}
-    return restaurantsData as Restaurant[];
-  });
-  const [cuisines, setCuisines] = useState<CuisineType[]>(() => {
-    try {
-      const cached = localStorage.getItem("foodi_cache_cuisines");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.data && parsed.data.length > 0) return parsed.data;
-      }
-    } catch {}
-    return cuisinesData as CuisineType[];
-  });
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(getStoredRestaurants);
+  const [cuisines, setCuisines] = useState<CuisineType[]>(getStoredCuisines);
   const budgetMeals: BudgetMeal[] = budgetMealsData as BudgetMeal[];
 
-  useEffect(() => {
+  const loadFreshData = useCallback(() => {
     fetchRestaurants().then((data) => {
       if (data && data.length > 0) {
         setRestaurants(data);
@@ -234,6 +216,12 @@ export const HomePage: React.FC = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    loadFreshData();
+    window.addEventListener("focus", loadFreshData);
+    return () => window.removeEventListener("focus", loadFreshData);
+  }, [loadFreshData]);
 
   const [activeCuisine, setActiveCuisine] = useState<string>("all");
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
