@@ -413,3 +413,68 @@ export function preloadBrandAssets(): void {
   });
 }
 
+/**
+ * 13. Budget Meals & Top 3 Restaurants (< 50 MAD)
+ */
+export interface BudgetMeal {
+  id: string | number;
+  name: string;
+  description?: string;
+  price: number;
+  original_price?: number | null;
+  image_path: string;
+  is_popular?: boolean;
+  is_featured?: boolean;
+  restaurant: {
+    id?: string | number;
+    name: string;
+    slug: string;
+    logo_path: string;
+    base_delivery_fee: number;
+    rating_cache?: number;
+  };
+}
+
+export interface TopBudgetRestaurant {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string;
+  rating: number;
+  deliveryFee: number;
+  mealsCount: number;
+}
+
+export interface BudgetMealsResponse {
+  status: string;
+  topRestaurants: TopBudgetRestaurant[];
+  meals: BudgetMeal[];
+  total: number;
+}
+
+export async function fetchBudgetMeals(restaurantSlug?: string): Promise<BudgetMealsResponse> {
+  const cacheKey = restaurantSlug && restaurantSlug !== "all" ? `budget_meals_${restaurantSlug}` : "budget_meals_all";
+  const query = restaurantSlug && restaurantSlug !== "all" ? `?restaurant=${encodeURIComponent(restaurantSlug)}` : "";
+
+  try {
+    const res = await apiFetch<BudgetMealsResponse>(`/meals/budget${query}`);
+    if (res && res.meals) {
+      setCached(cacheKey, res);
+      return res;
+    }
+  } catch (err) {
+    console.warn("Error fetching budget meals from API:", err);
+  }
+
+  const cached = getCached<BudgetMealsResponse>(cacheKey);
+  if (cached && cached.meals) return cached;
+
+  return { status: "fallback", topRestaurants: [], meals: [], total: 0 };
+}
+
+export function getStoredBudgetMeals(restaurantSlug?: string): BudgetMealsResponse | null {
+  const cacheKey = restaurantSlug && restaurantSlug !== "all" ? `budget_meals_${restaurantSlug}` : "budget_meals_all";
+  return getCached<BudgetMealsResponse>(cacheKey);
+}
+
+

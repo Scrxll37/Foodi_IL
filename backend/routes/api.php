@@ -39,6 +39,7 @@ Route::get('/settings/tarifs', [PlatformSettingController::class, 'index']);
 
 // 2. Restaurants & Cuisines (Customer Home & Detail)
 Route::get('/cuisines', [RestaurantController::class, 'cuisines']);
+Route::get('/meals/budget', [RestaurantController::class, 'budgetMeals']);
 Route::get('/restaurants', [RestaurantController::class, 'index']);
 Route::get('/restaurants/{idOrSlug}', [RestaurantController::class, 'show']);
 Route::post('/restaurants/update', [RestaurantController::class, 'update']);

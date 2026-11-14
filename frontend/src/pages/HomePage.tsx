@@ -24,10 +24,18 @@ import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
 import { useApp } from "../context/AppContext";
 import { getNearestBranchInfo } from "../utils/delivery";
-import { fetchRestaurants, fetchCuisines, getStoredRestaurants, getStoredCuisines } from "../services/api";
+import {
+  fetchRestaurants,
+  fetchCuisines,
+  getStoredRestaurants,
+  getStoredCuisines,
+  fetchBudgetMeals,
+  getStoredBudgetMeals,
+  BudgetMeal,
+  TopBudgetRestaurant,
+} from "../services/api";
 import restaurantsData from "../data/restaurants.json";
 import cuisinesData from "../data/cuisines.json";
-import budgetMealsData from "../data/budget_meals.json";
 import { Restaurant, CuisineType } from "../types";
 
 interface HeroAd {
@@ -43,20 +51,6 @@ interface HeroAd {
   deliveryFee: string;
   rating: string;
   isFreeDelivery?: boolean;
-}
-
-interface BudgetMeal {
-  id: string;
-  name: string;
-  price: number;
-  original_price?: number | null;
-  image_path: string;
-  restaurant?: {
-    name: string;
-    slug: string;
-    logo_path?: string;
-    base_delivery_fee?: number;
-  };
 }
 
 interface SectionInfoModalData {
@@ -202,7 +196,13 @@ export const HomePage: React.FC = () => {
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>(getStoredRestaurants);
   const [cuisines, setCuisines] = useState<CuisineType[]>(getStoredCuisines);
-  const budgetMeals: BudgetMeal[] = budgetMealsData as BudgetMeal[];
+
+  // Budget Meals (< 50 MAD) with Real DB Data & Top 3 Restaurants Filter
+  const initialBudget = getStoredBudgetMeals();
+  const [budgetMeals, setBudgetMeals] = useState<BudgetMeal[]>(initialBudget?.meals || []);
+  const [topBudgetRestaurants, setTopBudgetRestaurants] = useState<TopBudgetRestaurant[]>(initialBudget?.topRestaurants || []);
+  const [selectedBudgetFilter, setSelectedBudgetFilter] = useState<string>("all");
+  const [isBudgetLoading, setIsBudgetLoading] = useState(false);
 
   const loadFreshData = useCallback(() => {
     fetchRestaurants().then((data) => {
@@ -215,6 +215,35 @@ export const HomePage: React.FC = () => {
         setCuisines(data);
       }
     });
+    fetchBudgetMeals(selectedBudgetFilter).then((res) => {
+      if (res && res.meals) {
+        setBudgetMeals(res.meals);
+        if (res.topRestaurants && res.topRestaurants.length > 0) {
+          setTopBudgetRestaurants(res.topRestaurants);
+        }
+      }
+    });
+  }, [selectedBudgetFilter]);
+
+  const handleSelectBudgetFilter = useCallback(async (slug: string) => {
+    setSelectedBudgetFilter(slug);
+    setIsBudgetLoading(true);
+    try {
+      const res = await fetchBudgetMeals(slug);
+      if (res && res.meals) {
+        setBudgetMeals(res.meals);
+        if (res.topRestaurants && res.topRestaurants.length > 0) {
+          setTopBudgetRestaurants(res.topRestaurants);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to filter budget meals:", err);
+    } finally {
+      setIsBudgetLoading(false);
+      if (budgetSliderRef.current) {
+        budgetSliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -847,9 +876,9 @@ export const HomePage: React.FC = () => {
               </section>
             )}
 
-            {budgetMeals.length > 0 && (
+            {(budgetMeals.length > 0 || topBudgetRestaurants.length > 0) && (
               <section id="budget-meals-section" className="budget-section-wrap">
-                <div className="section-head-modern" style={{ marginBottom: "18px" }}>
+                <div className="section-head-modern" style={{ marginBottom: "14px" }}>
                   <div className="section-head-title-wrap">
                     <h3 className="section-title-modern">
                       Moins de 50 MAD
@@ -884,7 +913,52 @@ export const HomePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div ref={budgetSliderRef} className="budget-slider-track">
+                {/* Top 3 Restaurants Interactive Filter Pills */}
+                {topBudgetRestaurants.length > 0 && (
+                  <div className="budget-filter-bar">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectBudgetFilter("all")}
+                      className={`budget-filter-pill ${selectedBudgetFilter === "all" ? "active" : ""}`}
+                    >
+                      <span>Tous les repas</span>
+                      {selectedBudgetFilter === "all" && budgetMeals.length > 0 && (
+                        <span className="budget-filter-pill-badge">{budgetMeals.length}</span>
+                      )}
+                    </button>
+
+                    {topBudgetRestaurants.map((r) => {
+                      const isActive = selectedBudgetFilter === r.slug;
+                      return (
+                        <button
+                          key={`budget-filter-${r.slug}`}
+                          type="button"
+                          onClick={() => handleSelectBudgetFilter(r.slug)}
+                          className={`budget-filter-pill ${isActive ? "active" : ""}`}
+                        >
+                          <img
+                            src={r.logo}
+                            alt={r.name}
+                            className="budget-filter-pill-logo"
+                            onError={(e) => {
+                              e.currentTarget.src = "/images/restaurants/McDonalds.png";
+                            }}
+                          />
+                          <span>{r.name}</span>
+                          <span className="budget-filter-pill-badge">
+                            ★ {r.rating.toFixed(1)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div
+                  ref={budgetSliderRef}
+                  className="budget-slider-track"
+                  style={{ opacity: isBudgetLoading ? 0.6 : 1, transition: "opacity 0.2s ease" }}
+                >
                   {budgetMeals.map((meal) => {
                     const fee = Number(meal.restaurant?.base_delivery_fee || 0);
                     return (
@@ -899,12 +973,18 @@ export const HomePage: React.FC = () => {
                             alt={meal.name}
                             className="budget-photo-img"
                             loading="lazy"
+                            onError={(e) => {
+                              e.currentTarget.src = "/images/cuisines/poulet.png";
+                            }}
                           />
                           <div className="budget-photo-logo">
                             <img
                               src={meal.restaurant?.logo_path || "/images/logo.png"}
                               alt={meal.restaurant?.name}
                               className="budget-photo-logo-img"
+                              onError={(e) => {
+                                e.currentTarget.src = "/images/logo.png";
+                              }}
                             />
                           </div>
                         </div>
