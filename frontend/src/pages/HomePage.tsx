@@ -17,8 +17,6 @@ import {
 } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
 import { SearchOverlay } from "../components/SearchOverlay";
-import { CartDrawer } from "../components/CartDrawer";
-import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
@@ -1206,8 +1204,6 @@ export const HomePage: React.FC = () => {
       )}
 
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <CartDrawer />
-      <NotificationDrawer />
       <MobileBottomNav />
     </div>
   );

@@ -47,7 +47,7 @@ export const OrdersPage: React.FC = () => {
     return getStoredRestaurants();
   });
   const [loading, setLoading] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
+  const [filter, setFilter] = useState<"all" | "ongoing" | "delivered">("all");
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   const [copiedId, setCopiedId] = useState(false);
 
@@ -83,14 +83,15 @@ export const OrdersPage: React.FC = () => {
     );
   }, [orders]);
 
-  const pastOrders = useMemo(() => {
-    return orders.filter(
-      (o) =>
-        o.status === "delivered" ||
-        o.status === "cancelled" ||
-        o.status === "rejected"
-    );
+  const deliveredOrders = useMemo(() => {
+    return orders.filter((o) => o.status === "delivered");
   }, [orders]);
+
+  const displayedOrders = useMemo(() => {
+    if (filter === "ongoing") return ongoingOrders;
+    if (filter === "delivered") return deliveredOrders;
+    return orders;
+  }, [filter, orders, ongoingOrders, deliveredOrders]);
 
   const getShopCover = (shopName: string, fallbackLogo?: string) => {
     const found = restaurants.find(
@@ -146,43 +147,68 @@ export const OrdersPage: React.FC = () => {
             </p>
           </div>
 
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-2 cursor-pointer transition-all self-start sm:self-auto ${
-              showHistory
-                ? "bg-[#0B1020] text-white shadow-md shadow-[#0B1020]/20"
-                : "bg-white text-[#0B1020] hover:bg-[#FFF3EA] hover:text-[#FF5A00] border border-[#0B1020]/8 shadow-xs"
-            }`}
-          >
-            <History className="w-4 h-4 text-[#FF5A00]" />
-            <span>Historique des commandes</span>
-            <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-[#FF5A00]/10 text-[#FF5A00]">
-              {pastOrders.length}
-            </span>
-          </button>
+          <div className="flex items-center gap-1.5 bg-white p-1 rounded-2xl border border-[#0B1020]/8 shadow-xs">
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                filter === "all"
+                  ? "bg-[#0B1020] text-white shadow-xs"
+                  : "text-[#7A8194] hover:text-[#0B1020]"
+              }`}
+            >
+              Toutes ({orders.length})
+            </button>
+            <button
+              onClick={() => setFilter("ongoing")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                filter === "ongoing"
+                  ? "bg-[#FF5A00] text-white shadow-xs"
+                  : "text-[#7A8194] hover:text-[#FF5A00]"
+              }`}
+            >
+              En cours ({ongoingOrders.length})
+            </button>
+            <button
+              onClick={() => setFilter("delivered")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                filter === "delivered"
+                  ? "bg-[#12A150] text-white shadow-xs"
+                  : "text-[#7A8194] hover:text-[#12A150]"
+              }`}
+            >
+              Livrées ({deliveredOrders.length})
+            </button>
+          </div>
         </div>
 
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base sm:text-lg font-black text-[#0B1020] flex items-center gap-2">
-              <Package className="w-5 h-5 text-[#FF5A00]" />
-              <span>Commandes en cours ({ongoingOrders.length})</span>
-            </h2>
-          </div>
-
-          {ongoingOrders.length === 0 ? (
-            <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#0B1020]/8 shadow-xs text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-[#FFF3EA] text-[#FF5A00] flex items-center justify-center mx-auto ring-8 ring-[#FFF3EA]/50">
-                <ShoppingBag className="w-8 h-8" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-black text-[#0B1020]">
-                  Aucune commande en cours
-                </h3>
-                <p className="text-xs text-[#7A8194] max-w-sm mx-auto">
-                  Toutes vos livraisons précédentes ont été terminées. Envie d'un bon repas ?
-                </p>
-              </div>
+        {displayedOrders.length === 0 ? (
+          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#0B1020]/8 shadow-xs text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-[#FFF3EA] text-[#FF5A00] flex items-center justify-center mx-auto ring-8 ring-[#FFF3EA]/50">
+              <ShoppingBag className="w-8 h-8" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-black text-[#0B1020]">
+                {filter === "ongoing"
+                  ? "Aucune commande en cours"
+                  : filter === "delivered"
+                  ? "Aucune commande livrée"
+                  : "Aucune commande passée"}
+              </h3>
+              <p className="text-xs text-[#7A8194] max-w-sm mx-auto">
+                {filter === "ongoing" && deliveredOrders.length > 0
+                  ? "Toutes vos commandes précédentes ont bien été livrées à destination."
+                  : "Envie d'un bon repas ? Parcourez nos meilleurs restaurants d'Agadir."}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              {filter === "ongoing" && deliveredOrders.length > 0 && (
+                <button
+                  onClick={() => setFilter("delivered")}
+                  className="px-5 py-2.5 rounded-2xl text-xs font-black bg-[#12A150]/10 text-[#12A150] border border-[#12A150]/20 hover:bg-[#12A150]/15 transition-all cursor-pointer"
+                >
+                  Voir mes commandes livrées ({deliveredOrders.length})
+                </button>
+              )}
               <Link
                 to="/restaurants"
                 className="foodi-btn-primary inline-flex py-3 px-6 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/25 cursor-pointer"
@@ -191,67 +217,84 @@ export const OrdersPage: React.FC = () => {
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-          ) : (
-            <div className="space-y-6">
-              {ongoingOrders.map((ord) => {
-                const coverImg = getShopCover(ord.restaurantName, ord.restaurantLogo);
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {displayedOrders.map((ord) => {
+              const isDelivered = ord.status === "delivered";
+              const isOngoing = !isDelivered && ord.status !== "cancelled" && ord.status !== "rejected";
+              const coverImg = getShopCover(ord.restaurantName, ord.restaurantLogo);
 
-                return (
-                  <div
-                    key={ord.id}
-                    className="bg-white rounded-3xl border border-[#0B1020]/8 shadow-sm overflow-hidden transition-all hover:shadow-md"
-                  >
-                    <div className="h-32 sm:h-44 w-full relative overflow-hidden bg-[#0B1020]">
-                      <img
-                        src={coverImg}
-                        alt={ord.restaurantName}
-                        className="w-full h-full object-cover opacity-90 transition-transform duration-500 hover:scale-105"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80";
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+              return (
+                <div
+                  key={ord.id}
+                  className={`bg-white rounded-3xl border shadow-sm overflow-hidden transition-all hover:shadow-md ${
+                    isDelivered ? "border-emerald-200/80" : "border-[#0B1020]/8"
+                  }`}
+                >
+                  <div className="h-32 sm:h-44 w-full relative overflow-hidden bg-[#0B1020]">
+                    <img
+                      src={coverImg}
+                      alt={ord.restaurantName}
+                      className="w-full h-full object-cover opacity-90 transition-transform duration-500 hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80";
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
 
-                      <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
+                    <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
+                      {isDelivered ? (
+                        <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase text-white bg-[#12A150] px-3.5 py-1.5 rounded-full shadow-md">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Commande livrée
+                        </span>
+                      ) : isOngoing ? (
                         <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase text-white bg-[#FF5A00] px-3 py-1 rounded-full shadow-md">
                           <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                          {ord.statusLabel || "En préparation"}
+                          {ord.statusLabel || "En cours de livraison"}
                         </span>
-                      </div>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase text-white bg-red-600 px-3 py-1 rounded-full shadow-md">
+                          Commande annulée
+                        </span>
+                      )}
+                    </div>
 
-                      <div className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-10 text-right">
-                        <span className="font-mono text-xs font-black text-white/90 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-xl border border-white/10 block">
-                          {ord.id}
-                        </span>
-                        <span className="text-[10px] text-white/80 block mt-1">
-                          {ord.date}
-                        </span>
-                      </div>
+                    <div className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-10 text-right">
+                      <span className="font-mono text-xs font-black text-white/90 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-xl border border-white/10 block">
+                        {ord.id}
+                      </span>
+                      <span className="text-[10px] text-white/80 block mt-1">
+                        {isDelivered && ord.deliveredAt ? `Livrée le ${ord.deliveredAt}` : ord.date}
+                      </span>
+                    </div>
 
-                      <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 right-4 z-10 flex items-end justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white shadow-xl bg-white shrink-0">
-                            <img
-                              src={ord.restaurantLogo}
-                              alt={ord.restaurantName}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
-                              }}
-                            />
-                          </div>
-                          <div className="text-white">
-                            <h3 className="text-lg sm:text-xl font-black drop-shadow-sm">
-                              {ord.restaurantName}
-                            </h3>
-                            <p className="text-xs text-white/80 flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-[#FF5A00]" />
-                              <span>{ord.neighborhood}</span>
-                            </p>
-                          </div>
+                    <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 right-4 z-10 flex items-end justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white shadow-xl bg-white shrink-0">
+                          <img
+                            src={ord.restaurantLogo}
+                            alt={ord.restaurantName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
+                            }}
+                          />
                         </div>
+                        <div className="text-white">
+                          <h3 className="text-lg sm:text-xl font-black drop-shadow-sm">
+                            {ord.restaurantName}
+                          </h3>
+                          <p className="text-xs text-white/80 flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-[#FF5A00]" />
+                            <span>{ord.neighborhood}</span>
+                          </p>
+                        </div>
+                      </div>
 
+                      {isOngoing && (
                         <div className="hidden sm:block text-right bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-white/15">
                           <span className="text-[10px] text-white/80 uppercase font-bold block">
                             Arrivée estimée
@@ -260,198 +303,147 @@ export const OrdersPage: React.FC = () => {
                             ~{ord.arrivalTime || "20 min"}
                           </span>
                         </div>
-                      </div>
-                    </div>
+                      )}
 
-                    <div className="p-4 sm:p-6 space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between pb-1">
-                          <span className="text-xs font-black uppercase tracking-wider text-[#7A8194]">
-                            Menu commandé
+                      {isDelivered && (
+                        <div className="hidden sm:block text-right bg-emerald-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-emerald-400/30">
+                          <span className="text-[10px] text-emerald-200 uppercase font-bold block">
+                            Livraison réussie
                           </span>
+                          <span className="text-xs font-black text-white">
+                            À votre porte
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="p-4 sm:p-6 space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between pb-1">
+                        <span className="text-xs font-black uppercase tracking-wider text-[#7A8194]">
+                          Menu commandé ({ord.items.length} {ord.items.length > 1 ? "articles" : "article"})
+                        </span>
+                        {isOngoing && (
                           <span className="sm:hidden text-xs font-bold text-[#FF5A00]">
                             Arrivée : ~{ord.arrivalTime || "20 min"}
                           </span>
-                        </div>
-
-                        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
-                          {ord.items.map((item, idx) => (
-                            <div
-                              key={idx}
-                              className="p-2.5 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/6 flex items-center gap-3"
-                            >
-                              <img
-                                src={item.image || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=300&q=80"}
-                                alt={item.name}
-                                className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#0B1020]/6"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src =
-                                    "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=300&q=80";
-                                }}
-                              />
-                              <div className="min-w-0 flex-1">
-                                <h4 className="font-extrabold text-xs text-[#0B1020] truncate">
-                                  {item.name}
-                                </h4>
-                                <div className="flex items-center justify-between mt-1 text-[11px]">
-                                  <span className="font-bold text-[#FF5A00] bg-white px-1.5 py-0.5 rounded border border-[#0B1020]/6">
-                                    {item.quantity}x
-                                  </span>
-                                  <span className="font-black text-[#0B1020]">
-                                    {item.price * item.quantity} DH
-                                  </span>
-                                </div>
-                                {item.options && (
-                                  <p className="text-[10px] text-[#7A8194] truncate mt-0.5">
-                                    {item.options}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="sm:hidden space-y-2 pt-1 divide-y divide-[#0B1020]/6">
-                          {ord.items.map((item, idx) => (
-                            <div key={idx} className="pt-2 first:pt-0 flex justify-between items-center text-xs">
-                              <span className="text-[#0B1020]">
-                                <strong className="font-black text-[#FF5A00]">{item.quantity}x</strong> {item.name}
-                                {item.options && (
-                                  <span className="block text-[10px] text-[#7A8194]">
-                                    {item.options}
-                                  </span>
-                                )}
-                              </span>
-                              <span className="font-black text-[#0B1020] shrink-0">
-                                {item.price * item.quantity} DH
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                        )}
+                        {isDelivered && (
+                          <span className="text-xs font-extrabold text-[#12A150] flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5" />
+                            Livrée avec succès
+                          </span>
+                        )}
                       </div>
 
-                      <div className="pt-3 border-t border-[#0B1020]/8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="space-y-0.5 text-xs">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs text-[#7A8194] font-medium">Prix total :</span>
-                            <span className="text-xl font-black text-[#FF5A00]">
-                              {ord.total} DH
+                      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+                        {ord.items.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="p-2.5 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/6 flex items-center gap-3"
+                          >
+                            <img
+                              src={item.image || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=300&q=80"}
+                              alt={item.name}
+                              className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#0B1020]/6"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=300&q=80";
+                              }}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-extrabold text-xs text-[#0B1020] truncate">
+                                {item.name}
+                              </h4>
+                              <div className="flex items-center justify-between mt-1 text-[11px]">
+                                <span className="font-bold text-[#FF5A00] bg-white px-1.5 py-0.5 rounded border border-[#0B1020]/6">
+                                  {item.quantity}x
+                                </span>
+                                <span className="font-black text-[#0B1020]">
+                                  {item.price * item.quantity} DH
+                                </span>
+                              </div>
+                              {item.options && (
+                                <p className="text-[10px] text-[#7A8194] truncate mt-0.5">
+                                  {item.options}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="sm:hidden space-y-2 pt-1 divide-y divide-[#0B1020]/6">
+                        {ord.items.map((item, idx) => (
+                          <div key={idx} className="pt-2 first:pt-0 flex justify-between items-center text-xs">
+                            <span className="text-[#0B1020]">
+                              <strong className="font-black text-[#FF5A00]">{item.quantity}x</strong> {item.name}
+                              {item.options && (
+                                <span className="block text-[10px] text-[#7A8194]">
+                                  {item.options}
+                                </span>
+                              )}
                             </span>
-                            <span className="text-[11px] text-[#7A8194]">
-                              ({ord.paymentLabel || "Carte bancaire"})
+                            <span className="font-black text-[#0B1020] shrink-0">
+                              {item.price * item.quantity} DH
                             </span>
                           </div>
-                          <p className="text-[11px] text-[#7A8194] truncate max-w-md">
-                            Livraison à : <strong className="text-[#0B1020]" title={ord.address}>{ord.address.length > 10 ? ord.address.slice(0, 10) + "..." : ord.address}</strong>
-                          </p>
-                        </div>
+                        ))}
+                      </div>
+                    </div>
 
-                        <div className="flex items-center gap-2">
-                          {ord.token && (
-                            <Link
-                              to={`/track/${ord.token}`}
-                              className="foodi-btn-primary w-full sm:w-auto py-3 px-5 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
-                            >
-                              <Bike className="w-4 h-4" />
-                              <span>Suivre en direct</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </Link>
-                          )}
+                    <div className="pt-3 border-t border-[#0B1020]/8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="space-y-0.5 text-xs">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xs text-[#7A8194] font-medium">Prix total :</span>
+                          <span className="text-xl font-black text-[#FF5A00]">
+                            {ord.total} DH
+                          </span>
+                          <span className="text-[11px] text-[#7A8194]">
+                            ({ord.paymentLabel || "Carte bancaire"})
+                          </span>
                         </div>
+                        <p className="text-[11px] text-[#7A8194] truncate max-w-md">
+                          Livraison à : <strong className="text-[#0B1020]" title={ord.address}>{ord.address.length > 25 ? ord.address.slice(0, 25) + "..." : ord.address}</strong>
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={() => setSelectedOrder(ord)}
+                          className="py-2.5 px-4 rounded-2xl text-xs font-bold bg-[#FAF8F5] hover:bg-[#eaeaea] text-[#0B1020] transition-colors cursor-pointer border border-[#0B1020]/8"
+                        >
+                          Détails & Reçu
+                        </button>
+
+                        {isOngoing && ord.token && (
+                          <Link
+                            to={`/track/${ord.token}`}
+                            className="foodi-btn-primary py-2.5 px-5 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                          >
+                            <Bike className="w-4 h-4" />
+                            <span>Suivre en direct</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
+
+                        {isDelivered && (
+                          <Link
+                            to={`/restaurants/${getShopSlug(ord.restaurantName)}`}
+                            className="foodi-btn-primary py-2.5 px-5 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/25 flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            <span>Commander à nouveau</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        {showHistory && (
-          <section className="space-y-4 pt-4 border-t border-[#0B1020]/8 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base sm:text-lg font-black text-[#0B1020] flex items-center gap-2">
-                  <History className="w-5 h-5 text-[#0B1020]" />
-                  <span>Historique des commandes ({pastOrders.length})</span>
-                </h2>
-                <p className="text-xs text-[#7A8194]">
-                  Cliquez sur une commande pour afficher son récapitulatif complet
-                </p>
-              </div>
-            </div>
-
-            {pastOrders.length === 0 ? (
-              <div className="bg-white rounded-3xl p-6 border border-[#0B1020]/8 text-center text-xs text-[#7A8194]">
-                Aucune commande passée dans l'historique.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pastOrders.map((ord) => {
-                  const isDelivered = ord.status === "delivered";
-
-                  return (
-                    <div
-                      key={ord.id}
-                      onClick={() => setSelectedOrder(ord)}
-                      className="bg-white rounded-3xl p-5 border border-[#0B1020]/8 shadow-xs hover:border-[#FF5A00]/40 transition-all cursor-pointer space-y-3 group"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full overflow-hidden border border-[#0B1020]/10 flex items-center justify-center shrink-0 bg-white shadow-xs">
-                            <img
-                              src={ord.restaurantLogo}
-                              alt={ord.restaurantName}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/images/restaurants/McDonalds.png";
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <h4 className="font-extrabold text-sm sm:text-base text-[#0B1020] group-hover:text-[#FF5A00] transition-colors">
-                              {ord.restaurantName}
-                            </h4>
-                            <p className="text-[11px] text-[#7A8194]">
-                              {ord.deliveredAt || ord.date}
-                            </p>
-                          </div>
-                        </div>
-
-                        <span
-                          className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full border ${
-                            isDelivered
-                              ? "text-[#12A150] bg-emerald-50 border-emerald-100"
-                              : "text-red-600 bg-red-50 border-red-100"
-                          }`}
-                        >
-                          {isDelivered ? "Livrée" : "Annulée"}
-                        </span>
-                      </div>
-
-                      <div className="text-xs text-[#3B4256] line-clamp-2">
-                        {ord.items.map((it) => `${it.quantity}x ${it.name}`).join(", ")}
-                      </div>
-
-                      <div className="pt-2 border-t border-[#0B1020]/6 flex items-center justify-between text-xs">
-                        <span className="font-mono font-bold text-[#7A8194]">
-                          {ord.id}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-sm text-[#0B1020]">
-                            {ord.total} DH
-                          </span>
-                          <span className="text-[11px] font-bold text-[#FF5A00] flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-                            Détails <ChevronRight className="w-3.5 h-3.5" />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </section>
+                </div>
+              );
+            })}
+          </div>
         )}
       </main>
 
@@ -520,7 +512,7 @@ export const OrdersPage: React.FC = () => {
 
                 <div className="text-right">
                   <span className="text-[10px] text-[#7A8194] font-bold uppercase block">
-                    Livrée le
+                    {selectedOrder.status === "delivered" ? "Livrée le" : "Commandé le"}
                   </span>
                   <span className="font-bold text-[#0B1020]">
                     {selectedOrder.deliveredAt || selectedOrder.date}

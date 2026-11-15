@@ -128,12 +128,10 @@ export const RestaurantApplyPage: React.FC = () => {
     if (currentStep === 1) {
       if (validateStep1()) {
         setCurrentStep(2);
-        window.scrollTo({ top: 200, behavior: "smooth" });
       }
     } else if (currentStep === 2) {
       if (validateStep2()) {
         setCurrentStep(3);
-        window.scrollTo({ top: 200, behavior: "smooth" });
       }
     }
   };
@@ -142,7 +140,6 @@ export const RestaurantApplyPage: React.FC = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3);
       setErrorMessage("");
-      window.scrollTo({ top: 200, behavior: "smooth" });
     }
   };
 
@@ -189,39 +186,39 @@ export const RestaurantApplyPage: React.FC = () => {
     placeholder: string
   ) => {
     return (
-      <div className="space-y-1.5">
-        <label className="text-xs font-bold text-[#0B1020] block">{label}</label>
+      <div className="apply-form-group">
+        <label className="apply-label">{label}</label>
         {preview ? (
-          <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF5A00] bg-[#FAF8F5] p-2 flex items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-3 min-w-0">
-              <img src={preview} alt="Aperçu" className="w-14 h-14 rounded-xl object-cover border border-[#0B1020]/10" />
-              <div className="min-w-0">
-                <span className="text-xs font-black text-[#0B1020] flex items-center gap-1.5 truncate">
-                  <Check size={14} className="text-[#10B981]" /> Image prête
+          <div className="apply-upload-preview">
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+              <img src={preview} alt="Aperçu" style={{ width: "54px", height: "54px", borderRadius: "12px", objectFit: "cover" }} />
+              <div style={{ minWidth: 0 }}>
+                <span style={{ fontSize: "12px", fontWeight: 800, color: "#0B1020", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <Check size={14} color="#10B981" /> Image prête
                 </span>
-                <span className="text-[11px] text-[#7A8194]">Format validé</span>
+                <span style={{ fontSize: "11px", color: "#7A8194" }}>Format validé</span>
               </div>
             </div>
             <button
               type="button"
               onClick={() => onSet("")}
-              className="w-8 h-8 rounded-xl bg-white text-[#EF4444] border border-[#0B1020]/10 flex items-center justify-center hover:bg-[#FEF2F2] transition-colors cursor-pointer shrink-0"
+              style={{ width: "32px", height: "32px", borderRadius: "10px", background: "#FFFFFF", color: "#EF4444", border: "1px solid rgba(11,16,32,0.1)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
               title="Supprimer"
             >
               <X size={15} />
             </button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center p-5 rounded-2xl border-2 border-dashed border-[#0B1020]/15 hover:border-[#FF5A00] bg-[#FAF8F5] hover:bg-[#FFF3EA]/30 transition-all cursor-pointer group text-center">
-            <UploadCloud size={24} className="text-[#7A8194] group-hover:text-[#FF5A00] transition-colors mb-1.5" />
-            <span className="text-xs font-bold text-[#0B1020] group-hover:text-[#FF5A00] transition-colors">
+          <label className="apply-upload-dropzone">
+            <UploadCloud size={24} color="#FF5A00" style={{ marginBottom: "6px" }} />
+            <span style={{ fontSize: "12px", fontWeight: 800, color: "#0B1020" }}>
               {placeholder}
             </span>
-            <span className="text-[10px] text-[#7A8194] mt-0.5">PNG, JPG ou JPEG (max 5 Mo)</span>
+            <span style={{ fontSize: "11px", color: "#7A8194", marginTop: "2px" }}>PNG, JPG ou JPEG (max 5 Mo)</span>
             <input
               type="file"
               accept="image/*"
-              className="hidden"
+              style={{ display: "none" }}
               onChange={(e) => handleFileUpload(e, onSet)}
             />
           </label>
@@ -231,148 +228,125 @@ export const RestaurantApplyPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between">
+    <div className="apply-page-root">
       <div>
         <HomeHeader showBackButton />
 
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#7A8194]">
-            <Link to="/" className="hover:text-[#FF5A00] flex items-center gap-1 transition-colors">
+        <main className="apply-main-full">
+          <div className="apply-breadcrumb">
+            <Link to="/">
               <ArrowLeft size={14} /> Accueil
             </Link>
             <span>/</span>
-            <span className="text-[#0B1020]">Devenir Restaurant Partenaire</span>
+            <span style={{ color: "#0B1020" }}>Devenir Restaurant Partenaire</span>
           </div>
 
-          <div className="relative rounded-3xl overflow-hidden shadow-xl border border-[#0B1020]/10 bg-[#161D31] min-h-[200px] sm:min-h-[260px] flex items-end">
+          <div className="apply-banner">
             <img
               src="/images/banners/restaurant-banner.jpg"
               alt="Devenir restaurant partenaire Foodi Agadir"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="apply-banner-img"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = "/images/banners/restau.jpg";
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1020] via-[#0B1020]/60 to-transparent pointer-events-none" />
+            <div className="apply-banner-overlay" />
 
-            <div className="relative z-10 p-6 sm:p-8 space-y-2 text-white max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FF5A00] text-white text-[11px] font-black uppercase tracking-wider">
+            <div className="apply-banner-content">
+              <span className="apply-badge">
                 <Store size={13} /> Partenariat Agadir
               </span>
-              <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
+              <h1 className="apply-banner-title">
                 Enregistrez votre restaurant sur Foodi
               </h1>
-              <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+              <p className="apply-banner-subtitle">
                 Rejoignez le réseau Foodi à Agadir. Augmentez vos ventes en livraison et bénéficiez d'une visibilité directe auprès de milliers de clients.
               </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-[#0B1020]/6">
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { step: 1, title: "1. Restaurant", icon: Store },
-                { step: 2, title: "2. Gérant & Légal", icon: FileText },
-                { step: 3, title: "3. Photos & Menu", icon: Camera },
-              ].map((s) => {
-                const Icon = s.icon;
-                const isActive = currentStep === s.step;
-                const isDone = currentStep > s.step;
-                return (
-                  <div
-                    key={s.step}
-                    className={`flex items-center justify-center sm:justify-start gap-2.5 p-2 sm:p-3 rounded-xl transition-all ${
-                      isActive
-                        ? "bg-[#FFF3EA] text-[#FF5A00] font-black border border-[#FF5A00]/30 shadow-2xs"
-                        : isDone
-                        ? "bg-[#ECFDF5] text-[#10B981] font-bold"
-                        : "text-[#7A8194] font-medium"
-                    }`}
-                  >
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs ${
-                        isActive
-                          ? "bg-[#FF5A00] text-white font-black"
-                          : isDone
-                          ? "bg-[#10B981] text-white font-bold"
-                          : "bg-[#FAF8F5] text-[#7A8194] border border-[#0B1020]/10"
-                      }`}
-                    >
-                      {isDone ? <Check size={14} /> : s.step}
-                    </div>
-                    <span className="text-xs hidden sm:inline truncate">{s.title}</span>
+          <div className="apply-stepper-bar">
+            {[
+              { step: 1, title: "1. Restaurant", icon: Store },
+              { step: 2, title: "2. Gérant & Légal", icon: FileText },
+              { step: 3, title: "3. Photos & Menu", icon: Camera },
+            ].map((s) => {
+              const isActive = currentStep === s.step;
+              const isDone = currentStep > s.step;
+              return (
+                <div
+                  key={s.step}
+                  className={`apply-step-node ${isActive ? "active" : isDone ? "completed" : ""}`}
+                >
+                  <div className="apply-step-number">
+                    {isDone ? <Check size={14} /> : s.step}
                   </div>
-                );
-              })}
-            </div>
+                  <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.title}</span>
+                </div>
+              );
+            })}
           </div>
 
           {isSuccess ? (
-            <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-[#0B1020]/6 text-center space-y-5 animate-in fade-in zoom-in-95 duration-300">
-              <div className="w-20 h-20 rounded-full bg-[#ECFDF5] text-[#10B981] mx-auto flex items-center justify-center shadow-inner">
-                <CheckCircle2 size={42} />
+            <div className="apply-success-box">
+              <div className="apply-success-icon">
+                <CheckCircle2 size={40} />
               </div>
-              <div className="space-y-2 max-w-md mx-auto">
-                <h2 className="text-2xl font-black text-[#0B1020]">Demande transmise avec succès !</h2>
-                <p className="text-xs sm:text-sm text-[#7A8194] leading-relaxed">
-                  Merci <span className="font-bold text-[#0B1020]">{managerName}</span>. Votre dossier pour <span className="font-bold text-[#0B1020]">{restaurantName}</span> a été enregistré. Notre responsable partenariats Agadir vous appellera au <span className="font-bold text-[#0B1020]">{phone}</span> pour finaliser la mise en ligne de votre carte.
-                </p>
-              </div>
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link
-                  to="/"
-                  className="foodi-btn-primary px-6 py-3 rounded-2xl text-xs font-black shadow-md shadow-[#FF5A00]/20"
-                >
+              <h2 style={{ fontSize: "24px", fontWeight: 900, color: "#0B1020", margin: "0 0 8px 0" }}>
+                Demande transmise avec succès !
+              </h2>
+              <p style={{ fontSize: "13px", color: "#7A8194", maxWidth: "480px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
+                Merci <strong style={{ color: "#0B1020" }}>{managerName}</strong>. Votre dossier pour <strong style={{ color: "#0B1020" }}>{restaurantName}</strong> a été enregistré. Notre responsable partenariats Agadir vous appellera au <strong style={{ color: "#0B1020" }}>{phone}</strong> pour finaliser la mise en ligne de votre carte.
+              </p>
+              <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+                <Link to="/" className="apply-btn-submit" style={{ textDecoration: "none" }}>
                   Retour à l'accueil
                 </Link>
-                <Link
-                  to="/restaurants"
-                  className="px-6 py-3 rounded-2xl text-xs font-bold text-[#3B4256] hover:bg-[#FAF8F5] transition-colors"
-                >
+                <Link to="/restaurants" className="apply-btn-prev" style={{ textDecoration: "none" }}>
                   Explorer les restaurants
                 </Link>
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-[#0B1020]/6 space-y-8">
+            <form onSubmit={handleSubmit} className="apply-form-box">
               {errorMessage && (
-                <div className="p-4 rounded-2xl bg-[#FEF2F2] border border-[#FCA5A5] text-[#991B1B] text-xs font-bold flex items-center gap-3 animate-in fade-in">
-                  <AlertCircle size={18} className="shrink-0" />
+                <div className="apply-error-banner">
+                  <AlertCircle size={18} />
                   <span>{errorMessage}</span>
                 </div>
               )}
 
               {currentStep === 1 && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="border-b border-[#0B1020]/8 pb-4">
-                    <h2 className="text-lg font-black text-[#0B1020] flex items-center gap-2">
-                      <Store className="text-[#FF5A00]" size={20} />
+                <div>
+                  <div className="apply-section-header">
+                    <h2 className="apply-section-title">
+                      <Store color="#FF5A00" size={20} />
                       Étape 1 : Coordonnées du Restaurant
                     </h2>
-                    <p className="text-xs text-[#7A8194] mt-1">
+                    <p className="apply-section-desc">
                       Renseignez les détails d'identification de votre établissement.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Nom de l'établissement</label>
+                  <div className="apply-grid-2">
+                    <div className="apply-form-group">
+                      <label className="apply-label">Nom de l'établissement</label>
                       <input
                         type="text"
                         value={restaurantName}
                         onChange={(e) => setRestaurantName(e.target.value)}
                         placeholder="Ex: Le Grill d'Or, Pizza Roma..."
                         required
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-input"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Type de cuisine principale</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Type de cuisine principale</label>
                       <select
                         value={cuisine}
                         onChange={(e) => setCuisine(e.target.value)}
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-select"
                       >
                         {CUISINES.map((c) => (
                           <option key={c} value={c}>{c}</option>
@@ -380,12 +354,12 @@ export const RestaurantApplyPage: React.FC = () => {
                       </select>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Quartier à Agadir</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Quartier à Agadir</label>
                       <select
                         value={neighborhood}
                         onChange={(e) => setNeighborhood(e.target.value)}
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-select"
                       >
                         {AGADIR_NEIGHBORHOODS.map((n) => (
                           <option key={n} value={n}>{n}</option>
@@ -393,110 +367,113 @@ export const RestaurantApplyPage: React.FC = () => {
                       </select>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Adresse complète</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Adresse complète</label>
                       <input
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="Ex: 45 Avenue Hassan II, Talborjt"
                         required
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-input"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Téléphone du restaurant</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Téléphone du restaurant</label>
                       <input
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="Ex: 05 28 84 00 00"
                         required
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-input"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Email professionnel</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Email professionnel</label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Ex: contact@restaurant.ma"
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-input"
                       />
                     </div>
-                  </div>
 
-                  <div className="space-y-1.5 pt-2">
-                    <label className="text-xs font-bold text-[#0B1020]">Description courte ou spécialités</label>
-                    <textarea
-                      rows={3}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Présentez brièvement vos plats signatures, votre univers..."
-                      className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors resize-none"
-                    />
+                    <div className="apply-form-group apply-col-full">
+                      <label className="apply-label">Description courte ou spécialités</label>
+                      <textarea
+                        rows={3}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Présentez brièvement vos plats signatures, votre univers..."
+                        className="apply-textarea"
+                        style={{ resize: "none" }}
+                      />
+                    </div>
                   </div>
                 </div>
               )}
 
               {currentStep === 2 && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="border-b border-[#0B1020]/8 pb-4">
-                    <h2 className="text-lg font-black text-[#0B1020] flex items-center gap-2">
-                      <FileText className="text-[#FF5A00]" size={20} />
+                <div>
+                  <div className="apply-section-header">
+                    <h2 className="apply-section-title">
+                      <FileText color="#FF5A00" size={20} />
                       Étape 2 : Responsable & Informations Juridiques
                     </h2>
-                    <p className="text-xs text-[#7A8194] mt-1">
+                    <p className="apply-section-desc">
                       Informations sur le gérant et données administratives.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Nom complet du gérant</label>
+                  <div className="apply-grid-2">
+                    <div className="apply-form-group">
+                      <label className="apply-label">Nom complet du gérant</label>
                       <input
                         type="text"
                         value={managerName}
                         onChange={(e) => setManagerName(e.target.value)}
                         placeholder="Ex: Mehdi Alaoui"
                         required
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-input"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Téléphone portable direct</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Téléphone portable direct</label>
                       <input
                         type="tel"
                         value={managerPhone}
                         onChange={(e) => setManagerPhone(e.target.value)}
                         placeholder="Ex: 06 12 34 56 78"
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors"
+                        className="apply-input"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Numéro RC (Registre du Commerce)</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Numéro RC (Registre du Commerce)</label>
                       <input
                         type="text"
                         value={rcNumber}
                         onChange={(e) => setRcNumber(e.target.value)}
                         placeholder="Ex: RC 12345/Agadir"
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors uppercase"
+                        className="apply-input"
+                        style={{ textTransform: "uppercase" }}
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-[#0B1020]">Numéro ICE</label>
+                    <div className="apply-form-group">
+                      <label className="apply-label">Numéro ICE</label>
                       <input
                         type="text"
                         value={iceNumber}
                         onChange={(e) => setIceNumber(e.target.value)}
                         placeholder="Ex: 001234567000089"
-                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F5] border border-[#0B1020]/10 text-xs font-bold text-[#0B1020] focus:outline-hidden focus:border-[#FF5A00] transition-colors uppercase"
+                        className="apply-input"
+                        style={{ textTransform: "uppercase" }}
                       />
                     </div>
                   </div>
@@ -504,18 +481,18 @@ export const RestaurantApplyPage: React.FC = () => {
               )}
 
               {currentStep === 3 && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="border-b border-[#0B1020]/8 pb-4">
-                    <h2 className="text-lg font-black text-[#0B1020] flex items-center gap-2">
-                      <Camera className="text-[#FF5A00]" size={20} />
+                <div>
+                  <div className="apply-section-header">
+                    <h2 className="apply-section-title">
+                      <Camera color="#FF5A00" size={20} />
                       Étape 3 : Photos & Identité Visuelle
                     </h2>
-                    <p className="text-xs text-[#7A8194] mt-1">
+                    <p className="apply-section-desc">
                       Téléversez votre logo et des photos de votre restaurant.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="apply-grid-2">
                     {renderUploadBox(
                       "Logo officiel du restaurant",
                       logoPreview,
@@ -530,7 +507,7 @@ export const RestaurantApplyPage: React.FC = () => {
                       "Cliquer pour téléverser la photo de devanture"
                     )}
 
-                    <div className="sm:col-span-2">
+                    <div className="apply-col-full">
                       {renderUploadBox(
                         "Photo du menu ou plat signature",
                         menuPreview,
@@ -542,12 +519,12 @@ export const RestaurantApplyPage: React.FC = () => {
                 </div>
               )}
 
-              <div className="pt-6 border-t border-[#0B1020]/8 flex items-center justify-between gap-4">
+              <div className="apply-nav-bar">
                 {currentStep > 1 ? (
                   <button
                     type="button"
                     onClick={handlePrev}
-                    className="px-6 py-3.5 rounded-2xl border border-[#0B1020]/10 bg-[#FAF8F5] hover:bg-[#F3EFEA] text-xs font-bold text-[#0B1020] flex items-center gap-2 cursor-pointer transition-colors"
+                    className="apply-btn-prev"
                   >
                     <ArrowLeft size={15} />
                     <span>Précédent</span>
@@ -560,7 +537,7 @@ export const RestaurantApplyPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="foodi-btn-primary px-8 py-3.5 rounded-2xl text-xs font-black shadow-lg shadow-[#FF5A00]/25 flex items-center gap-2 cursor-pointer"
+                    className="apply-btn-next"
                   >
                     <span>Étape suivante</span>
                     <ArrowRight size={15} />
@@ -569,7 +546,8 @@ export const RestaurantApplyPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="foodi-btn-primary px-8 py-3.5 rounded-2xl text-xs font-black shadow-lg shadow-[#FF5A00]/25 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="apply-btn-submit"
+                    style={{ opacity: isSubmitting ? 0.7 : 1 }}
                   >
                     {isSubmitting ? (
                       <>

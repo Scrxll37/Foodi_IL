@@ -20,8 +20,6 @@ import {
   Lock
 } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
-import { CartDrawer } from "../components/CartDrawer";
-import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Loader } from "../components/Loader";
 import { EmailChangeModal } from "../components/EmailChangeModal";
@@ -703,8 +701,6 @@ export const DashboardPage: React.FC = () => {
         onSuccess={handleEmailSuccess}
       />
 
-      <CartDrawer />
-      <NotificationDrawer />
       <MobileBottomNav />
     </div>
   );

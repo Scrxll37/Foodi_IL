@@ -15,8 +15,6 @@ import {
   ThumbsUp
 } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
-import { CartDrawer } from "../components/CartDrawer";
-import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { DishModal } from "../components/DishModal";
 import { Footer } from "../components/Footer";
@@ -685,8 +683,6 @@ export const RestaurantDetailPage: React.FC = () => {
         onClose={() => setSelectedDish(null)}
       />
 
-      <CartDrawer />
-      <NotificationDrawer />
       <MobileBottomNav />
     </div>
   );

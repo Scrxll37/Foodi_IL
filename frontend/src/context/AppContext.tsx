@@ -251,60 +251,82 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       startY = (window as any).event.clientY;
     }
 
-    const cartBtn =
-      document.getElementById("header-cart-btn") ||
-      document.getElementById("bottom-cart-btn") ||
-      document.querySelector(".foodi-header-btn[aria-label='Panier']") ||
-      document.querySelector(".bottom-nav-cart-btn");
+    const isMobile = window.innerWidth < 768;
+    const cartBtn = isMobile
+      ? document.getElementById("bottom-cart-btn") || document.getElementById("header-cart-btn")
+      : document.getElementById("header-cart-btn") || document.getElementById("bottom-cart-btn");
 
-    let targetX = window.innerWidth - 60;
-    let targetY = 30;
+    let targetX = isMobile ? window.innerWidth / 2 : window.innerWidth - 60;
+    let targetY = isMobile ? window.innerHeight - 35 : 30;
 
     if (cartBtn) {
       const rect = cartBtn.getBoundingClientRect();
-      targetX = rect.left + rect.width / 2;
-      targetY = rect.top + rect.height / 2;
+      if (rect.width > 0 && rect.height > 0) {
+        targetX = rect.left + rect.width / 2;
+        targetY = rect.top + rect.height / 2;
+      }
     }
 
     const flyer = document.createElement("div");
     flyer.style.position = "fixed";
     flyer.style.left = `${startX}px`;
     flyer.style.top = `${startY}px`;
-    flyer.style.width = "32px";
-    flyer.style.height = "32px";
-    flyer.style.marginLeft = "-16px";
-    flyer.style.marginTop = "-16px";
+    flyer.style.width = isMobile ? "36px" : "32px";
+    flyer.style.height = isMobile ? "36px" : "32px";
+    flyer.style.marginLeft = isMobile ? "-18px" : "-16px";
+    flyer.style.marginTop = isMobile ? "-18px" : "-16px";
     flyer.style.backgroundColor = "#FF5A00";
     flyer.style.color = "#FFFFFF";
     flyer.style.borderRadius = "9999px";
     flyer.style.display = "flex";
     flyer.style.alignItems = "center";
     flyer.style.justifyContent = "center";
-    flyer.style.boxShadow = "0 8px 24px rgba(255, 90, 0, 0.5)";
+    flyer.style.boxShadow = "0 8px 24px rgba(255, 90, 0, 0.55)";
     flyer.style.zIndex = "99999";
     flyer.style.pointerEvents = "none";
-    flyer.style.transition = "transform 0.65s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.65s ease-in";
-    flyer.style.transform = "translate3d(0, 0, 0) scale(1)";
-    flyer.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
+    flyer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
 
     document.body.appendChild(flyer);
 
-    requestAnimationFrame(() => {
-      const deltaX = targetX - startX;
-      const deltaY = targetY - startY;
-      flyer.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.35)`;
-      flyer.style.opacity = "0.7";
-    });
+    const deltaX = targetX - startX;
+    const deltaY = targetY - startY;
 
-    setTimeout(() => {
-      if (flyer.parentNode) {
-        flyer.parentNode.removeChild(flyer);
-      }
-      setIsCartAnimating(true);
+    if (isMobile) {
+      const midY = deltaY < 0 ? deltaY * 0.4 - 30 : -35;
+      const anim = flyer.animate(
+        [
+          { transform: "translate3d(0, 0, 0) scale(1)", opacity: 1 },
+          { transform: `translate3d(${deltaX * 0.45}px, ${midY}px, 0) scale(1.15)`, opacity: 0.95, offset: 0.35 },
+          { transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.2)`, opacity: 0 }
+        ],
+        {
+          duration: 650,
+          easing: "cubic-bezier(0.25, 0.9, 0.3, 1)",
+          fill: "forwards"
+        }
+      );
+      anim.onfinish = () => {
+        if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+        setIsCartAnimating(true);
+        setTimeout(() => {
+          setIsCartAnimating(false);
+        }, 700);
+      };
+    } else {
+      flyer.style.transition = "transform 0.65s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.65s ease-in";
+      flyer.style.transform = "translate3d(0, 0, 0) scale(1)";
+      requestAnimationFrame(() => {
+        flyer.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.35)`;
+        flyer.style.opacity = "0.7";
+      });
       setTimeout(() => {
-        setIsCartAnimating(false);
-      }, 700);
-    }, 650);
+        if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+        setIsCartAnimating(true);
+        setTimeout(() => {
+          setIsCartAnimating(false);
+        }, 700);
+      }, 650);
+    }
   };
 
   const addToCart = (item: Omit<CartItem, "id">, source?: HTMLElement | { x: number; y: number } | null) => {

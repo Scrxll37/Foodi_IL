@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Star, Clock, Heart } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
-import { CartDrawer } from "../components/CartDrawer";
-import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { Footer } from "../components/Footer";
 import { Loader } from "../components/Loader";
@@ -372,8 +370,6 @@ export const RestaurantsPage: React.FC = () => {
         <Footer />
       </div>
 
-      <CartDrawer />
-      <NotificationDrawer />
       <MobileBottomNav />
     </div>
   );

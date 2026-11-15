@@ -2,6 +2,7 @@
 @import "./home.css";
 @import "./components.css";
 @import "./auth.css";
+@import "./apply.css";
 
 :root {
   --fd-brand: #FF5A00;

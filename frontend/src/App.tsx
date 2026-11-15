@@ -18,6 +18,9 @@ import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { DriverApplyPage } from "./pages/DriverApplyPage";
 import { RestaurantApplyPage } from "./pages/RestaurantApplyPage";
 import { ConflictModal } from "./components/ConflictModal";
+import { CartDrawer } from "./components/CartDrawer";
+import { NotificationDrawer } from "./components/NotificationDrawer";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const { user } = useApp();
@@ -35,7 +38,10 @@ export const App: React.FC = () => {
   return (
     <AppProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <ConflictModal />
+        <CartDrawer />
+        <NotificationDrawer />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

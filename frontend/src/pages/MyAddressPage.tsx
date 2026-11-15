@@ -3,8 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import L from "leaflet";
 import { Home, Building2, Briefcase, HelpCircle, Check, Edit3, Navigation, MapPin, ArrowRight, ArrowLeft, X } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
-import { CartDrawer } from "../components/CartDrawer";
-import { NotificationDrawer } from "../components/NotificationDrawer";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { useApp } from "../context/AppContext";
 import { UserAddress } from "../types";
@@ -595,11 +593,7 @@ export const MyAddressPage: React.FC = () => {
       </main>
 
       {!isPhoneFullScreenMap && (
-        <>
-          <CartDrawer />
-          <NotificationDrawer />
-          <MobileBottomNav />
-        </>
+        <MobileBottomNav />
       )}
     </div>
   );
