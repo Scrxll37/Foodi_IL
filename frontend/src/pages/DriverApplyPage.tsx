@@ -333,10 +333,13 @@ export const DriverApplyPage: React.FC = () => {
                 <CheckCircle2 size={40} />
               </div>
               <h2 style={{ fontSize: "24px", fontWeight: 900, color: "#0B1020", margin: "0 0 8px 0" }}>
-                Candidature soumise avec succès !
+                Dossier en cours d'examen
               </h2>
-              <p style={{ fontSize: "13px", color: "#7A8194", maxWidth: "480px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
-                Merci <strong style={{ color: "#0B1020" }}>{fullName || user.name}</strong>. Vos informations et documents ont été enregistrés avec succès. Notre coordinateur des opérations vous appellera au <strong style={{ color: "#0B1020" }}>{phone || user.phone}</strong> sous 48 heures.
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", backgroundColor: "#FFF3EA", color: "#FF5A00", padding: "6px 14px", borderRadius: "9999px", fontSize: "12px", fontWeight: 800, marginBottom: "16px" }}>
+                <span>Statut : En attente d'approbation administrateur</span>
+              </div>
+              <p style={{ fontSize: "13px", color: "#7A8194", maxWidth: "520px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
+                Merci <strong style={{ color: "#0B1020" }}>{fullName || user.name}</strong>. Votre dossier a été transmis à l'équipe d'administration Foodi Agadir. Il sera examiné sous 24 à 48 heures. Dès que l'administrateur aura validé votre candidature, votre compte sera promu coursier et votre prochaine connexion vous redirigera directement vers votre espace livreur.
               </p>
               <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
                 <Link to="/" className="apply-btn-submit" style={{ textDecoration: "none" }}>

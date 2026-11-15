@@ -201,4 +201,163 @@ class PartnerApplicationController extends Controller
             'data' => $restaurant,
         ]);
     }
+
+    public function pendingApplications(): JsonResponse
+    {
+        $drivers = DriverProfile::with('user')
+            ->where('approval_status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($dp) {
+                return [
+                    'id' => (string) $dp->id,
+                    'userId' => (string) $dp->user_id,
+                    'fullName' => $dp->user?->name ?? 'Candidat Livreur',
+                    'phone' => $dp->user?->phone_number ?? '',
+                    'email' => $dp->user?->email ?? '',
+                    'cin' => $dp->cin_number,
+                    'vehicleType' => $dp->vehicle_type ?? 'motorcycle',
+                    'vehicleBrand' => $dp->vehicle_brand ?? 'Moto',
+                    'vehicleModel' => $dp->vehicle_model ?? '',
+                    'vehiclePlate' => $dp->license_plate ?? '',
+                    'licenseNumber' => $dp->license_number ?? '',
+                    'status' => 'pending',
+                    'appliedDate' => $dp->applied_at ? date('d M Y', strtotime($dp->applied_at)) : 'Récemment',
+                    'photoUrl' => $dp->avatar_path ?: '/images/ui/driver-reference.jpg',
+                    'documents' => [
+                        'cinPhotoUrl' => $dp->cin_recto_path ?: '/images/auth/phone-login.png',
+                        'licensePhotoUrl' => $dp->license_photo_path ?: '/images/auth/phone-register.jpg',
+                        'registrationCardUrl' => $dp->registration_card_path ?: '/images/auth/adphonee.jpg',
+                    ],
+                ];
+            });
+
+        $restaurants = Restaurant::where('approval_status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($r) {
+                return [
+                    'id' => (string) $r->id,
+                    'slug' => $r->slug,
+                    'name' => $r->name,
+                    'managerName' => $r->manager_name ?? 'Gérant',
+                    'phone' => $r->phone_number,
+                    'email' => $r->email ?? '',
+                    'cuisine' => $r->cuisine ?? 'Restauration',
+                    'neighborhood' => $r->neighborhood ?? 'Agadir',
+                    'address' => $r->address,
+                    'rcNumber' => $r->rc_number ?? '',
+                    'iceNumber' => $r->ice_number ?? '',
+                    'status' => 'pending',
+                    'appliedDate' => $r->applied_at ? date('d M Y', strtotime($r->applied_at)) : 'Récemment',
+                    'logo' => $r->logo_path ?: '/images/restaurants/crusti.jpg',
+                    'branches' => [],
+                    'branchesCount' => 1,
+                    'commissionRate' => 15,
+                    'deliveryPricingMode' => 'km',
+                    'customDeliveryFee' => (float) ($r->base_delivery_fee ?? 12),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'pendingDrivers' => $drivers,
+            'pendingRestaurants' => $restaurants,
+        ]);
+    }
+
+    public function updateApplicationStatus(Request $request): JsonResponse
+    {
+        $type = $request->input('type');
+        $id = $request->input('id');
+        $action = $request->input('status') ?? $request->input('action');
+
+        $isApproved = ($action === 'active' || $action === 'approved');
+
+        if ($type === 'driver') {
+            $profile = DriverProfile::where('id', $id)
+                ->orWhere('user_id', $id)
+                ->first();
+
+            if (!$profile) {
+                return response()->json(['success' => false, 'message' => 'Profil coursier non trouvé'], 404);
+            }
+
+            $profile->approval_status = $isApproved ? 'approved' : 'rejected';
+            $profile->is_available = $isApproved;
+            $profile->save();
+
+            if ($profile->user_id) {
+                User::where('id', $profile->user_id)->update([
+                    'role' => $isApproved ? \App\Enums\UserRole::Driver : \App\Enums\UserRole::Customer,
+                ]);
+
+                DB::table('notifications')->insert([
+                    'id' => (string) Str::uuid(),
+                    'type' => 'App\Notifications\DriverApplicationReviewed',
+                    'notifiable_type' => 'App\Models\User',
+                    'notifiable_id' => $profile->user_id,
+                    'data' => json_encode([
+                        'title' => $isApproved ? 'Candidature livreur acceptée !' : 'Candidature non retenue',
+                        'message' => $isApproved
+                            ? 'Félicitations ! Votre dossier a été validé par l\'administration. Vous pouvez maintenant vous connecter à votre espace coursier.'
+                            : 'Votre candidature de livreur n\'a pas été retenue par l\'administration.',
+                        'type' => 'driver',
+                    ]),
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $isApproved ? 'Candidature coursier acceptée avec succès' : 'Candidature coursier refusée',
+            ]);
+        }
+
+        if ($type === 'restaurant') {
+            $restaurant = Restaurant::where('id', $id)
+                ->orWhere('slug', $id)
+                ->first();
+
+            if (!$restaurant) {
+                return response()->json(['success' => false, 'message' => 'Restaurant non trouvé'], 404);
+            }
+
+            $restaurant->approval_status = $isApproved ? 'approved' : 'rejected';
+            $restaurant->status = $isApproved ? 'active' : 'inactive';
+            $restaurant->save();
+
+            if ($restaurant->created_by) {
+                User::where('id', $restaurant->created_by)->update([
+                    'role' => $isApproved ? \App\Enums\UserRole::RestaurantManager : \App\Enums\UserRole::Customer,
+                ]);
+
+                DB::table('notifications')->insert([
+                    'id' => (string) Str::uuid(),
+                    'type' => 'App\Notifications\RestaurantApplicationReviewed',
+                    'notifiable_type' => 'App\Models\User',
+                    'notifiable_id' => $restaurant->created_by,
+                    'data' => json_encode([
+                        'title' => $isApproved ? 'Demande restaurant acceptée !' : 'Demande restaurant refusée',
+                        'message' => $isApproved
+                            ? 'Félicitations ! Votre établissement "' . $restaurant->name . '" a été validé. Il est désormais actif sur Foodi et vous avez accès à votre espace restaurateur.'
+                            : 'Votre demande d\'adhésion pour "' . $restaurant->name . '" a été refusée par l\'administration.',
+                        'type' => 'restaurant',
+                    ]),
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $isApproved ? 'Restaurant approuvé et activé avec succès' : 'Restaurant refusé',
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Type invalide'], 422);
+    }
 }

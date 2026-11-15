@@ -584,3 +584,30 @@ export async function apiApplyRestaurant(payload: RestaurantApplyPayload): Promi
     body: JSON.stringify(payload),
   });
 }
+
+export async function fetchPendingApplications(): Promise<{
+  success: boolean;
+  pendingDrivers: any[];
+  pendingRestaurants: any[];
+}> {
+  try {
+    return await apiFetch<{
+      success: boolean;
+      pendingDrivers: any[];
+      pendingRestaurants: any[];
+    }>("/admin/pending-applications");
+  } catch {
+    return { success: false, pendingDrivers: [], pendingRestaurants: [] };
+  }
+}
+
+export async function apiUpdateApplicationStatus(
+  type: "driver" | "restaurant",
+  id: string | number,
+  status: "active" | "suspended" | "rejected" | "approved"
+): Promise<{ success: boolean; message: string }> {
+  return apiFetch<{ success: boolean; message: string }>("/admin/approve-application", {
+    method: "POST",
+    body: JSON.stringify({ type, id, status }),
+  });
+}

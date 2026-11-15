@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/admin.css";
-import { getStoredRestaurants } from "../services/api";
+import { getStoredRestaurants, fetchPendingApplications, apiUpdateApplicationStatus } from "../services/api";
 import { useApp } from "../context/AppContext";
 
 interface DriverReview {
@@ -528,18 +528,45 @@ export const AdminDashboardPage: React.FC = () => {
     });
   }, [restaurants, searchQuery]);
 
-  const handleUpdateCourierStatus = (id: string, newStatus: "active" | "suspended" | "rejected") => {
+  useEffect(() => {
+    fetchPendingApplications().then((res) => {
+      if (res && res.success) {
+        if (Array.isArray(res.pendingDrivers) && res.pendingDrivers.length > 0) {
+          setCouriers((prev) => {
+            const existingIds = new Set(prev.map((c) => String(c.id)));
+            const newOnes = res.pendingDrivers.filter((d: any) => !existingIds.has(String(d.id)));
+            return [...newOnes, ...prev];
+          });
+        }
+        if (Array.isArray(res.pendingRestaurants) && res.pendingRestaurants.length > 0) {
+          setRestaurants((prev) => {
+            const existingIds = new Set(prev.map((r) => String(r.id)));
+            const newOnes = res.pendingRestaurants.filter((r: any) => !existingIds.has(String(r.id)));
+            return [...newOnes, ...prev];
+          });
+        }
+      }
+    });
+  }, []);
+
+  const handleUpdateCourierStatus = async (id: string, newStatus: "active" | "suspended" | "rejected") => {
     setCouriers((prev) =>
       prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
     );
+    try {
+      await apiUpdateApplicationStatus("driver", id, newStatus);
+    } catch {}
     const label = newStatus === "active" ? "validé" : newStatus === "suspended" ? "suspendu" : "refusé";
     showToast(`Livreur ${label}`);
   };
 
-  const handleUpdateRestaurantStatus = (id: string, newStatus: "active" | "suspended" | "rejected") => {
+  const handleUpdateRestaurantStatus = async (id: string, newStatus: "active" | "suspended" | "rejected") => {
     setRestaurants((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
     );
+    try {
+      await apiUpdateApplicationStatus("restaurant", id, newStatus);
+    } catch {}
     const label = newStatus === "active" ? "validé" : newStatus === "suspended" ? "suspendu" : "refusé";
     showToast(`Restaurant ${label}`);
   };

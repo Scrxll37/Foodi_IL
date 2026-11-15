@@ -15,6 +15,8 @@ class RestaurantController extends Controller
     {
         $query = Restaurant::query()
             ->whereNull('parent_restaurant_id')
+            ->where('approval_status', 'approved')
+            ->where('status', 'active')
             ->with(['branches', 'cuisineTypes', 'schedules']);
 
         if ($search = $request->query('q')) {
@@ -108,9 +110,17 @@ class RestaurantController extends Controller
 
     public function show(string $idOrSlug): JsonResponse
     {
-        $restaurant = Restaurant::where('id', $idOrSlug)
-            ->orWhere('slug', $idOrSlug)
-            ->with([
+        $preview = request()->query('preview') === '1' || request()->header('X-Admin-Preview') === '1';
+
+        $query = Restaurant::where(function ($q) use ($idOrSlug) {
+            $q->where('id', $idOrSlug)->orWhere('slug', $idOrSlug);
+        });
+
+        if (!$preview) {
+            $query->where('approval_status', 'approved')->where('status', 'active');
+        }
+
+        $restaurant = $query->with([
                 'branches',
                 'cuisineTypes',
                 'schedules',
@@ -121,7 +131,7 @@ class RestaurantController extends Controller
         if (!$restaurant) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Restaurant non trouvé',
+                'message' => 'Restaurant non trouvé ou en attente d\'approbation',
             ], 404);
         }
 

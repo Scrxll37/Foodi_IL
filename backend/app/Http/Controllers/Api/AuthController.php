@@ -6,6 +6,8 @@ use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\DriverProfile;
+use App\Models\Restaurant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +53,25 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Identifiant ou mot de passe incorrect.',
             ], 401);
+        }
+
+        if ($user->role === UserRole::Customer || (string)$user->role === 'customer') {
+            $hasApprovedDriver = DriverProfile::where('user_id', $user->id)
+                ->where('approval_status', 'approved')
+                ->exists();
+            if ($hasApprovedDriver) {
+                $user->role = UserRole::Driver;
+                $user->save();
+            } else {
+                $hasApprovedRestau = Restaurant::where('created_by', $user->id)
+                    ->where('approval_status', 'approved')
+                    ->where('status', 'active')
+                    ->exists();
+                if ($hasApprovedRestau) {
+                    $user->role = UserRole::RestaurantManager;
+                    $user->save();
+                }
+            }
         }
 
         $frontendRole = $this->formatFrontendRole($user->role);

@@ -351,10 +351,13 @@ export const RestaurantApplyPage: React.FC = () => {
                 <CheckCircle2 size={40} />
               </div>
               <h2 style={{ fontSize: "24px", fontWeight: 900, color: "#0B1020", margin: "0 0 8px 0" }}>
-                Demande transmise avec succès !
+                Dossier en cours d'examen
               </h2>
-              <p style={{ fontSize: "13px", color: "#7A8194", maxWidth: "480px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
-                Merci <strong style={{ color: "#0B1020" }}>{managerName}</strong>. Votre dossier pour <strong style={{ color: "#0B1020" }}>{restaurantName}</strong> a été enregistré. Notre responsable partenariats Agadir vous appellera au <strong style={{ color: "#0B1020" }}>{phone}</strong> pour finaliser la mise en ligne de votre carte.
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", backgroundColor: "#FFF3EA", color: "#FF5A00", padding: "6px 14px", borderRadius: "9999px", fontSize: "12px", fontWeight: 800, marginBottom: "16px" }}>
+                <span>Statut : En attente d'approbation administrateur</span>
+              </div>
+              <p style={{ fontSize: "13px", color: "#7A8194", maxWidth: "520px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
+                Merci <strong style={{ color: "#0B1020" }}>{managerName}</strong>. Votre dossier pour <strong style={{ color: "#0B1020" }}>{restaurantName}</strong> a été transmis à l'administration. Votre établissement ne sera visible sur la plateforme qu'après validation officielle. Dès acceptation, lors de votre prochaine connexion, vous serez automatiquement redirigé vers votre espace restaurant.
               </p>
               <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
                 <Link to="/" className="apply-btn-submit" style={{ textDecoration: "none" }}>
