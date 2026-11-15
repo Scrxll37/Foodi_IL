@@ -4,15 +4,15 @@ import {
   Store, 
   CheckCircle2, 
   ArrowLeft, 
-  ArrowRight,
+  ArrowRight, 
   AlertCircle, 
-  Send,
-  Loader2,
-  FileText,
-  UploadCloud,
-  Check,
+  Send, 
+  Loader2, 
+  FileText, 
+  UploadCloud, 
+  Check, 
   X,
-  Camera
+  Image as ImageIcon
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { HomeHeader } from "../components/HomeHeader";
@@ -20,31 +20,31 @@ import { Footer } from "../components/Footer";
 import { apiApplyRestaurant } from "../services/api";
 
 const AGADIR_NEIGHBORHOODS = [
+  "Centre Ville",
   "Talborjt",
-  "Centre-Ville",
+  "Marina Agadir",
   "Haut Founty",
-  "Sonaba & Cité Suisse",
+  "Founty Sonaba",
   "Dakhla",
   "Salam",
+  "Al Houda",
+  "Hay Mohammadi",
+  "Charaf",
   "Bensergao",
   "Anza",
-  "Inezgane",
-  "Dcheira",
-  "Tikiouine",
-  "Taghazout",
-  "Autre quartier"
+  "Tikiouine"
 ];
 
 const CUISINES = [
-  "Marocain",
-  "Fast Food & Burgers",
-  "Pizza & Italien",
-  "Tacos & Sandwichs",
+  "Marocain & Tajines",
+  "Burgers & Fast-Food",
+  "Pizzas & Italien",
+  "Tacos & Sandwiches",
   "Asiatique & Sushi",
-  "Grillades & Chawarma",
-  "Café & Desserts",
-  "Healthy & Salades",
-  "Autre cuisine"
+  "Poissons & Fruits de mer",
+  "Café, Crêpes & Desserts",
+  "Grillades & Barbecue",
+  "Végétarien & Healthy"
 ];
 
 export const RestaurantApplyPage: React.FC = () => {
@@ -55,9 +55,9 @@ export const RestaurantApplyPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
   const [restaurantName, setRestaurantName] = useState("");
-  const [cuisine, setCuisine] = useState("Marocain");
   const [address, setAddress] = useState("");
-  const [neighborhood, setNeighborhood] = useState("Talborjt");
+  const [neighborhood, setNeighborhood] = useState(AGADIR_NEIGHBORHOODS[0]);
+  const [cuisine, setCuisine] = useState(CUISINES[0]);
   const [phone, setPhone] = useState(user.phone || "");
   const [email, setEmail] = useState(user.email || "");
   const [description, setDescription] = useState("");
@@ -99,16 +99,20 @@ export const RestaurantApplyPage: React.FC = () => {
   };
 
   const validateStep1 = (): boolean => {
-    if (!restaurantName.trim()) {
+    if (!restaurantName.trim() || restaurantName.trim().length < 2) {
       setErrorMessage("Veuillez renseigner le nom de votre établissement.");
       return false;
     }
-    if (!address.trim()) {
+    if (!address.trim() || address.trim().length < 5) {
       setErrorMessage("Veuillez renseigner l'adresse complète du restaurant.");
       return false;
     }
     if (!phone.trim() || phone.trim().length < 8) {
-      setErrorMessage("Veuillez renseigner un numéro de téléphone de contact.");
+      setErrorMessage("Veuillez renseigner un numéro de téléphone de contact valide.");
+      return false;
+    }
+    if (!email.trim() || !email.includes("@")) {
+      setErrorMessage("Veuillez renseigner une adresse email valide.");
       return false;
     }
     setErrorMessage("");
@@ -116,13 +120,56 @@ export const RestaurantApplyPage: React.FC = () => {
   };
 
   const validateStep2 = (): boolean => {
-    if (!managerName.trim()) {
+    if (!managerName.trim() || managerName.trim().length < 3) {
       setErrorMessage("Veuillez renseigner le nom du gérant ou responsable.");
+      return false;
+    }
+    if (!managerPhone.trim() || managerPhone.trim().length < 8) {
+      setErrorMessage("Veuillez renseigner le numéro de portable du responsable.");
+      return false;
+    }
+    if (!rcNumber.trim() || rcNumber.trim().length < 3) {
+      setErrorMessage("Veuillez renseigner votre numéro de Registre du Commerce (RC).");
+      return false;
+    }
+    if (!iceNumber.trim() || iceNumber.trim().length < 6) {
+      setErrorMessage("Veuillez renseigner votre Identifiant Commun de l'Entreprise (ICE).");
       return false;
     }
     setErrorMessage("");
     return true;
   };
+
+  const validateStep3 = (): boolean => {
+    if (!logoPreview) {
+      setErrorMessage("Veuillez téléverser le logo officiel de votre restaurant.");
+      return false;
+    }
+    if (!facadePreview) {
+      setErrorMessage("Veuillez téléverser la photo de la façade ou de la salle.");
+      return false;
+    }
+    if (!menuPreview) {
+      setErrorMessage("Veuillez téléverser une photo ou extrait de votre menu.");
+      return false;
+    }
+    setErrorMessage("");
+    return true;
+  };
+
+  const isAllFilled = Boolean(
+    restaurantName.trim() &&
+    address.trim() &&
+    phone.trim() &&
+    email.trim() &&
+    managerName.trim() &&
+    managerPhone.trim() &&
+    rcNumber.trim() &&
+    iceNumber.trim() &&
+    logoPreview &&
+    facadePreview &&
+    menuPreview
+  );
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -145,7 +192,18 @@ export const RestaurantApplyPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateStep1() || !validateStep2()) return;
+    if (!validateStep1()) {
+      setCurrentStep(1);
+      return;
+    }
+    if (!validateStep2()) {
+      setCurrentStep(2);
+      return;
+    }
+    if (!validateStep3()) {
+      setCurrentStep(3);
+      return;
+    }
 
     setIsSubmitting(true);
     setErrorMessage("");
@@ -156,15 +214,15 @@ export const RestaurantApplyPage: React.FC = () => {
         name: restaurantName.trim(),
         manager_name: managerName.trim(),
         phone_number: (phone || managerPhone).trim(),
-        email: email.trim() || undefined,
+        email: email.trim(),
         address: address.trim(),
         neighborhood,
         cuisine,
-        rc_number: rcNumber.trim() || undefined,
-        ice_number: iceNumber.trim() || undefined,
+        rc_number: rcNumber.trim(),
+        ice_number: iceNumber.trim(),
         description: description.trim() || undefined,
-        logo_path: logoPreview || undefined,
-        cover_image_path: facadePreview || menuPreview || undefined,
+        logo_path: logoPreview,
+        cover_image_path: facadePreview || menuPreview,
       });
 
       if (res.success) {
@@ -238,16 +296,16 @@ export const RestaurantApplyPage: React.FC = () => {
               <ArrowLeft size={14} /> Accueil
             </Link>
             <span>/</span>
-            <span style={{ color: "#0B1020" }}>Devenir Restaurant Partenaire</span>
+            <span style={{ color: "#0B1020" }}>Espace Restaurateur Partenaire</span>
           </div>
 
           <div className="apply-banner">
             <img
-              src="/images/banners/restaurant-banner.jpg"
-              alt="Devenir restaurant partenaire Foodi Agadir"
+              src="/images/banners/joinus.png"
+              alt="Partenariat restaurant Foodi"
               className="apply-banner-img"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = "/images/banners/restau.jpg";
+                (e.target as HTMLImageElement).src = "/images/banners/apply.png";
               }}
             />
             <div className="apply-banner-overlay" />
@@ -257,19 +315,19 @@ export const RestaurantApplyPage: React.FC = () => {
                 <Store size={13} /> Partenariat Agadir
               </span>
               <h1 className="apply-banner-title">
-                Enregistrez votre restaurant sur Foodi
+                Boostez vos ventes avec Foodi
               </h1>
               <p className="apply-banner-subtitle">
-                Rejoignez le réseau Foodi à Agadir. Augmentez vos ventes en livraison et bénéficiez d'une visibilité directe auprès de milliers de clients.
+                Rejoignez le réseau des meilleurs restaurants d'Agadir. Visibilité maximale, gestion simplifiée de vos commandes et livreurs dédiés.
               </p>
             </div>
           </div>
 
           <div className="apply-stepper-bar">
             {[
-              { step: 1, title: "1. Restaurant", icon: Store },
-              { step: 2, title: "2. Gérant & Légal", icon: FileText },
-              { step: 3, title: "3. Photos & Menu", icon: Camera },
+              { step: 1, title: "1. Établissement", icon: Store },
+              { step: 2, title: "2. Responsable & Légal", icon: FileText },
+              { step: 3, title: "3. Photos & Menu", icon: ImageIcon },
             ].map((s) => {
               const isActive = currentStep === s.step;
               const isDone = currentStep > s.step;
@@ -324,13 +382,13 @@ export const RestaurantApplyPage: React.FC = () => {
                       Étape 1 : Coordonnées du Restaurant
                     </h2>
                     <p className="apply-section-desc">
-                      Renseignez les détails d'identification de votre établissement.
+                      Renseignez les détails d'identification obligatoires de votre établissement.
                     </p>
                   </div>
 
                   <div className="apply-grid-2">
                     <div className="apply-form-group">
-                      <label className="apply-label">Nom de l'établissement</label>
+                      <label className="apply-label">Nom de l'établissement *</label>
                       <input
                         type="text"
                         value={restaurantName}
@@ -342,7 +400,7 @@ export const RestaurantApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Type de cuisine principale</label>
+                      <label className="apply-label">Type de cuisine principale *</label>
                       <select
                         value={cuisine}
                         onChange={(e) => setCuisine(e.target.value)}
@@ -355,7 +413,7 @@ export const RestaurantApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Quartier à Agadir</label>
+                      <label className="apply-label">Quartier à Agadir *</label>
                       <select
                         value={neighborhood}
                         onChange={(e) => setNeighborhood(e.target.value)}
@@ -368,7 +426,7 @@ export const RestaurantApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Adresse complète</label>
+                      <label className="apply-label">Adresse complète *</label>
                       <input
                         type="text"
                         value={address}
@@ -380,7 +438,7 @@ export const RestaurantApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Téléphone du restaurant</label>
+                      <label className="apply-label">Téléphone du restaurant *</label>
                       <input
                         type="tel"
                         value={phone}
@@ -392,12 +450,13 @@ export const RestaurantApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Email professionnel</label>
+                      <label className="apply-label">Email professionnel *</label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Ex: contact@restaurant.ma"
+                        required
                         className="apply-input"
                       />
                     </div>
@@ -425,13 +484,13 @@ export const RestaurantApplyPage: React.FC = () => {
                       Étape 2 : Responsable & Informations Juridiques
                     </h2>
                     <p className="apply-section-desc">
-                      Informations sur le gérant et données administratives.
+                      Informations obligatoires sur le gérant et données administratives de l'établissement.
                     </p>
                   </div>
 
                   <div className="apply-grid-2">
                     <div className="apply-form-group">
-                      <label className="apply-label">Nom complet du gérant</label>
+                      <label className="apply-label">Nom complet du gérant *</label>
                       <input
                         type="text"
                         value={managerName}
@@ -443,37 +502,38 @@ export const RestaurantApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Téléphone portable direct</label>
+                      <label className="apply-label">Téléphone portable direct *</label>
                       <input
                         type="tel"
                         value={managerPhone}
                         onChange={(e) => setManagerPhone(e.target.value)}
                         placeholder="Ex: 06 12 34 56 78"
+                        required
                         className="apply-input"
                       />
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Numéro RC (Registre du Commerce)</label>
+                      <label className="apply-label">Numéro RC (Registre du Commerce) *</label>
                       <input
                         type="text"
                         value={rcNumber}
                         onChange={(e) => setRcNumber(e.target.value)}
-                        placeholder="Ex: RC 12345/Agadir"
+                        placeholder="Ex: RC-AGADIR-87654"
+                        required
                         className="apply-input"
-                        style={{ textTransform: "uppercase" }}
                       />
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Numéro ICE</label>
+                      <label className="apply-label">Numéro ICE (15 chiffres) *</label>
                       <input
                         type="text"
                         value={iceNumber}
                         onChange={(e) => setIceNumber(e.target.value)}
-                        placeholder="Ex: 001234567000089"
+                        placeholder="Ex: 001234567890123"
+                        required
                         className="apply-input"
-                        style={{ textTransform: "uppercase" }}
                       />
                     </div>
                   </div>
@@ -484,37 +544,35 @@ export const RestaurantApplyPage: React.FC = () => {
                 <div>
                   <div className="apply-section-header">
                     <h2 className="apply-section-title">
-                      <Camera color="#FF5A00" size={20} />
-                      Étape 3 : Photos & Identité Visuelle
+                      <ImageIcon color="#FF5A00" size={20} />
+                      Étape 3 : Visuels & Menu du Restaurant
                     </h2>
                     <p className="apply-section-desc">
-                      Téléversez votre logo et des photos de votre restaurant.
+                      Téléversez votre logo, photos d'ambiance et carte pour préparer la vitrine de votre restaurant.
                     </p>
                   </div>
 
-                  <div className="apply-grid-2">
+                  <div className="apply-grid-3">
                     {renderUploadBox(
-                      "Logo officiel du restaurant",
+                      "Logo du restaurant *",
                       logoPreview,
                       setLogoPreview,
-                      "Cliquer pour téléverser votre logo"
+                      "Cliquer pour téléverser votre logo officiel"
                     )}
 
                     {renderUploadBox(
-                      "Photo de la devanture / façade",
+                      "Photo de façade / salle *",
                       facadePreview,
                       setFacadePreview,
                       "Cliquer pour téléverser la photo de devanture"
                     )}
 
-                    <div className="apply-col-full">
-                      {renderUploadBox(
-                        "Photo du menu ou plat signature",
-                        menuPreview,
-                        setMenuPreview,
-                        "Cliquer pour téléverser votre menu ou plat signature"
-                      )}
-                    </div>
+                    {renderUploadBox(
+                      "Photo de votre menu *",
+                      menuPreview,
+                      setMenuPreview,
+                      "Cliquer pour téléverser votre carte des menus"
+                    )}
                   </div>
                 </div>
               )}
@@ -545,19 +603,19 @@ export const RestaurantApplyPage: React.FC = () => {
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isAllFilled}
                     className="apply-btn-submit"
-                    style={{ opacity: isSubmitting ? 0.7 : 1 }}
+                    style={{ opacity: isAllFilled ? 1 : 0.65, cursor: isAllFilled ? "pointer" : "not-allowed" }}
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="animate-spin" size={16} />
-                        <span>Enregistrement de la demande...</span>
+                        <Loader2 size={15} className="animate-spin" />
+                        <span>Envoi en cours...</span>
                       </>
                     ) : (
                       <>
                         <Send size={15} />
-                        <span>Envoyer la demande</span>
+                        <span>Transmettre mon dossier</span>
                       </>
                     )}
                   </button>

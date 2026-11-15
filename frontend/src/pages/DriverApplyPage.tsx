@@ -4,15 +4,15 @@ import {
   Bike, 
   CheckCircle2, 
   ArrowLeft, 
-  ArrowRight,
+  ArrowRight, 
   AlertCircle, 
-  Send,
-  Loader2,
-  User,
-  FileText,
-  UploadCloud,
-  Check,
-  X
+  Send, 
+  Loader2, 
+  User, 
+  FileText, 
+  UploadCloud, 
+  Check, 
+  X 
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { HomeHeader } from "../components/HomeHeader";
@@ -36,7 +36,7 @@ export const DriverApplyPage: React.FC = () => {
   const [licensePhotoPreview, setLicensePhotoPreview] = useState<string>("");
   const [cinPhotoPreview, setCinPhotoPreview] = useState<string>("");
 
-  const [vehicleType, setVehicleType] = useState<"motorcycle" | "scooter" | "bicycle" | "car">("motorcycle");
+  const vehicleType = "motorcycle" as const;
   const [vehicleBrand, setVehicleBrand] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
@@ -79,7 +79,11 @@ export const DriverApplyPage: React.FC = () => {
       setErrorMessage("Veuillez renseigner un numéro de téléphone valide.");
       return false;
     }
-    if (!cinNumber.trim()) {
+    if (!email.trim() || !email.includes("@")) {
+      setErrorMessage("Veuillez renseigner une adresse e-mail valide.");
+      return false;
+    }
+    if (!cinNumber.trim() || cinNumber.trim().length < 3) {
       setErrorMessage("Veuillez renseigner votre numéro de CIN.");
       return false;
     }
@@ -88,13 +92,66 @@ export const DriverApplyPage: React.FC = () => {
   };
 
   const validateStep2 = (): boolean => {
-    if (vehicleType !== "bicycle" && !licenseNumber.trim()) {
-      setErrorMessage("Le numéro de permis est obligatoire pour les véhicules motorisés.");
+    if (!avatarPreview) {
+      setErrorMessage("Veuillez téléverser votre photo de profil.");
+      return false;
+    }
+    if (!cinPhotoPreview) {
+      setErrorMessage("Veuillez téléverser la photo de votre CIN.");
+      return false;
+    }
+    if (!licenseNumber.trim() || licenseNumber.trim().length < 3) {
+      setErrorMessage("Veuillez renseigner votre numéro de permis de conduire.");
+      return false;
+    }
+    if (!licensePhotoPreview) {
+      setErrorMessage("Veuillez téléverser la photo de votre permis de conduire.");
       return false;
     }
     setErrorMessage("");
     return true;
   };
+
+  const validateStep3 = (): boolean => {
+    if (!vehicleBrand.trim() || vehicleBrand.trim().length < 2) {
+      setErrorMessage("Veuillez renseigner la marque de la moto.");
+      return false;
+    }
+    if (!vehicleModel.trim()) {
+      setErrorMessage("Veuillez renseigner le modèle de la moto.");
+      return false;
+    }
+    if (!licensePlate.trim() || licensePlate.trim().length < 3) {
+      setErrorMessage("Veuillez renseigner la plaque d'immatriculation / matricule.");
+      return false;
+    }
+    if (!vehiclePhotoPreview) {
+      setErrorMessage("Veuillez téléverser la photo de votre moto.");
+      return false;
+    }
+    if (!regCardPreview) {
+      setErrorMessage("Veuillez téléverser la photo de la carte grise ou de l'assurance.");
+      return false;
+    }
+    setErrorMessage("");
+    return true;
+  };
+
+  const isAllFilled = Boolean(
+    fullName.trim() &&
+    phone.trim() &&
+    email.trim() &&
+    cinNumber.trim() &&
+    avatarPreview &&
+    cinPhotoPreview &&
+    licenseNumber.trim() &&
+    licensePhotoPreview &&
+    vehicleBrand.trim() &&
+    vehicleModel.trim() &&
+    licensePlate.trim() &&
+    vehiclePhotoPreview &&
+    regCardPreview
+  );
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -117,7 +174,18 @@ export const DriverApplyPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateStep1() || !validateStep2()) return;
+    if (!validateStep1()) {
+      setCurrentStep(1);
+      return;
+    }
+    if (!validateStep2()) {
+      setCurrentStep(2);
+      return;
+    }
+    if (!validateStep3()) {
+      setCurrentStep(3);
+      return;
+    }
 
     setIsSubmitting(true);
     setErrorMessage("");
@@ -129,14 +197,14 @@ export const DriverApplyPage: React.FC = () => {
         phone: phone.trim() || user.phone,
         cin_number: cinNumber.trim().toUpperCase(),
         vehicle_type: vehicleType,
-        vehicle_brand: vehicleBrand.trim() || undefined,
-        vehicle_model: vehicleModel.trim() || undefined,
-        license_plate: licensePlate.trim().toUpperCase() || undefined,
-        license_number: licenseNumber.trim().toUpperCase() || undefined,
-        avatar_path: avatarPreview || undefined,
-        license_photo_path: licensePhotoPreview || undefined,
-        cin_photo_path: cinPhotoPreview || undefined,
-        registration_card_path: regCardPreview || vehiclePhotoPreview || undefined,
+        vehicle_brand: vehicleBrand.trim(),
+        vehicle_model: vehicleModel.trim(),
+        license_plate: licensePlate.trim().toUpperCase(),
+        license_number: licenseNumber.trim().toUpperCase(),
+        avatar_path: avatarPreview,
+        license_photo_path: licensePhotoPreview,
+        cin_photo_path: cinPhotoPreview,
+        registration_card_path: regCardPreview || vehiclePhotoPreview,
       });
 
       if (res.success) {
@@ -215,7 +283,7 @@ export const DriverApplyPage: React.FC = () => {
 
           <div className="apply-banner">
             <img
-              src="/images/banners/driver-banner.jpg"
+              src="/images/banners/apply.png"
               alt="Devenir coursier Foodi Agadir"
               className="apply-banner-img"
               onError={(e) => {
@@ -241,7 +309,7 @@ export const DriverApplyPage: React.FC = () => {
             {[
               { step: 1, title: "1. Infos Générales", icon: User },
               { step: 2, title: "2. Profil & Permis", icon: FileText },
-              { step: 3, title: "3. Véhicule & Photos", icon: Bike },
+              { step: 3, title: "3. Moto & Documents", icon: Bike },
             ].map((s) => {
               const isActive = currentStep === s.step;
               const isDone = currentStep > s.step;
@@ -296,13 +364,13 @@ export const DriverApplyPage: React.FC = () => {
                       Étape 1 : Informations Générales
                     </h2>
                     <p className="apply-section-desc">
-                      Renseignez vos coordonnées de contact et informations personnelles.
+                      Renseignez vos coordonnées de contact et informations personnelles obligatoires.
                     </p>
                   </div>
 
                   <div className="apply-grid-2">
                     <div className="apply-form-group">
-                      <label className="apply-label">Nom et prénom</label>
+                      <label className="apply-label">Nom et prénom *</label>
                       <input
                         type="text"
                         value={fullName}
@@ -314,7 +382,7 @@ export const DriverApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Numéro de téléphone</label>
+                      <label className="apply-label">Numéro de téléphone *</label>
                       <input
                         type="tel"
                         value={phone}
@@ -326,18 +394,19 @@ export const DriverApplyPage: React.FC = () => {
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Adresse Email</label>
+                      <label className="apply-label">Adresse Email *</label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Ex: yassine@gmail.com"
+                        required
                         className="apply-input"
                       />
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Numéro CIN</label>
+                      <label className="apply-label">Numéro CIN *</label>
                       <input
                         type="text"
                         value={cinNumber}
@@ -360,32 +429,33 @@ export const DriverApplyPage: React.FC = () => {
                       Étape 2 : Profil & Pièces d'identité
                     </h2>
                     <p className="apply-section-desc">
-                      Téléchargez votre photo de profil ainsi que vos pièces justificatives.
+                      Téléchargez votre photo de profil ainsi que vos pièces justificatives obligatoires.
                     </p>
                   </div>
 
                   <div className="apply-grid-2">
                     {renderUploadBox(
-                      "Photo de profil (visage net)",
+                      "Photo de profil (visage net) *",
                       avatarPreview,
                       setAvatarPreview,
                       "Cliquer pour téléverser votre photo de profil"
                     )}
 
                     {renderUploadBox(
-                      "Photo CIN (Recto / Verso)",
+                      "Photo CIN (Recto / Verso) *",
                       cinPhotoPreview,
                       setCinPhotoPreview,
                       "Cliquer pour téléverser votre carte CIN"
                     )}
 
                     <div className="apply-form-group apply-col-full">
-                      <label className="apply-label">Numéro de permis de conduire</label>
+                      <label className="apply-label">Numéro de permis de conduire *</label>
                       <input
                         type="text"
                         value={licenseNumber}
                         onChange={(e) => setLicenseNumber(e.target.value)}
                         placeholder="Ex: 12/345678"
+                        required
                         className="apply-input"
                         style={{ textTransform: "uppercase" }}
                       />
@@ -393,7 +463,7 @@ export const DriverApplyPage: React.FC = () => {
 
                     <div className="apply-col-full">
                       {renderUploadBox(
-                        "Photo du permis de conduire",
+                        "Photo du permis de conduire *",
                         licensePhotoPreview,
                         setLicensePhotoPreview,
                         "Cliquer pour téléverser votre permis de conduire"
@@ -408,65 +478,59 @@ export const DriverApplyPage: React.FC = () => {
                   <div className="apply-section-header">
                     <h2 className="apply-section-title">
                       <Bike color="#FF5A00" size={20} />
-                      Étape 3 : Véhicule & Documents
+                      Étape 3 : Moto & Documents
                     </h2>
                     <p className="apply-section-desc">
-                      Indiquez votre moyen de transport et téléversez ses photos.
+                      Seules les motos sont acceptées. Renseignez les détails et téléversez les photos obligatoires.
                     </p>
                   </div>
 
                   <div className="apply-form-group" style={{ marginBottom: "16px" }}>
-                    <label className="apply-label">Type de véhicule</label>
-                    <div className="apply-grid-4">
-                      {[
-                        { id: "motorcycle", label: "Moto", icon: "🏍️" },
-                        { id: "scooter", label: "Scooter", icon: "🛵" },
-                        { id: "bicycle", label: "Vélo", icon: "🚲" },
-                        { id: "car", label: "Voiture", icon: "🚗" },
-                      ].map((v) => (
-                        <button
-                          key={v.id}
-                          type="button"
-                          onClick={() => setVehicleType(v.id as any)}
-                          className={`apply-vehicle-option ${vehicleType === v.id ? "selected" : ""}`}
-                        >
-                          <span style={{ fontSize: "22px" }}>{v.icon}</span>
-                          <span>{v.label}</span>
-                        </button>
-                      ))}
+                    <label className="apply-label">Type de véhicule accepté *</label>
+                    <div style={{ maxWidth: "340px" }}>
+                      <div className="apply-vehicle-option selected" style={{ cursor: "default", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", gap: "14px", padding: "14px 20px" }}>
+                        <span style={{ fontSize: "28px" }}>🏍️</span>
+                        <div style={{ textAlign: "left" }}>
+                          <span style={{ fontSize: "14px", fontWeight: 900, color: "#FF5A00", display: "block" }}>Moto</span>
+                          <span style={{ fontSize: "11px", color: "#7A8194" }}>Seul véhicule accepté pour les livraisons</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div className="apply-grid-3">
                     <div className="apply-form-group">
-                      <label className="apply-label">Marque du véhicule</label>
+                      <label className="apply-label">Marque de la moto *</label>
                       <input
                         type="text"
                         value={vehicleBrand}
                         onChange={(e) => setVehicleBrand(e.target.value)}
-                        placeholder="Ex: Yamaha, Peugeot..."
+                        placeholder="Ex: Yamaha, Honda, Peugeot..."
+                        required
                         className="apply-input"
                       />
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Modèle</label>
+                      <label className="apply-label">Modèle de la moto *</label>
                       <input
                         type="text"
                         value={vehicleModel}
                         onChange={(e) => setVehicleModel(e.target.value)}
-                        placeholder="Ex: Kisbee, Jog, SH..."
+                        placeholder="Ex: Kisbee, Jog, SH, TMAX..."
+                        required
                         className="apply-input"
                       />
                     </div>
 
                     <div className="apply-form-group">
-                      <label className="apply-label">Plaque / Matricule</label>
+                      <label className="apply-label">Plaque / Matricule *</label>
                       <input
                         type="text"
                         value={licensePlate}
                         onChange={(e) => setLicensePlate(e.target.value)}
                         placeholder="Ex: 12345-A-33"
+                        required
                         className="apply-input"
                         style={{ textTransform: "uppercase" }}
                       />
@@ -475,14 +539,14 @@ export const DriverApplyPage: React.FC = () => {
 
                   <div className="apply-grid-2" style={{ marginTop: "16px" }}>
                     {renderUploadBox(
-                      "Photo de votre véhicule",
+                      "Photo de votre moto *",
                       vehiclePhotoPreview,
                       setVehiclePhotoPreview,
-                      "Cliquer pour téléverser la photo de votre véhicule"
+                      "Cliquer pour téléverser la photo de votre moto"
                     )}
 
                     {renderUploadBox(
-                      "Photo Carte Grise ou Assurance",
+                      "Photo Carte Grise ou Assurance *",
                       regCardPreview,
                       setRegCardPreview,
                       "Cliquer pour téléverser la carte grise / assurance"
@@ -517,19 +581,19 @@ export const DriverApplyPage: React.FC = () => {
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isAllFilled}
                     className="apply-btn-submit"
-                    style={{ opacity: isSubmitting ? 0.7 : 1 }}
+                    style={{ opacity: isAllFilled ? 1 : 0.65, cursor: isAllFilled ? "pointer" : "not-allowed" }}
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="animate-spin" size={16} />
-                        <span>Envoi de votre dossier...</span>
+                        <Loader2 size={15} className="animate-spin" />
+                        <span>Envoi en cours...</span>
                       </>
                     ) : (
                       <>
                         <Send size={15} />
-                        <span>Soumettre ma candidature</span>
+                        <span>Envoyer ma candidature</span>
                       </>
                     )}
                   </button>
