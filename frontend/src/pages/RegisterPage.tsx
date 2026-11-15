@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { AuthLayoutShell } from "../components/AuthLayoutShell";
+import { PhoneCountryInput } from "../components/PhoneCountryInput";
 import { apiRegister } from "../services/api";
 
 export const RegisterPage: React.FC = () => {
@@ -13,6 +14,8 @@ export const RegisterPage: React.FC = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [countryCode, setCountryCode] = useState("+212");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +38,15 @@ export const RegisterPage: React.FC = () => {
 
     if (!cleanEmail || !emailRegex.test(cleanEmail)) {
       errs.email = "Veuillez renseigner une adresse email valide.";
+    }
+
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (!cleanPhone) {
+      errs.phone = "Veuillez renseigner votre numéro de téléphone.";
+    } else if (countryCode === "+212" && (cleanPhone.length < 9 || cleanPhone.length > 10)) {
+      errs.phone = "Numéro marocain invalide (ex: 6 12 34 56 78).";
+    } else if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+      errs.phone = "Veuillez renseigner un numéro de téléphone valide.";
     }
 
     setClientErrors(errs);
@@ -99,10 +111,13 @@ export const RegisterPage: React.FC = () => {
     setIsSubmitting(true);
     setClientErrors((prev) => ({ ...prev, general: "" }));
 
+    const fullPhone = `${countryCode} ${phone.trim()}`;
+
     try {
       const res = await apiRegister({
         name: name.trim(),
         email: email.trim(),
+        phone: fullPhone,
         password: password,
       });
 
@@ -111,10 +126,10 @@ export const RegisterPage: React.FC = () => {
           id: res.user.id,
           name: res.user.name,
           email: res.user.email,
-          phone: res.user.phone,
+          phone: res.user.phone || fullPhone,
           role: "client",
         });
-        navigate(redirectPath, { replace: true });
+        navigate("/myaddress?complete=1", { replace: true });
       } else {
         setClientErrors((prev) => ({
           ...prev,
@@ -270,6 +285,41 @@ export const RegisterPage: React.FC = () => {
                 >
                   <i className="fa-solid fa-circle-exclamation" />
                   <span>{clientErrors.email}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="auth-field-group">
+              <label className="auth-label">
+                Numéro de téléphone
+              </label>
+              <PhoneCountryInput
+                countryCode={countryCode}
+                onCountryCodeChange={(code) => {
+                  setCountryCode(code);
+                  if (clientErrors.phone) setClientErrors((prev) => ({ ...prev, phone: "" }));
+                }}
+                phoneNumber={phone}
+                onPhoneNumberChange={(val) => {
+                  setPhone(val);
+                  if (clientErrors.phone) setClientErrors((prev) => ({ ...prev, phone: "" }));
+                }}
+                error={clientErrors.phone}
+              />
+              {clientErrors.phone && (
+                <p
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "0.75rem",
+                    color: "#EF4444",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <i className="fa-solid fa-circle-exclamation" />
+                  <span>{clientErrors.phone}</span>
                 </p>
               )}
             </div>

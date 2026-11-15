@@ -25,6 +25,10 @@ class PartnerApplicationController extends Controller
             'user_id' => 'nullable',
             'phone' => 'nullable|string|max:50',
             'full_name' => 'nullable|string|max:150',
+            'avatar_path' => 'nullable|string',
+            'license_photo_path' => 'nullable|string',
+            'cin_photo_path' => 'nullable|string',
+            'registration_card_path' => 'nullable|string',
         ]);
 
         $userId = $request->input('user_id');
@@ -40,6 +44,26 @@ class PartnerApplicationController extends Controller
             User::where('id', $userId)->update($updateUser);
         }
 
+        $avatarPath = $request->input('avatar_path');
+        if ($avatarPath && strlen($avatarPath) > 250) {
+            $avatarPath = '/images/drivers/avatar-' . $userId . '.jpg';
+        }
+
+        $licensePhoto = $request->input('license_photo_path');
+        if ($licensePhoto && strlen($licensePhoto) > 250) {
+            $licensePhoto = '/images/drivers/license-' . $userId . '.jpg';
+        }
+
+        $cinPhoto = $request->input('cin_photo_path');
+        if ($cinPhoto && strlen($cinPhoto) > 250) {
+            $cinPhoto = '/images/drivers/cin-' . $userId . '.jpg';
+        }
+
+        $regCard = $request->input('registration_card_path');
+        if ($regCard && strlen($regCard) > 250) {
+            $regCard = '/images/drivers/reg-' . $userId . '.jpg';
+        }
+
         $profile = DriverProfile::updateOrCreate(
             ['user_id' => $userId],
             [
@@ -49,6 +73,10 @@ class PartnerApplicationController extends Controller
                 'vehicle_brand' => $validated['vehicle_brand'] ?? null,
                 'vehicle_model' => $validated['vehicle_model'] ?? null,
                 'license_plate' => $validated['license_plate'] ?? null,
+                'avatar_path' => $avatarPath,
+                'license_photo_path' => $licensePhoto,
+                'cin_recto_path' => $cinPhoto,
+                'registration_card_path' => $regCard,
                 'approval_status' => 'pending',
                 'applied_at' => now(),
                 'is_online' => false,
@@ -94,6 +122,8 @@ class PartnerApplicationController extends Controller
             'cuisine' => 'nullable|string|max:100',
             'description' => 'nullable|string',
             'user_id' => 'nullable',
+            'logo_path' => 'nullable|string',
+            'cover_image_path' => 'nullable|string',
         ]);
 
         $userId = $request->input('user_id');
@@ -113,6 +143,16 @@ class PartnerApplicationController extends Controller
             $counter++;
         }
 
+        $logoPath = $request->input('logo_path');
+        if ($logoPath && strlen($logoPath) > 250) {
+            $logoPath = '/images/restaurants/' . $slug . '-logo.jpg';
+        }
+
+        $coverPath = $request->input('cover_image_path');
+        if ($coverPath && strlen($coverPath) > 250) {
+            $coverPath = '/images/restaurants/' . $slug . '-cover.jpg';
+        }
+
         $restaurant = Restaurant::create([
             'name' => $validated['name'],
             'slug' => $slug,
@@ -124,6 +164,8 @@ class PartnerApplicationController extends Controller
             'city' => 'Agadir',
             'latitude' => 30.4278,
             'longitude' => -9.5981,
+            'logo_path' => $logoPath,
+            'cover_image_path' => $coverPath,
             'description' => $validated['description'] ?? null,
             'rc_number' => $validated['rc_number'] ?? null,
             'ice_number' => $validated['ice_number'] ?? null,

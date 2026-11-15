@@ -517,9 +517,33 @@ export const HomePage: React.FC = () => {
     return <Loader fullScreen message="Chargement des restaurants d'Agadir..." />;
   }
 
+  const isProfileSet =
+    !user.isLoggedIn ||
+    localStorage.getItem(`foodi_setprofile_${user.id}`) === "1" ||
+    localStorage.getItem("foodi_setprofile") === "1";
+
   return (
     <div className="home-root">
       <HomeHeader />
+
+      {!isProfileSet && (
+        <div className="bg-[#FFF3EA] border-b border-[#FF5A00]/25 px-4 py-3">
+          <div className="max-w-[1380px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 text-[#0B1020]">
+              <span className="w-6 h-6 rounded-full bg-[#FF5A00] text-white flex items-center justify-center shrink-0 text-xs font-black">!</span>
+              <span className="font-bold">
+                Votre profil n'est pas encore complet : vous devez sélectionner votre adresse de livraison à Agadir.
+              </span>
+            </div>
+            <Link
+              to="/myaddress?complete=1"
+              className="foodi-btn-primary px-4 py-2 rounded-xl text-xs font-black shadow-xs shrink-0 cursor-pointer"
+            >
+              Définir mon adresse
+            </Link>
+          </div>
+        </div>
+      )}
 
       <main className="home-container">
         <section className="search-section">

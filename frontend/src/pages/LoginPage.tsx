@@ -81,12 +81,19 @@ export const LoginPage: React.FC = () => {
             redirectPath.startsWith("/apply-driver") ||
             redirectPath.startsWith("/apply-restaurant");
 
-          const isClientTarget =
-            redirectPath &&
-            !redirectPath.includes("admin") &&
-            (isSpecialPartnerOrDriver || (!redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner")));
+          const userKey = `foodi_setprofile_${res.user.id}`;
+          const isProfileSet = localStorage.getItem(userKey) === "1" || localStorage.getItem("foodi_setprofile") === "1";
 
-          dest = isClientTarget ? redirectPath : "/";
+          if (!isProfileSet && !isSpecialPartnerOrDriver) {
+            dest = "/myaddress?complete=1";
+          } else {
+            const isClientTarget =
+              redirectPath &&
+              !redirectPath.includes("admin") &&
+              (isSpecialPartnerOrDriver || (!redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner")));
+
+            dest = isClientTarget ? redirectPath : "/";
+          }
         }
 
         navigate(dest, { replace: true });
@@ -102,7 +109,18 @@ export const LoginPage: React.FC = () => {
 
   return (
     <AuthLayoutShell pageType="login" backHref="/">
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
+        {isSubmitting && (
+          <div className="absolute inset-0 bg-white/92 backdrop-blur-xs rounded-3xl flex flex-col items-center justify-center gap-3 z-50 animate-in fade-in duration-200">
+            <div className="w-14 h-14 rounded-2xl bg-[#FFF3EA] flex items-center justify-center shadow-lg border border-[#FF5A00]/20">
+              <img src="/images/logo.png" alt="Foodi" className="w-8 h-8 object-contain animate-bounce" />
+            </div>
+            <div className="flex items-center gap-2 text-xs font-black text-[#FF5A00]">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Connexion à votre compte Foodi...</span>
+            </div>
+          </div>
+        )}
         <div className="text-center">
           <Link to="/" className="inline-block mb-3">
             <img src="/images/logohor.png" alt="Foodi" className="h-8 sm:h-9 mx-auto object-contain" />

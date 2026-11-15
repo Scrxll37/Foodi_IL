@@ -549,6 +549,10 @@ export interface DriverApplyPayload {
   vehicle_model?: string;
   license_plate?: string;
   zone?: string;
+  avatar_path?: string;
+  license_photo_path?: string;
+  cin_photo_path?: string;
+  registration_card_path?: string;
 }
 
 export interface RestaurantApplyPayload {
@@ -563,6 +567,8 @@ export interface RestaurantApplyPayload {
   rc_number?: string;
   ice_number?: string;
   description?: string;
+  logo_path?: string;
+  cover_image_path?: string;
 }
 
 export async function apiApplyDriver(payload: DriverApplyPayload): Promise<{ success: boolean; message: string; data?: any }> {

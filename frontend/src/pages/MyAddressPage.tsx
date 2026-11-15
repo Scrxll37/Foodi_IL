@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import L from "leaflet";
 import { Home, Building2, Briefcase, HelpCircle, Check, Edit3, Navigation, MapPin, ArrowRight, ArrowLeft, X } from "lucide-react";
 import { HomeHeader } from "../components/HomeHeader";
@@ -16,6 +16,8 @@ const AGADIR_BOUNDS: L.LatLngBoundsExpression = [
 
 export const MyAddressPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isProfileSetup = searchParams.get("complete") === "1";
   const { address, saveAddress, user } = useApp();
 
   const [mode, setMode] = useState<"view" | "edit-map" | "edit-details">("view");
@@ -215,11 +217,17 @@ export const MyAddressPage: React.FC = () => {
     };
 
     saveAddress(newAddress);
+    const userKey = `foodi_setprofile_${user.id || user.email}`;
+    localStorage.setItem(userKey, "1");
+    localStorage.setItem("foodi_setprofile", "1");
     setMode("view");
     setShowSavedAlert(true);
     setTimeout(() => {
       setShowSavedAlert(false);
-    }, 4000);
+      if (isProfileSetup) {
+        navigate("/", { replace: true });
+      }
+    }, 1500);
   };
 
   const isPhoneFullScreenMap = mode === "edit-map";
