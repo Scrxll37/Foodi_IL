@@ -449,6 +449,15 @@ export interface AuthResponse {
   message?: string;
   token?: string;
   user: UserProfile & { id?: string | number };
+  restaurant?: {
+    id: string;
+    name: string;
+    slug: string;
+    approval_status?: string;
+    status?: string;
+    logo?: string;
+    cover?: string;
+  } | null;
 }
 
 export async function apiLogin(payload: {
@@ -610,4 +619,30 @@ export async function apiUpdateApplicationStatus(
     method: "POST",
     body: JSON.stringify({ type, id, status }),
   });
+}
+
+export interface ApplicationStatusResponse {
+  success: boolean;
+  hasDriverApplication: boolean;
+  driverStatus: "pending" | "approved" | "rejected" | null;
+  driverData: any | null;
+  hasRestaurantApplication: boolean;
+  restaurantStatus: "pending" | "approved" | "rejected" | null;
+  restaurantData: any | null;
+}
+
+export async function checkApplicationStatus(userId: string | number): Promise<ApplicationStatusResponse> {
+  try {
+    return await apiFetch<ApplicationStatusResponse>(`/partners/check-application?user_id=${encodeURIComponent(userId)}`);
+  } catch {
+    return {
+      success: false,
+      hasDriverApplication: false,
+      driverStatus: null,
+      driverData: null,
+      hasRestaurantApplication: false,
+      restaurantStatus: null,
+      restaurantData: null,
+    };
+  }
 }

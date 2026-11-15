@@ -37,6 +37,16 @@ class PartnerApplicationController extends Controller
             $userId = $user ? $user->id : 1;
         }
 
+        $existingProfile = DriverProfile::where('user_id', $userId)->first();
+        if ($existingProfile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une candidature de coursier a déjà été soumise pour ce compte. Une seule candidature par compte est autorisée.',
+                'already_applied' => true,
+                'status' => $existingProfile->approval_status,
+            ], 422);
+        }
+
         if ($request->filled('phone') || $request->filled('full_name')) {
             $updateUser = [];
             if ($request->filled('phone')) $updateUser['phone_number'] = $request->input('phone');
@@ -44,47 +54,30 @@ class PartnerApplicationController extends Controller
             User::where('id', $userId)->update($updateUser);
         }
 
-        $avatarPath = $request->input('avatar_path');
-        if ($avatarPath && strlen($avatarPath) > 250) {
-            $avatarPath = '/images/drivers/avatar-' . $userId . '.jpg';
-        }
+        $avatarPath = $this->saveBase64Image($request->input('avatar_path'), 'drivers', 'avatar-' . $userId);
+        $licensePhoto = $this->saveBase64Image($request->input('license_photo_path'), 'drivers', 'license-' . $userId);
+        $cinPhoto = $this->saveBase64Image($request->input('cin_photo_path'), 'drivers', 'cin-' . $userId);
+        $regCard = $this->saveBase64Image($request->input('registration_card_path'), 'drivers', 'reg-' . $userId);
 
-        $licensePhoto = $request->input('license_photo_path');
-        if ($licensePhoto && strlen($licensePhoto) > 250) {
-            $licensePhoto = '/images/drivers/license-' . $userId . '.jpg';
-        }
-
-        $cinPhoto = $request->input('cin_photo_path');
-        if ($cinPhoto && strlen($cinPhoto) > 250) {
-            $cinPhoto = '/images/drivers/cin-' . $userId . '.jpg';
-        }
-
-        $regCard = $request->input('registration_card_path');
-        if ($regCard && strlen($regCard) > 250) {
-            $regCard = '/images/drivers/reg-' . $userId . '.jpg';
-        }
-
-        $profile = DriverProfile::updateOrCreate(
-            ['user_id' => $userId],
-            [
-                'cin_number' => $validated['cin_number'],
-                'license_number' => $validated['license_number'] ?? null,
-                'vehicle_type' => $validated['vehicle_type'],
-                'vehicle_brand' => $validated['vehicle_brand'] ?? null,
-                'vehicle_model' => $validated['vehicle_model'] ?? null,
-                'license_plate' => $validated['license_plate'] ?? null,
-                'avatar_path' => $avatarPath,
-                'license_photo_path' => $licensePhoto,
-                'cin_recto_path' => $cinPhoto,
-                'registration_card_path' => $regCard,
-                'approval_status' => 'pending',
-                'applied_at' => now(),
-                'is_online' => false,
-                'is_available' => false,
-                'current_latitude' => 30.4278,
-                'current_longitude' => -9.5981,
-            ]
-        );
+        $profile = DriverProfile::create([
+            'user_id' => $userId,
+            'cin_number' => $validated['cin_number'],
+            'license_number' => $validated['license_number'] ?? null,
+            'vehicle_type' => $validated['vehicle_type'],
+            'vehicle_brand' => $validated['vehicle_brand'] ?? null,
+            'vehicle_model' => $validated['vehicle_model'] ?? null,
+            'license_plate' => $validated['license_plate'] ?? null,
+            'avatar_path' => $avatarPath ?: '/images/ui/driver-reference.jpg',
+            'license_photo_path' => $licensePhoto ?: '/images/auth/phone-register.jpg',
+            'cin_recto_path' => $cinPhoto ?: '/images/auth/phone-login.png',
+            'registration_card_path' => $regCard ?: '/images/auth/adphonee.jpg',
+            'approval_status' => 'pending',
+            'applied_at' => now(),
+            'is_online' => false,
+            'is_available' => false,
+            'current_latitude' => 30.4278,
+            'current_longitude' => -9.5981,
+        ]);
 
         DB::table('notifications')->insert([
             'id' => (string) Str::uuid(),
@@ -132,6 +125,16 @@ class PartnerApplicationController extends Controller
             $userId = $user ? $user->id : 1;
         }
 
+        $existingRestaurant = Restaurant::where('created_by', $userId)->first();
+        if ($existingRestaurant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une demande de restaurant a déjà été soumise pour ce compte. Une seule demande par compte est autorisée.',
+                'already_applied' => true,
+                'status' => $existingRestaurant->approval_status,
+            ], 422);
+        }
+
         $baseSlug = Str::slug($validated['name']);
         if (empty($baseSlug)) {
             $baseSlug = 'restaurant-' . time();
@@ -143,15 +146,8 @@ class PartnerApplicationController extends Controller
             $counter++;
         }
 
-        $logoPath = $request->input('logo_path');
-        if ($logoPath && strlen($logoPath) > 250) {
-            $logoPath = '/images/restaurants/' . $slug . '-logo.jpg';
-        }
-
-        $coverPath = $request->input('cover_image_path');
-        if ($coverPath && strlen($coverPath) > 250) {
-            $coverPath = '/images/restaurants/' . $slug . '-cover.jpg';
-        }
+        $logoPath = $this->saveBase64Image($request->input('logo_path'), 'restaurants', $slug . '-logo');
+        $coverPath = $this->saveBase64Image($request->input('cover_image_path'), 'banners', $slug . '-banner');
 
         $restaurant = Restaurant::create([
             'name' => $validated['name'],
@@ -164,8 +160,8 @@ class PartnerApplicationController extends Controller
             'city' => 'Agadir',
             'latitude' => 30.4278,
             'longitude' => -9.5981,
-            'logo_path' => $logoPath,
-            'cover_image_path' => $coverPath,
+            'logo_path' => $logoPath ?: '/images/restaurants/McDonalds.png',
+            'cover_image_path' => $coverPath ?: '/images/banners/mcdo1.png',
             'description' => $validated['description'] ?? null,
             'rc_number' => $validated['rc_number'] ?? null,
             'ice_number' => $validated['ice_number'] ?? null,
@@ -352,12 +348,96 @@ class PartnerApplicationController extends Controller
                 ]);
             }
 
-            return response()->json([
-                'success' => true,
-                'message' => $isApproved ? 'Restaurant approuvé et activé avec succès' : 'Restaurant refusé',
-            ]);
+            return response()->json(['success' => true, 'message' => $isApproved ? 'Restaurant approuvé et activé avec succès' : 'Restaurant refusé']);
         }
 
         return response()->json(['success' => false, 'message' => 'Type invalide'], 422);
+    }
+
+    public function checkApplicationStatus(Request $request): JsonResponse
+    {
+        $userId = $request->query('user_id');
+        if (!$userId && $request->user()) {
+            $userId = $request->user()->id;
+        }
+
+        if (!$userId) {
+            return response()->json([
+                'success' => true,
+                'hasDriverApplication' => false,
+                'driverStatus' => null,
+                'driverData' => null,
+                'hasRestaurantApplication' => false,
+                'restaurantStatus' => null,
+                'restaurantData' => null,
+            ]);
+        }
+
+        $driver = DriverProfile::where('user_id', $userId)->first();
+        $restaurant = Restaurant::where('created_by', $userId)->first();
+
+        return response()->json([
+            'success' => true,
+            'hasDriverApplication' => (bool) $driver,
+            'driverStatus' => $driver ? $driver->approval_status : null,
+            'driverData' => $driver ? [
+                'id' => $driver->id,
+                'approval_status' => $driver->approval_status,
+                'applied_at' => $driver->applied_at,
+                'vehicle_type' => $driver->vehicle_type,
+            ] : null,
+            'hasRestaurantApplication' => (bool) $restaurant,
+            'restaurantStatus' => $restaurant ? $restaurant->approval_status : null,
+            'restaurantData' => $restaurant ? [
+                'id' => $restaurant->id,
+                'name' => $restaurant->name,
+                'slug' => $restaurant->slug,
+                'approval_status' => $restaurant->approval_status,
+                'status' => $restaurant->status,
+                'applied_at' => $restaurant->applied_at,
+                'logo_path' => $restaurant->logo_path,
+                'cover_image_path' => $restaurant->cover_image_path,
+            ] : null,
+        ]);
+    }
+
+    private function saveBase64Image(?string $base64Data, string $subDir, string $filePrefix): ?string
+    {
+        if (empty($base64Data)) {
+            return null;
+        }
+
+        if (str_starts_with($base64Data, '/images/') || str_starts_with($base64Data, 'http://') || str_starts_with($base64Data, 'https://')) {
+            return $base64Data;
+        }
+
+        if (!preg_match('/^data:image\/(png|jpeg|jpg);base64,(.+)$/is', $base64Data, $matches)) {
+            return null;
+        }
+
+        $rawMime = strtolower($matches[1]);
+        $extension = ($rawMime === 'png') ? 'png' : 'jpg';
+        $encodedData = $matches[2];
+        $binary = base64_decode($encodedData, true);
+        if ($binary === false) {
+            return null;
+        }
+
+        $destDir = base_path('../frontend/public/images/' . $subDir);
+        if (!is_dir($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $filename = $filePrefix . '-' . time() . '.' . $extension;
+        $fullPath = $destDir . DIRECTORY_SEPARATOR . $filename;
+        file_put_contents($fullPath, $binary);
+
+        $backendDir = public_path('images/' . $subDir);
+        if (!is_dir($backendDir)) {
+            mkdir($backendDir, 0755, true);
+        }
+        file_put_contents($backendDir . DIRECTORY_SEPARATOR . $filename, $binary);
+
+        return '/images/' . $subDir . '/' . $filename;
     }
 }

@@ -77,6 +77,20 @@ class AuthController extends Controller
         $frontendRole = $this->formatFrontendRole($user->role);
         $token = 'tok_' . Str::random(40);
 
+        $userRestaurant = Restaurant::where('created_by', $user->id)->first();
+        $restaurantData = null;
+        if ($userRestaurant) {
+            $restaurantData = [
+                'id' => (string) $userRestaurant->id,
+                'name' => $userRestaurant->name,
+                'slug' => $userRestaurant->slug,
+                'approval_status' => $userRestaurant->approval_status,
+                'status' => $userRestaurant->status,
+                'logo' => $userRestaurant->logo_path,
+                'cover' => $userRestaurant->cover_image_path,
+            ];
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Connexion réussie',
@@ -91,6 +105,7 @@ class AuthController extends Controller
                 'avatar_url' => $user->avatar_url,
                 'isLoggedIn' => true,
             ],
+            'restaurant' => $restaurantData,
         ]);
     }
 

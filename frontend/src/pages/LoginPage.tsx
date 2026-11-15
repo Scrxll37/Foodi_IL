@@ -74,6 +74,17 @@ export const LoginPage: React.FC = () => {
           dest = "/driver";
         } else if (res.user.role === "restaurant") {
           dest = "/restaurant-dashboard";
+          if (res.restaurant) {
+            try {
+              localStorage.setItem("foodi_restaurant_session", JSON.stringify({
+                email: res.user.email,
+                restaurantId: res.restaurant.slug || res.restaurant.id,
+                restaurantName: res.restaurant.name,
+                managerName: res.user.name,
+              }));
+              localStorage.removeItem("foodi_cache_restaurants_all");
+            } catch {}
+          }
         } else {
           const isSpecialPartnerOrDriver =
             redirectPath.startsWith("/postuler-coursier") ||

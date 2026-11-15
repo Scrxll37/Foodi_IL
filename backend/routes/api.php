@@ -57,5 +57,6 @@ Route::post('/notifications', [NotificationController::class, 'store']);
 
 Route::post('/partners/driver-apply', [PartnerApplicationController::class, 'applyDriver']);
 Route::post('/partners/restaurant-apply', [PartnerApplicationController::class, 'applyRestaurant']);
+Route::get('/partners/check-application', [PartnerApplicationController::class, 'checkApplicationStatus']);
 Route::get('/admin/pending-applications', [PartnerApplicationController::class, 'pendingApplications']);
 Route::post('/admin/approve-application', [PartnerApplicationController::class, 'updateApplicationStatus']);

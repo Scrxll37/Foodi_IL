@@ -15,7 +15,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Restaurant, OrderRecord, Dish, MenuCategory, RestaurantBranch } from "../types";
-import { getStoredRestaurants } from "../services/api";
+import { getStoredRestaurants, fetchRestaurants, checkApplicationStatus } from "../services/api";
 import { EmailChangeModal } from "../components/EmailChangeModal";
 import { useApp } from "../context/AppContext";
 import "../styles/restaurant.css";
@@ -83,6 +83,42 @@ export const RestaurantDashboardPage: React.FC = () => {
     );
     return found || restaurants[0] || (getStoredRestaurants()[0] as Restaurant);
   }, [restaurants, activeRestaurantId]);
+
+  useEffect(() => {
+    fetchRestaurants({ forceRefresh: true }).then((data) => {
+      if (data && data.length > 0) {
+        setRestaurants(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      checkApplicationStatus(user.id).then((res) => {
+        if (res.hasRestaurantApplication && res.restaurantData) {
+          const restau = res.restaurantData;
+          const targetId = restau.slug || String(restau.id);
+          setSession((prev) => {
+            if (prev && prev.restaurantId === targetId) return prev;
+            return {
+              email: user.email || "restau@foodi.ma",
+              restaurantId: targetId,
+              restaurantName: restau.name,
+              managerName: user.name || "Gérant",
+            };
+          });
+          try {
+            localStorage.setItem("foodi_restaurant_session", JSON.stringify({
+              email: user.email || "restau@foodi.ma",
+              restaurantId: targetId,
+              restaurantName: restau.name,
+              managerName: user.name || "Gérant",
+            }));
+          } catch {}
+        }
+      });
+    }
+  }, [user?.id, user?.email, user?.name]);
 
   const [activeTab, setActiveTab] = useState<
     "orders" | "menu" | "hours" | "restaurant" | "profile"

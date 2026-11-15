@@ -17,7 +17,7 @@ import {
 import { useApp } from "../context/AppContext";
 import { HomeHeader } from "../components/HomeHeader";
 import { Footer } from "../components/Footer";
-import { apiApplyDriver } from "../services/api";
+import { apiApplyDriver, checkApplicationStatus } from "../services/api";
 
 export const DriverApplyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,15 +47,42 @@ export const DriverApplyPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [checkingExisting, setCheckingExisting] = useState(true);
+  const [alreadyApplied, setAlreadyApplied] = useState(false);
+  const [existingDriverStatus, setExistingDriverStatus] = useState<string | null>(null);
+
   useEffect(() => {
     if (!user.isLoggedIn) {
       navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`, { replace: true });
+      return;
     }
-  }, [user.isLoggedIn, navigate, location.pathname]);
+
+    if (user.id) {
+      checkApplicationStatus(user.id)
+        .then((res) => {
+          if (res.hasDriverApplication) {
+            setAlreadyApplied(true);
+            setExistingDriverStatus(res.driverStatus);
+          }
+        })
+        .finally(() => {
+          setCheckingExisting(false);
+        });
+    } else {
+      setCheckingExisting(false);
+    }
+  }, [user.isLoggedIn, user.id, navigate, location.pathname]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const validMimes = ["image/png", "image/jpeg", "image/jpg"];
+    const validExtensions = /\.(png|jpe?g)$/i;
+    if (!validMimes.includes(file.type) || !validExtensions.test(file.name)) {
+      setErrorMessage("Seules les photos au format PNG ou JPG/JPEG sont acceptées.");
+      return;
+    }
 
     if (file.size > 5 * 1024 * 1024) {
       setErrorMessage("La taille maximale par photo est de 5 Mo.");
@@ -257,7 +284,7 @@ export const DriverApplyPage: React.FC = () => {
             <span style={{ fontSize: "11px", color: "#7A8194", marginTop: "2px" }}>PNG, JPG ou JPEG (max 5 Mo)</span>
             <input
               type="file"
-              accept="image/*"
+              accept=".png,.jpg,.jpeg,image/png,image/jpeg"
               style={{ display: "none" }}
               onChange={(e) => handleFileUpload(e, onSet)}
             />
@@ -327,7 +354,58 @@ export const DriverApplyPage: React.FC = () => {
             })}
           </div>
 
-          {isSuccess ? (
+          {alreadyApplied ? (
+            <div className="apply-success-box">
+              <div
+                className="apply-success-icon"
+                style={{
+                  backgroundColor: existingDriverStatus === "approved" ? "#ECFDF5" : existingDriverStatus === "rejected" ? "#FEF2F2" : "#FFF3EA",
+                  color: existingDriverStatus === "approved" ? "#10B981" : existingDriverStatus === "rejected" ? "#EF4444" : "#FF5A00"
+                }}
+              >
+                <CheckCircle2 size={40} />
+              </div>
+              <h2 style={{ fontSize: "24px", fontWeight: 900, color: "#0B1020", margin: "0 0 8px 0" }}>
+                Candidature coursier déjà enregistrée
+              </h2>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  backgroundColor: existingDriverStatus === "approved" ? "#ECFDF5" : existingDriverStatus === "rejected" ? "#FEF2F2" : "#FFF3EA",
+                  color: existingDriverStatus === "approved" ? "#059669" : existingDriverStatus === "rejected" ? "#DC2626" : "#D97706",
+                  padding: "6px 14px",
+                  borderRadius: "9999px",
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  marginBottom: "16px",
+                  border: `1px solid ${existingDriverStatus === "approved" ? "#A7F3D0" : existingDriverStatus === "rejected" ? "#FECACA" : "#FED7AA"}`
+                }}
+              >
+                <span>
+                  {existingDriverStatus === "approved"
+                    ? "Statut : Candidature validée et active"
+                    : existingDriverStatus === "rejected"
+                    ? "Statut : Candidature non retenue"
+                    : "Statut : En cours d'examen par l'administration"}
+                </span>
+              </div>
+              <p style={{ fontSize: "13px", color: "#7A8194", maxWidth: "520px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
+                Une seule demande de coursier par compte est autorisée (même en cas de refus). Votre dossier a déjà été enregistré pour ce profil.
+              </p>
+              <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+                <Link to="/" className="apply-btn-submit" style={{ textDecoration: "none" }}>
+                  Retour à l'accueil
+                </Link>
+                {existingDriverStatus === "approved" && (
+                  <Link to="/driver" className="apply-btn-prev" style={{ textDecoration: "none" }}>
+                    Espace coursier
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : isSuccess ? (
             <div className="apply-success-box">
               <div className="apply-success-icon">
                 <CheckCircle2 size={40} />
