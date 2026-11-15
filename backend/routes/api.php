@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PlatformSettingController;
 use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\CustomerAddressController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PartnerApplicationController;
 use App\Models\PlatformSetting;
 use App\Models\Restaurant;
 use App\Models\Order;
@@ -53,3 +54,6 @@ Route::post('/auth/profile', [AuthController::class, 'updateProfile']);
 Route::get('/notifications', [NotificationController::class, 'index']);
 Route::post('/notifications/read', [NotificationController::class, 'markRead']);
 Route::post('/notifications', [NotificationController::class, 'store']);
+
+Route::post('/partners/driver-apply', [PartnerApplicationController::class, 'applyDriver']);
+Route::post('/partners/restaurant-apply', [PartnerApplicationController::class, 'applyRestaurant']);

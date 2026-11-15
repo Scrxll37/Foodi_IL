@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Mail, Phone, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Bike } from "lucide-react";
+import { Mail, Phone, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Bike, Loader2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { AuthLayoutShell } from "../components/AuthLayoutShell";
 import { apiLogin } from "../services/api";
@@ -75,12 +75,17 @@ export const LoginPage: React.FC = () => {
         } else if (res.user.role === "restaurant") {
           dest = "/restaurant-dashboard";
         } else {
+          const isSpecialPartnerOrDriver =
+            redirectPath.startsWith("/postuler-coursier") ||
+            redirectPath.startsWith("/devenir-partenaire") ||
+            redirectPath.startsWith("/apply-driver") ||
+            redirectPath.startsWith("/apply-restaurant");
+
           const isClientTarget =
             redirectPath &&
             !redirectPath.includes("admin") &&
-            !redirectPath.includes("driver") &&
-            !redirectPath.includes("restaurant") &&
-            !redirectPath.includes("partner");
+            (isSpecialPartnerOrDriver || (!redirectPath.includes("driver") && !redirectPath.includes("restaurant") && !redirectPath.includes("partner")));
+
           dest = isClientTarget ? redirectPath : "/";
         }
 
@@ -225,9 +230,16 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="foodi-btn-primary w-full py-3.5 sm:py-4 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/25 hover:shadow-xl hover:shadow-[#FF5A00]/35 cursor-pointer flex items-center justify-center active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="foodi-btn-primary w-full py-3.5 sm:py-4 rounded-2xl text-xs sm:text-sm font-black shadow-lg shadow-[#FF5A00]/25 hover:shadow-xl hover:shadow-[#FF5A00]/35 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99] transition-all disabled:opacity-75 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "Connexion..." : "Connexion"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>Connexion en cours...</span>
+              </>
+            ) : (
+              <span>Connexion</span>
+            )}
           </button>
         </form>
 

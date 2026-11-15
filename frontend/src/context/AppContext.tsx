@@ -19,7 +19,7 @@ export interface CartConflictData {
 
 interface AppContextType {
   cart: CartItem[];
-  addToCart: (item: Omit<CartItem, "id">) => void;
+  addToCart: (item: Omit<CartItem, "id">, source?: HTMLElement | { x: number; y: number } | null) => void;
   updateQuantity: (id: string, delta: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
@@ -210,7 +210,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem("foodi_notifications", JSON.stringify(notifications));
   }, [notifications]);
 
-  const applyItemToCart = (item: Omit<CartItem, "id">) => {
+  const applyItemToCart = (item: Omit<CartItem, "id">, source?: HTMLElement | { x: number; y: number } | null) => {
     const existingIndex = cart.findIndex(
       (c) =>
         c.dishId === item.dishId &&
@@ -230,13 +230,84 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setCart((prev) => [...prev, newItem]);
     }
-    setIsCartAnimating(true);
-    setTimeout(() => {
-      setIsCartAnimating(false);
-    }, 700);
+    flyToCart(source);
   };
 
-  const addToCart = (item: Omit<CartItem, "id">) => {
+  const flyToCart = (source?: HTMLElement | { x: number; y: number } | null) => {
+    if (typeof window === "undefined") return;
+
+    let startX = window.innerWidth / 2;
+    let startY = window.innerHeight / 2;
+
+    if (source instanceof HTMLElement) {
+      const rect = source.getBoundingClientRect();
+      startX = rect.left + rect.width / 2;
+      startY = rect.top + rect.height / 2;
+    } else if (source && typeof source === "object" && "x" in source) {
+      startX = source.x;
+      startY = source.y;
+    } else if ((window as any).event && (window as any).event.clientX) {
+      startX = (window as any).event.clientX;
+      startY = (window as any).event.clientY;
+    }
+
+    const cartBtn =
+      document.getElementById("header-cart-btn") ||
+      document.getElementById("bottom-cart-btn") ||
+      document.querySelector(".foodi-header-btn[aria-label='Panier']") ||
+      document.querySelector(".bottom-nav-cart-btn");
+
+    let targetX = window.innerWidth - 60;
+    let targetY = 30;
+
+    if (cartBtn) {
+      const rect = cartBtn.getBoundingClientRect();
+      targetX = rect.left + rect.width / 2;
+      targetY = rect.top + rect.height / 2;
+    }
+
+    const flyer = document.createElement("div");
+    flyer.style.position = "fixed";
+    flyer.style.left = `${startX}px`;
+    flyer.style.top = `${startY}px`;
+    flyer.style.width = "32px";
+    flyer.style.height = "32px";
+    flyer.style.marginLeft = "-16px";
+    flyer.style.marginTop = "-16px";
+    flyer.style.backgroundColor = "#FF5A00";
+    flyer.style.color = "#FFFFFF";
+    flyer.style.borderRadius = "9999px";
+    flyer.style.display = "flex";
+    flyer.style.alignItems = "center";
+    flyer.style.justifyContent = "center";
+    flyer.style.boxShadow = "0 8px 24px rgba(255, 90, 0, 0.5)";
+    flyer.style.zIndex = "99999";
+    flyer.style.pointerEvents = "none";
+    flyer.style.transition = "transform 0.65s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.65s ease-in";
+    flyer.style.transform = "translate3d(0, 0, 0) scale(1)";
+    flyer.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
+
+    document.body.appendChild(flyer);
+
+    requestAnimationFrame(() => {
+      const deltaX = targetX - startX;
+      const deltaY = targetY - startY;
+      flyer.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.35)`;
+      flyer.style.opacity = "0.7";
+    });
+
+    setTimeout(() => {
+      if (flyer.parentNode) {
+        flyer.parentNode.removeChild(flyer);
+      }
+      setIsCartAnimating(true);
+      setTimeout(() => {
+        setIsCartAnimating(false);
+      }, 700);
+    }, 650);
+  };
+
+  const addToCart = (item: Omit<CartItem, "id">, source?: HTMLElement | { x: number; y: number } | null) => {
     if (!user.isLoggedIn) {
       const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
       window.location.href = `/login?redirect=${currentUrl}`;
@@ -252,7 +323,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
 
-    applyItemToCart(item);
+    applyItemToCart(item, source);
   };
 
   const confirmConflictReplace = () => {
@@ -264,10 +335,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setCart([newItem]);
     setConflictData(null);
-    setIsCartAnimating(true);
-    setTimeout(() => {
-      setIsCartAnimating(false);
-    }, 700);
+    flyToCart();
   };
 
   const cancelConflict = () => {

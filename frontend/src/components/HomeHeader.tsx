@@ -223,6 +223,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ showBackButton = false, 
                 }
                 setIsCartOpen(true);
               }}
+              id="header-cart-btn"
               aria-label="Panier"
               className={`foodi-header-btn ${isCartAnimating ? "foodi-cart-bounce" : ""}`}
             >

@@ -993,14 +993,13 @@ export const HomePage: React.FC = () => {
               <div className="foodi-ad-card">
                 <div className="foodi-ad-content">
                   <span className="foodi-ad-pill">
-                    <Sparkles size={13} /> Application Foodi
+                    <Sparkles size={13} /> Avec Foodi
                   </span>
                   <h3 className="foodi-ad-title">
-                    Commandez plus vite sur l'App Foodi
+                  Commandez plus vite avec Foodi
                   </h3>
                   <p className="foodi-ad-desc">
-                    Profitez du suivi en direct de votre livreur, d'offres partenaires exclusives et commandez vos repas préférés en un clin d'œil.
-                  </p>
+                  Profitez du suivi en direct de votre commande, découvrez des offres exclusives et commandez vos repas préférés en quelques clics.                  </p>
                 </div>
 
                 <div className="foodi-ad-image-container">
@@ -1079,7 +1078,10 @@ export const HomePage: React.FC = () => {
                     <p className="partner-recruitment-desc">
                       Profitez d'horaires flexibles, de paiements rapides et de primes avantageuses en livrant avec Foodi à Agadir.
                     </p>
-                    <Link to="/login" className="partner-recruitment-btn">
+                    <Link
+                      to={user.isLoggedIn ? "/postuler-coursier" : `/login?redirect=${encodeURIComponent("/postuler-coursier")}`}
+                      className="partner-recruitment-btn"
+                    >
                       <span>Postuler comme coursier</span>
                       <ArrowRight size={15} />
                     </Link>
@@ -1108,7 +1110,10 @@ export const HomePage: React.FC = () => {
                     <p className="partner-recruitment-desc">
                       Augmentez votre visibilité, attirez des milliers de nouveaux clients et développez vos ventes à emporter et en livraison.
                     </p>
-                    <Link to="/login" className="partner-recruitment-btn">
+                    <Link
+                      to={user.isLoggedIn ? "/devenir-partenaire" : `/login?redirect=${encodeURIComponent("/devenir-partenaire")}`}
+                      className="partner-recruitment-btn"
+                    >
                       <span>Inscrire mon restaurant</span>
                       <ArrowRight size={15} />
                     </Link>

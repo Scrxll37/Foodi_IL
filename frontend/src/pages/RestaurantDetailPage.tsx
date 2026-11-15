@@ -75,16 +75,8 @@ export const RestaurantDetailPage: React.FC = () => {
     return null;
   });
 
-  const [pageLoading, setPageLoading] = useState<boolean>(() => {
-    if (slug) {
-      const cached = getStoredRestaurant(slug);
-      if (cached && Array.isArray(cached.categories) && cached.categories.length > 0) {
-        return false;
-      }
-    }
-    return true;
-  });
-
+  const [pageLoading, setPageLoading] = useState<boolean>(true);
+  const [isCategoryLoading, setIsCategoryLoading] = useState<boolean>(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -101,7 +93,9 @@ export const RestaurantDetailPage: React.FC = () => {
         console.warn("Could not load restaurant:", err);
       })
       .finally(() => {
-        setPageLoading(false);
+        setTimeout(() => {
+          setPageLoading(false);
+        }, 300);
       });
   }, [slug]);
 
@@ -136,7 +130,7 @@ export const RestaurantDetailPage: React.FC = () => {
     return allDishes.filter((d) => (d.promoPrice && d.promoPrice > 0) || d.isPopular);
   }, [allDishes]);
 
-  const handleDishClick = (dish: Dish) => {
+  const handleDishClick = (dish: Dish, source?: HTMLElement | null) => {
     if (!user.isLoggedIn) {
       navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
@@ -153,12 +147,16 @@ export const RestaurantDetailPage: React.FC = () => {
         price: dish.price,
         image: dish.image,
         quantity: 1
-      });
+      }, source);
     }
   };
 
   const scrollToCategory = (catId: string) => {
+    setIsCategoryLoading(true);
     setActiveCategoryId(catId);
+    setTimeout(() => {
+      setIsCategoryLoading(false);
+    }, 200);
     if (catId === "all" || catId === "promotions") {
       window.scrollTo({ top: 380, behavior: "smooth" });
       return;
@@ -490,7 +488,7 @@ export const RestaurantDetailPage: React.FC = () => {
               </div>
             </aside>
 
-            <div className="lg:col-span-3 space-y-8">
+            <div className={`lg:col-span-3 space-y-8 transition-opacity duration-200 ${isCategoryLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
               {displayedCategories.map((category) => (
                 <section key={category.id} id={category.id} className="space-y-4 scroll-mt-24">
                   <div className="flex flex-col pb-2.5 border-b border-[#0B1020]/8">
@@ -539,7 +537,7 @@ export const RestaurantDetailPage: React.FC = () => {
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleDishClick(dish);
+                                handleDishClick(dish, e.currentTarget);
                               }}
                               className="w-8 h-8 rounded-xl bg-[#FFF3EA] text-[#FF5A00] hover:bg-[#FF5A00] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
                               title="Ajouter au panier"

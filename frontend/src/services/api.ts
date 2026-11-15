@@ -537,3 +537,44 @@ export async function createNotification(payload: {
     body: JSON.stringify(payload),
   });
 }
+
+export interface DriverApplyPayload {
+  user_id?: string | number;
+  full_name?: string;
+  phone?: string;
+  cin_number: string;
+  license_number?: string;
+  vehicle_type: "motorcycle" | "scooter" | "bicycle" | "car";
+  vehicle_brand?: string;
+  vehicle_model?: string;
+  license_plate?: string;
+  zone?: string;
+}
+
+export interface RestaurantApplyPayload {
+  user_id?: string | number;
+  name: string;
+  manager_name: string;
+  phone_number: string;
+  email?: string;
+  address: string;
+  neighborhood?: string;
+  cuisine?: string;
+  rc_number?: string;
+  ice_number?: string;
+  description?: string;
+}
+
+export async function apiApplyDriver(payload: DriverApplyPayload): Promise<{ success: boolean; message: string; data?: any }> {
+  return apiFetch<{ success: boolean; message: string; data?: any }>("/partners/driver-apply", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function apiApplyRestaurant(payload: RestaurantApplyPayload): Promise<{ success: boolean; message: string; data?: any }> {
+  return apiFetch<{ success: boolean; message: string; data?: any }>("/partners/restaurant-apply", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

@@ -15,6 +15,8 @@ import { TestBoardPage } from "./pages/TestBoardPage";
 import { DriverDashboardPage } from "./pages/DriverDashboardPage";
 import { RestaurantDashboardPage } from "./pages/RestaurantDashboardPage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
+import { DriverApplyPage } from "./pages/DriverApplyPage";
+import { RestaurantApplyPage } from "./pages/RestaurantApplyPage";
 import { ConflictModal } from "./components/ConflictModal";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -38,6 +40,39 @@ export const App: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+
+          <Route
+            path="/postuler-coursier"
+            element={
+              <ProtectedRoute>
+                <DriverApplyPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/apply-driver"
+            element={
+              <ProtectedRoute>
+                <DriverApplyPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/devenir-partenaire"
+            element={
+              <ProtectedRoute>
+                <RestaurantApplyPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/apply-restaurant"
+            element={
+              <ProtectedRoute>
+                <RestaurantApplyPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/restaurants"

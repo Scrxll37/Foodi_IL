@@ -39,6 +39,7 @@ export const MobileBottomNav: React.FC = () => {
           }
           setIsCartOpen(true);
         }}
+        id="bottom-cart-btn"
         className={`bottom-nav-cart-btn ${isCartAnimating ? "foodi-cart-bounce" : ""}`}
       >
         <div className="bottom-nav-cart-bubble">

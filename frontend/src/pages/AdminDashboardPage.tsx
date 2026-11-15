@@ -401,7 +401,13 @@ export const AdminDashboardPage: React.FC = () => {
 
       const map = L.map(orderMapRef.current, {
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: [
+          [30.25, -9.75],
+          [30.60, -9.40]
+        ],
+        maxBoundsViscosity: 1.0,
+        minZoom: 11
       }).setView([restLat, restLng], 13);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

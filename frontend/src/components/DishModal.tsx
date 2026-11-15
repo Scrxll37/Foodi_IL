@@ -26,7 +26,7 @@ export const DishModal: React.FC<DishModalProps> = ({ dish, restaurantId, restau
     }));
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e?: React.MouseEvent<HTMLButtonElement>) => {
     if (!user.isLoggedIn) {
       onClose();
       navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
@@ -42,7 +42,7 @@ export const DishModal: React.FC<DishModalProps> = ({ dish, restaurantId, restau
       image: dish.image,
       quantity,
       selectedOptions
-    });
+    }, e?.currentTarget);
     onClose();
   };
 

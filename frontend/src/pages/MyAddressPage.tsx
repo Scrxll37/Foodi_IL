@@ -9,6 +9,11 @@ import { MobileBottomNav } from "../components/MobileBottomNav";
 import { useApp } from "../context/AppContext";
 import { UserAddress } from "../types";
 
+const AGADIR_BOUNDS: L.LatLngBoundsExpression = [
+  [30.25, -9.75],
+  [30.60, -9.40]
+];
+
 export const MyAddressPage: React.FC = () => {
   const navigate = useNavigate();
   const { address, saveAddress, user } = useApp();
@@ -103,7 +108,10 @@ export const MyAddressPage: React.FC = () => {
     if (!mapInstanceRef.current) {
       const map = L.map(mapContainerRef.current, {
         zoomControl: false,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: AGADIR_BOUNDS,
+        maxBoundsViscosity: 1.0,
+        minZoom: 12
       }).setView([lat, lng], 16);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -120,6 +128,8 @@ export const MyAddressPage: React.FC = () => {
       marker.on("dragend", () => {
         if (modeRef.current !== "edit-map") return;
         const position = marker.getLatLng();
+        const bounds = L.latLngBounds(AGADIR_BOUNDS);
+        if (!bounds.contains(position)) return;
         setLat(position.lat);
         setLng(position.lng);
         reverseGeocode(position.lat, position.lng);
@@ -127,6 +137,8 @@ export const MyAddressPage: React.FC = () => {
 
       map.on("click", (e) => {
         if (modeRef.current !== "edit-map") return;
+        const bounds = L.latLngBounds(AGADIR_BOUNDS);
+        if (!bounds.contains(e.latlng)) return;
         marker.setLatLng(e.latlng);
         setLat(e.latlng.lat);
         setLng(e.latlng.lng);

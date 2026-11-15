@@ -292,7 +292,13 @@ export const RestaurantDashboardPage: React.FC = () => {
 
       const map = L.map(profileBranchesMapContainerRef.current, {
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: [
+          [30.25, -9.75],
+          [30.60, -9.40]
+        ],
+        maxBoundsViscosity: 1.0,
+        minZoom: 11
       }).setView(defaultCenter, 13);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -456,7 +462,13 @@ export const RestaurantDashboardPage: React.FC = () => {
 
       const map = L.map(branchMapContainerRef.current, {
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: [
+          [30.25, -9.75],
+          [30.60, -9.40]
+        ],
+        maxBoundsViscosity: 1.0,
+        minZoom: 11
       }).setView([initLat, initLng], 14);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

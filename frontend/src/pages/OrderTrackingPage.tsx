@@ -488,7 +488,13 @@ export const OrderTrackingPage: React.FC = () => {
     if (!mapInstanceRef.current) {
       const map = L.map(mapContainerRef.current, {
         zoomControl: false,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: [
+          [30.25, -9.75],
+          [30.60, -9.40]
+        ],
+        maxBoundsViscosity: 1.0,
+        minZoom: 11
       });
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
